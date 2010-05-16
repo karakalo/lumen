@@ -31,6 +31,10 @@ package Lumen.Window is
    -- All the various settings a window can have
    type Configuration is null record;
 
+   -- Local exceptions raised by these procedures
+   Connection_Failed : exception;  -- can't connect to X server
+   Context_Failed    : exception;  -- can't create or attach OpenGL context
+
    -- Create a native window
    procedure Create (Win     :    out Handle;
                      Options : in     Configuration);
@@ -62,5 +66,8 @@ private
    -- The (opaque) rendering context type
    type Context_Info;
    type Context_Handle is access Context_Info;
+
+   pragma Linker_Options ("-lX11");
+   pragma Linker_Options ("-lGL");
 
 end Lumen.Window;
