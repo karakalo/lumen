@@ -28,15 +28,16 @@ package Lumen.Events is
    type Event_Type is (No_Event,
                        Key_Press, Key_Release, Button_Press, Button_Release, Pointer_Motion,
                        Enter_Window, Leave_Window, Focus_In, Focus_Out,
-                       Exposed, Resized);
+                       Exposed, Mapped, Resized, Client_Message);
 
    -- Raw keycode, not much use except at the very lowest level
    type Raw_Keycode is mod 2 ** Integer'Size;
 
-   -- Keystroke modifiers
+   -- Keystroke and pointer modifiers
    type Modifier is (Mod_Shift, Mod_Lock, Mod_Control, Mod_1, Mod_2, Mod_3, Mod_4, Mod_5,
                      Mod_Button_1, Mod_Button_2, Mod_Button_3, Mod_Button_4, Mod_Button_5);
    type Modifier_Set is array (Modifier) of Boolean;
+   No_Modifiers : Modifier_Set := (others => False);
 
    -- Pointer buttons
    type Button is (Button_1, Button_2, Button_3, Button_4, Button_5);
@@ -54,12 +55,11 @@ package Lumen.Events is
             Key_Code    : Raw_Keycode;
          when Button_Press | Button_Release =>
             Changed     : Button;
-         when Pointer_Motion =>
-            Drag_Button : Button_Set;
-            Drag_Key    : Modifier_Set;
          when Exposed | Resized =>
             Width       : Natural;
             Height      : Natural;
+         when Client_Message =>
+            Delete      : Boolean;
          when others =>
             null;
       end case;
@@ -72,6 +72,10 @@ package Lumen.Events is
    type Event_Callback_Table is array (Event_Type) of Event_Callback;
 
    ---------------------------------------------------------------------------
+
+   -- Returns the number of events that are waiting in the event queue.
+   -- Useful for more complex event loops.
+   function Pending (Win : Window.Handle) return Natural;
 
    -- Retrieve the next input event from the queue and return it.  Useful for
    -- constructing event loops.

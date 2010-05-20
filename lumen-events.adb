@@ -29,6 +29,19 @@ package body Lumen.Events is
 
    ---------------------------------------------------------------------------
 
+   -- Returns the number of events that are waiting in the event queue.
+   -- Useful for more complex event loops.
+   function Pending (Win : Window.Handle) return Natural is
+
+      function X_Pending (Display : in Internal.Display_Pointer) return Natural;
+      pragma Import (C, X_Pending, "XPending");
+
+   begin  -- Pending
+      return X_Pending (Win.Display);
+   end Pending;
+
+   ---------------------------------------------------------------------------
+
    -- Retrieve the next input event from the queue and return it
    function Next_Event (Win : Window.Handle) return Event_Data is
 
@@ -46,10 +59,12 @@ package body Lumen.Events is
       X_Focus_In       : constant :=  9;
       X_Focus_Out      : constant := 10;
       X_Expose         : constant := 12;
+      X_Map_Notify     : constant := 19;
       X_Resize_Request : constant := 25;
+      X_Client_Message : constant := 33;
 
       X_First_Event    : constant := X_Error;
-      X_Last_Event     : constant := X_Resize_Request;
+      X_Last_Event     : constant := X_Client_Message;
 
       -- X modifier mask and its values
       type Modifier_Mask is mod 2 ** Integer'Size;
@@ -70,8 +85,9 @@ package body Lumen.Events is
 
       type X_Event_Code is new Integer range X_First_Event .. X_Last_Event;
 
-      Bytes : constant := Integer'Size / 8;
-      Bits  : constant := Integer'Size - 1;
+      Bytes     : constant := Integer'Size / 8;
+      Bits      : constant := Integer'Size - 1;
+      Atom_Bits : constant := Internal.Atom'Size - 1;
       type Padding is array (1 .. 23) of Long_Integer;
       type X_Event_Data (X_Event_Type : X_Event_Code := X_Error) is record
          case X_Event_Type is
@@ -108,6 +124,8 @@ package body Lumen.Events is
             when X_Resize_Request =>
                Siz_Width  : Natural;
                Siz_Height : Natural;
+            when X_Client_Message =>
+               Msg_Value  : Internal.Atom;
             when others =>
                Pad        : Padding;
          end case;
@@ -147,6 +165,8 @@ package body Lumen.Events is
 
          Siz_Width    at 10 * Bytes range 0 .. Bits;
          Siz_Height   at 11 * Bytes range 0 .. Bits;
+
+         Msg_Value    at 14 * Bytes range 0 .. Atom_Bits;
       end record;
 
       ------------------------------------------------------------------------
@@ -191,47 +211,130 @@ package body Lumen.Events is
 
       -- Based on the event type, transfer and convert the event data
       case X_Event.X_Event_Type is
-         when X_Key_Press | X_Key_Release =>
-            Result.X         := X_Event.Key_X;
-            Result.Y         := X_Event.Key_Y;
-            Result.Abs_X     := X_Event.Key_Root_X;
-            Result.Abs_Y     := X_Event.Key_Root_Y;
-            Result.Key_Code  := Raw_Keycode (X_Event.Key_Code);
-            Result.Modifiers := Modifier_Mask_To_Set (X_Event.Key_State);
+         when X_Key_Press =>
+            Result := (Which     => Key_Press,
+                       X         => X_Event.Key_X,
+                       Y         => X_Event.Key_Y,
+                       Abs_X     => X_Event.Key_Root_X,
+                       Abs_Y     => X_Event.Key_Root_Y,
+                       Key_Code  => Raw_Keycode (X_Event.Key_Code),
+                       Modifiers => Modifier_Mask_To_Set (X_Event.Key_State));
 
-         when X_Button_Press | X_Button_Release =>
-            Result.X         := X_Event.Btn_X;
-            Result.Y         := X_Event.Btn_Y;
-            Result.Abs_X     := X_Event.Btn_Root_X;
-            Result.Abs_Y     := X_Event.Btn_Root_Y;
-            Result.Changed   := Button'Val (X_Event.Btn_Code - 1);
-            Result.Modifiers := Modifier_Mask_To_Set (X_Event.Btn_State);
+         when X_Key_Release =>
+            Result := (Which     => Key_Release,
+                       X         => X_Event.Key_X,
+                       Y         => X_Event.Key_Y,
+                       Abs_X     => X_Event.Key_Root_X,
+                       Abs_Y     => X_Event.Key_Root_Y,
+                       Key_Code  => Raw_Keycode (X_Event.Key_Code),
+                       Modifiers => Modifier_Mask_To_Set (X_Event.Key_State));
+
+         when X_Button_Press =>
+            Result := (Which     => Button_Press,
+                       X         => X_Event.Btn_X,
+                       Y         => X_Event.Btn_Y,
+                       Abs_X     => X_Event.Btn_Root_X,
+                       Abs_Y     => X_Event.Btn_Root_Y,
+                       Changed   => Button'Val (X_Event.Btn_Code - 1),
+                       Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State));
+
+         when X_Button_Release =>
+            Result := (Which     => Button_Release,
+                       X         => X_Event.Btn_X,
+                       Y         => X_Event.Btn_Y,
+                       Abs_X     => X_Event.Btn_Root_X,
+                       Abs_Y     => X_Event.Btn_Root_Y,
+                       Changed   => Button'Val (X_Event.Btn_Code - 1),
+                       Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State));
 
          when X_Motion_Notify =>
-            Result.X         := X_Event.Mov_X;
-            Result.Y         := X_Event.Mov_Y;
-            Result.Abs_X     := X_Event.Mov_Root_X;
-            Result.Abs_Y     := X_Event.Mov_Root_Y;
-            Result.Modifiers := Modifier_Mask_To_Set (X_Event.Mov_State);
+            Result := (Which     => Pointer_Motion,
+                       X         => X_Event.Mov_X,
+                       Y         => X_Event.Mov_Y,
+                       Abs_X     => X_Event.Mov_Root_X,
+                       Abs_Y     => X_Event.Mov_Root_Y,
+                       Modifiers => Modifier_Mask_To_Set (X_Event.Mov_State));
 
-         when X_Enter_Notify | X_Leave_Notify =>
-            Result.X         := X_Event.Xng_X;
-            Result.Y         := X_Event.Xng_Y;
-            Result.Abs_X     := X_Event.Xng_Root_X;
-            Result.Abs_Y     := X_Event.Xng_Root_Y;
+         when X_Enter_Notify =>
+            Result := (Which     => Enter_Window,
+                       X         => X_Event.Xng_X,
+                       Y         => X_Event.Xng_Y,
+                       Abs_X     => X_Event.Xng_Root_X,
+                       Abs_Y     => X_Event.Xng_Root_Y,
+                       Modifiers => No_Modifiers);
+
+         when X_Leave_Notify =>
+            Result := (Which     => Leave_Window,
+                       X         => X_Event.Xng_X,
+                       Y         => X_Event.Xng_Y,
+                       Abs_X     => X_Event.Xng_Root_X,
+                       Abs_Y     => X_Event.Xng_Root_Y,
+                       Modifiers => No_Modifiers);
+
+         when X_Focus_In =>
+            Result := (Which     => Focus_In,
+                       X         => 0,
+                       Y         => 0,
+                       Abs_X     => 0,
+                       Abs_Y     => 0,
+                       Modifiers => No_Modifiers);
+
+         when X_Focus_Out =>
+            Result := (Which     => Focus_Out,
+                       X         => 0,
+                       Y         => 0,
+                       Abs_X     => 0,
+                       Abs_Y     => 0,
+                       Modifiers => No_Modifiers);
 
          when X_Expose =>
-            Result.X         := X_Event.Xng_X;
-            Result.Y         := X_Event.Xng_Y;
-            Result.Width     := X_Event.Xps_Width;
-            Result.Height    := X_Event.Xps_Height;
+            Result := (Which     => Exposed,
+                       X         => X_Event.Xps_X,
+                       Y         => X_Event.Xps_Y,
+                       Abs_X     => 0,
+                       Abs_Y     => 0,
+                       Modifiers => No_Modifiers,
+                       Width     => X_Event.Xps_Width,
+                       Height    => X_Event.Xps_Height);
+
+         when X_Map_Notify =>
+            Result := (Which     => Mapped,
+                       X         => 0,
+                       Y         => 0,
+                       Abs_X     => 0,
+                       Abs_Y     => 0,
+                       Modifiers => No_Modifiers);
 
          when X_Resize_Request =>
-            Result.Width     := X_Event.Xps_Width;
-            Result.Height    := X_Event.Xps_Height;
+            Result := (Which     => Resized,
+                       X         => 0,
+                       Y         => 0,
+                       Abs_X     => 0,
+                       Abs_Y     => 0,
+                       Modifiers => No_Modifiers,
+                       Width     => X_Event.Siz_Width,
+                       Height    => X_Event.Siz_Height);
+
+         when X_Client_Message =>
+            declare
+               use type Internal.Atom;
+            begin
+               Result := (Which     => Client_Message,
+                          X         => 0,
+                          Y         => 0,
+                          Abs_X     => 0,
+                          Abs_Y     => 0,
+                       Modifiers => No_Modifiers,
+                          Delete    => X_Event.Msg_Value = Internal.Delete_Window_Atom);
+            end;
 
          when others =>
-            null;
+            Result := (Which     => No_Event,
+                       X         => 0,
+                       Y         => 0,
+                       Abs_X     => 0,
+                       Abs_Y     => 0,
+                       Modifiers => No_Modifiers);
       end case;
 
       -- Pass back our massaged result
