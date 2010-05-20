@@ -12,29 +12,36 @@
 -- purpose with or without fee is hereby granted, provided that the above
 -- copyright notice and this permission notice appear in all copies.
 --
--- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
--- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
--- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
--- SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
--- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
--- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
--- IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+-- The software is provided "as is" and the author disclaims all warranties
+-- with regard to this software including all implied warranties of
+-- merchantability and fitness. In no event shall the author be liable for any
+-- special, direct, indirect, or consequential damages or any damages
+-- whatsoever resulting from loss of use, data or profits, whether in an
+-- action of contract, negligence or other tortious action, arising out of or
+-- in connection with the use or performance of this software.
+
+-- Environment
+with Lumen.Internal;
+
 
 package Lumen.Window is
 
-   -- Handle for a native window
-   type Handle is private;
-
-   -- Window has no parent; in X, this means the root window is the parent
-   No_Parent : constant Handle;
+   -- Handle for a Lumen window
+   subtype Handle is Internal.Window_Info;
 
    -- Handle for an OpenGL rendering context
-   type Context_Handle is private;
+   subtype Context_Handle is Internal.GLX_Context;
+
+   -- Null window; in X, this means the root window is the parent
+   No_Window : constant Handle := (Display => Internal.Null_Display_Pointer,
+                                   Window  => 0,
+                                   Visual  => null,
+                                   Context => Internal.Null_Context);
 
    -- Means "no GL context"; for Create, means create a new one
-   No_Context : constant Context_Handle;
+   No_Context : constant Context_Handle := Internal.Null_Context;
 
-   -- Types of events wanted, and a set listing them
+   -- Types of events wanted, and a set listing them.
    type Wanted_Event is (Want_Key_Press, Want_Key_Release, Want_Button_Press,  Want_Button_Release,
                          Want_Window_Enter, Want_Window_Leave,
                          Want_Pointer_Move, Want_Pointer_Drag,
@@ -54,7 +61,7 @@ package Lumen.Window is
    -- create a "usable" window.  Details about the parameters are:
    --
    -- Parent: Handle of an existing window that will act as the new window's
-   -- parent, or No_Parent, meaning an independent top-level window.
+   -- parent, or No_Window, meaning an independent top-level window.
    --
    -- Width, Height: Window dimensions in pixels.
    --
@@ -79,7 +86,7 @@ package Lumen.Window is
    --
    -- Animated: Whether the GL rendering context will be double-buffered, thus
    -- allowing smooth animation.
-   function Create (Parent        : Handle           := No_Parent;
+   function Create (Parent        : Handle           := No_Window;
                     Width         : Natural          := 400;
                     Height        : Natural          := 400;
                     Events        : Wanted_Event_Set := Want_No_Events;
@@ -116,18 +123,12 @@ package Lumen.Window is
    procedure Make_Current (Win     : in out Handle;
                            Context : in     Context_Handle);
 
+   -- Promotes the back buffer to front; only valid if the window is double
+   -- buffered, meaning Animated was true when the window was created.  Useful
+   -- for smooth animation.
+   procedure Swap (Win : in Handle);
 
 private
-
-   -- The (opaque) native window type
-   type Window_Info;
-   type Handle is access Window_Info;
-   No_Parent : constant Handle := null;
-
-   -- The (opaque) rendering context type
-   type Context_Info;
-   type Context_Handle is access Context_Info;
-   No_Context : constant Context_Handle := null;
 
    pragma Linker_Options ("-lX11");
    pragma Linker_Options ("-lGL");

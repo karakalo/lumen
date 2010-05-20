@@ -12,13 +12,13 @@
 -- purpose with or without fee is hereby granted, provided that the above
 -- copyright notice and this permission notice appear in all copies.
 --
--- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
--- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
--- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
--- SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
--- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
--- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
--- IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+-- The software is provided "as is" and the author disclaims all warranties
+-- with regard to this software including all implied warranties of
+-- merchantability and fitness. In no event shall the author be liable for any
+-- special, direct, indirect, or consequential damages or any damages
+-- whatsoever resulting from loss of use, data or profits, whether in an
+-- action of contract, negligence or other tortious action, arising out of or
+-- in connection with the use or performance of this software.
 
 -- The declarations below include a minimal Xlib binding, adapted from code by
 -- Hans-Frieder Vogt and Vadim Godunko.  Their code was GPLv2, but I've raped
@@ -31,65 +31,22 @@
 -- Environment
 with Ada.Command_Line;
 with Ada.Directories;
-with Ada.Unchecked_Deallocation;
 with System;
 
 with GNAT.Case_Util;
 
 with GL;
 
+-- This is really "part of" this package, just packaged separately so it can
+-- be used in Events
+with Lumen.Internal;
+use  Lumen.Internal;
+
 package body Lumen.Window is
 
    ---------------------------------------------------------------------------
 
-   -- Xlib stuff needed for our window info record
-   type Display_Pointer is new System.Address;
-   Null_Display_Pointer : constant Display_Pointer := Display_Pointer (System.Null_Address);
-   type Screen_Depth    is new Natural;
-   type Screen_Number   is new Natural;
-   type Visual_ID       is new Long_Integer;
-   type Window_ID       is new Long_Integer;
-
-   type X_Visual_Info is record
-      Visual        : System.Address;
-      Visual_Ident  : Visual_ID;
-      Screen        : Screen_Number;
-      Depth         : Screen_Depth;
-      Class         : Integer;
-      Red_Mask      : Long_Integer;
-      Green_Mask    : Long_Integer;
-      Blue_Mask     : Long_Integer;
-      Colormap_Size : Natural;
-      Bits_Per_RGB  : Natural;
-   end record;
-   type X_Visual_Info_Pointer is access all X_Visual_Info;
-
-   ---------------------------------------------------------------------------
-
-   -- The (opaque) native window type
-   type Window_Info is record
-      Display : Display_Pointer       := Null_Display_Pointer;
-      Window  : Window_ID             := 0;
-      Visual  : X_Visual_Info_Pointer := null;
-      Context : Context_Handle        := null;
-   end record;
-
-   ---------------------------------------------------------------------------
-
-   -- A GLX type needed by our context info record
-   type GLX_Context is new System.Address;
-   Null_Context : constant GLX_Context := GLX_Context (System.Null_Address);
-
-   ---------------------------------------------------------------------------
-
-   -- The (opaque) rendering context type
-   type Context_Info is record
-      Context : GLX_Context := Null_Context;
-   end record;
-
-   ---------------------------------------------------------------------------
-
-   -- More Xlib stuff, needed by more than one of the routines below
+   -- Xlib stuff needed by more than one of the routines below
    type Atom             is new Long_Integer;
    type Data_Format_Type is (Invalid, Bits_8, Bits_16, Bits_32);
    for  Data_Format_Type use (Invalid => 0, Bits_8 => 8, Bits_16 => 16, Bits_32 => 32);
@@ -120,23 +77,23 @@ package body Lumen.Window is
    pragma Import (C, X_Set_Class_Hint, "XSetClassHint");
 
    procedure X_Set_Icon_Name (Display : in Display_Pointer;
-                              W       : in Window_ID;
+                              Window  : in Window_ID;
                               Name    : in System.Address);
    pragma Import (C, X_Set_Icon_Name, "XSetIconName");
 
    procedure X_Set_WM_Icon_Name (Display   : in Display_Pointer;
-                                 W         : in Window_ID;
+                                 Window    : in Window_ID;
                                  Text_Prop : in System.Address);
    pragma Import (C, X_Set_WM_Icon_Name, "XSetWMIconName");
 
    procedure X_Set_WM_Name (Display   : in Display_Pointer;
-                            W         : in Window_ID;
+                            Window    : in Window_ID;
                             Text_Prop : in System.Address);
    pragma Import (C, X_Set_WM_Name, "XSetWMName");
 
    ---------------------------------------------------------------------------
 
-   -- More GLX stuff, needed by more than one of the routines below
+   -- GLX stuff needed by more than one of the routines below
    function GLX_Create_Context (Display    : Display_Pointer;
                                 Visual     : X_Visual_Info_Pointer;
                                 Share_List : GLX_Context;
@@ -153,7 +110,7 @@ package body Lumen.Window is
    ---------------------------------------------------------------------------
 
    -- Create a native window
-   function Create (Parent        : Handle           := No_Parent;
+   function Create (Parent        : Handle           := No_Window;
                     Width         : Natural          := 400;
                     Height        : Natural          := 400;
                     Events        : Wanted_Event_Set := Want_No_Events;
@@ -197,7 +154,7 @@ package body Lumen.Window is
 
       -- Xlib functions needed only by Create
       function X_Create_Colormap (Display : Display_Pointer;
-                                  W       : Window_ID;
+                                  Window  : Window_ID;
                                   Visual  : System.Address;
                                   Alloc   : Alloc_Mode)
       return Colormap_ID;
@@ -221,7 +178,7 @@ package body Lumen.Window is
       function X_Default_Screen (Display : Display_Pointer) return Screen_Number;
       pragma Import (C, X_Default_Screen, "XDefaultScreen");
 
-      procedure X_Map_Window (Display : in Display_Pointer;   W : in Window_ID);
+      procedure X_Map_Window (Display : in Display_Pointer;   Window : in Window_ID);
       pragma Import (C, X_Map_Window, "XMapWindow");
 
       function X_Open_Display (Display_Name : System.Address := System.Null_Address) return Display_Pointer;
@@ -292,7 +249,6 @@ package body Lumen.Window is
       Visual         : X_Visual_Info_Pointer;
       Win_Attributes : X_Set_Window_Attributes;
       Window         : Window_ID;
-      Result         : Handle;
 
       ------------------------------------------------------------------------
 
@@ -316,7 +272,7 @@ package body Lumen.Window is
       Visual := GLX_Choose_Visual (Display, X_Default_Screen (Display), GLX_Attribute_List_Ptr (Con_Attributes'Address));
 
       -- Pick the parent window to use
-      if Parent = null then
+      if Parent = No_Window then
          Our_Parent := X_Root_Window (Display, Visual.Screen);
       else
          Our_Parent := Parent.Window;
@@ -396,10 +352,10 @@ package body Lumen.Window is
       end;
 
       -- Connect the OpenGL context to the new X window
-      if Context = null then
+      if Context = No_Context then
          Our_Context := GLX_Create_Context (Display, Visual, GLX_Context (System.Null_Address), GL.GL_TRUE);
       else
-         Our_Context := Context.Context;
+         Our_Context := Context;
       end if;
       Did := GLX_Make_Current (Display, Window, Our_Context);
       declare
@@ -411,11 +367,10 @@ package body Lumen.Window is
       end;
 
       -- Return the results
-      Result := new Window_Info'(Display => Display,
-                                 Window  => Window,
-                                 Visual  => Visual,
-                                 Context => new Context_Info'(Context => Our_Context));
-      return Result;
+      return Window_Info'(Display => Display,
+                          Window  => Window,
+                          Visual  => Visual,
+                          Context => Our_Context);
    end Create;
 
    ---------------------------------------------------------------------------
@@ -423,14 +378,12 @@ package body Lumen.Window is
    -- Destroy a native window, including its current rendering context.
    procedure Destroy (Win : in out Handle) is
 
-      procedure X_Destroy_Window (Display : in Display_Pointer;   W : in Window_ID);
+      procedure X_Destroy_Window (Display : in Display_Pointer;   Window : in Window_ID);
       pragma Import (C, X_Destroy_Window, "XDestroyWindow");
-
-      procedure Free is new Ada.Unchecked_Deallocation (Window_Info, Handle);
 
    begin  -- Destroy
       X_Destroy_Window (Win.Display, Win.Window);
-      Free (Win);
+      Win := No_Window;
    end Destroy;
 
    ---------------------------------------------------------------------------
@@ -480,8 +433,7 @@ package body Lumen.Window is
    -- with
    function Create_Context (Win : Handle) return Context_Handle is
    begin  -- Create_Context
-      return new Context_Info'(Context => GLX_Create_Context (Win.Display, Win.Visual,
-                                                              GLX_Context (System.Null_Address), GL.GL_TRUE));
+      return GLX_Create_Context (Win.Display, Win.Visual, GLX_Context (System.Null_Address), GL.GL_TRUE);
    end Create_Context;
 
    ---------------------------------------------------------------------------
@@ -493,11 +445,9 @@ package body Lumen.Window is
                                      Context : GLX_Context);
       pragma Import (C, GLX_Destroy_Context, "glXDestroyContext");
 
-      procedure Free is new Ada.Unchecked_Deallocation (Context_Info, Context_Handle);
-
    begin  -- Destroy_Context
-      GLX_Destroy_Context (Win.Display, Win.Context.Context);
-      Free (Win.Context);
+      GLX_Destroy_Context (Win.Display, Win.Context);
+      Win.Context := No_Context;
    end Destroy_Context;
 
    ---------------------------------------------------------------------------
@@ -509,12 +459,26 @@ package body Lumen.Window is
       use GL;
 
    begin  -- Make_Current
-      if GLX_Make_Current (Win.Display, Win.Window, Context.Context) = GL_TRUE then
+      if GLX_Make_Current (Win.Display, Win.Window, Context) = GL_TRUE then
          Win.Context := Context;
       else
          raise Context_Failed;
       end if;
    end Make_Current;
+
+   ---------------------------------------------------------------------------
+
+   -- Promotes the back buffer to front; only valid if the window is double
+   -- buffered, meaning Animated was true when the window was created.  Useful
+   -- for smooth animation.
+   procedure Swap (Win : in Handle) is
+
+      procedure GLX_Swap_Buffers (Display : in Display_Pointer;   Window : in Window_ID);
+      pragma Import (C, GLX_Swap_Buffers, "glXSwapBuffers");
+
+   begin  -- Swap
+      GLX_Swap_Buffers (Win.Display, Win.Window);
+   end Swap;
 
    ---------------------------------------------------------------------------
 
