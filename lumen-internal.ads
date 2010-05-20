@@ -28,6 +28,7 @@ package Lumen.Internal is
    ---------------------------------------------------------------------------
 
    -- Xlib stuff needed for our window info record
+   type Atom            is new Long_Integer;
    type Display_Pointer is new System.Address;
    Null_Display_Pointer : constant Display_Pointer := Display_Pointer (System.Null_Address);
    type Screen_Depth    is new Natural;
@@ -64,6 +65,11 @@ package Lumen.Internal is
       Visual  : X_Visual_Info_Pointer := null;
       Context : GLX_Context           := Null_Context;
    end record;
+
+   ---------------------------------------------------------------------------
+
+   -- Our "delete window" atom value
+   Delete_Window_Atom : Atom;
 
    ---------------------------------------------------------------------------
 
