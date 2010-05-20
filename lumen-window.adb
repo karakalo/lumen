@@ -47,7 +47,6 @@ package body Lumen.Window is
    ---------------------------------------------------------------------------
 
    -- Xlib stuff needed by more than one of the routines below
-   type Atom             is new Long_Integer;
    type Data_Format_Type is (Invalid, Bits_8, Bits_16, Bits_32);
    for  Data_Format_Type use (Invalid => 0, Bits_8 => 8, Bits_16 => 16, Bits_32 => 32);
 
@@ -245,7 +244,6 @@ package body Lumen.Window is
       Did            : GL.GLboolean;
       Display        : Display_Pointer;
       Our_Parent     : Window_ID;
-      Protocol_Atom  : Atom_Array (1 .. 1);
       Visual         : X_Visual_Info_Pointer;
       Win_Attributes : X_Set_Window_Attributes;
       Window         : Window_ID;
@@ -294,8 +292,8 @@ package body Lumen.Window is
       X_Map_Window (Display, Window);
 
       -- Tell the window manager that we want the close button sent to us
-      Protocol_Atom (1) := X_Intern_Atom (Display, WM_Del'Address, 0);
-      X_Set_WM_Protocols (Display, Window, Protocol_Atom'Address, Protocol_Atom'Length);
+      Delete_Window_Atom := X_Intern_Atom (Display, WM_Del'Address, 0);
+      X_Set_WM_Protocols (Display, Window, Delete_Window_Atom'Address, 1);
 
       -- Figure out what we want to call the new window
       declare
