@@ -319,13 +319,21 @@ package body Lumen.Events is
             declare
                use type Internal.Atom;
             begin
-               Result := (Which     => Client_Message,
-                          X         => 0,
-                          Y         => 0,
-                          Abs_X     => 0,
-                          Abs_Y     => 0,
-                       Modifiers => No_Modifiers,
-                          Delete    => X_Event.Msg_Value = Internal.Delete_Window_Atom);
+               if X_Event.Msg_Value = Internal.Delete_Window_Atom then
+                  Result := (Which     => Close_Window,
+                             X         => 0,
+                             Y         => 0,
+                             Abs_X     => 0,
+                             Abs_Y     => 0,
+                             Modifiers => No_Modifiers);
+               else
+                  Result := (Which     => No_Event,
+                             X         => 0,
+                             Y         => 0,
+                             Abs_X     => 0,
+                             Abs_Y     => 0,
+                             Modifiers => No_Modifiers);
+               end if;
             end;
 
          when others =>
