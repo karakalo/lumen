@@ -374,7 +374,9 @@ package body Lumen.Events is
 
       -- Get events and pass them to the selected callback
       loop
-         Calls (Event.Which) (Event);
+         if Calls (Event.Which) /= No_Callback then
+            Calls (Event.Which) (Event);
+         end if;
       end loop;
    end Select_Events;
 

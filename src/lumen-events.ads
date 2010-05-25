@@ -65,6 +65,7 @@ package Lumen.Events is
 
    -- An event callback procedure
    type Event_Callback is access procedure (Event : Event_Data);
+   No_Callback : constant Event_Callback := null;
 
    -- A table of callback procedures, used to select on event type
    type Event_Callback_Table is array (Event_Type) of Event_Callback;
