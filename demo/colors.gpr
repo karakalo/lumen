@@ -1,0 +1,24 @@
+with "../lumen.gpr";
+
+project Colors is
+
+   for Source_Files use ("colors.adb", "red.adb");
+   for Main use ("colors.adb");
+   type Build_Type is
+      ("Debug", "Normal");
+   Build : Build_Type := external ("Build", "Debug");
+
+   package Builder is
+
+      case Build is
+
+         when "Debug" =>
+            for Default_Switches ("ada") use ("-s");
+
+         when "Normal" =>
+            for Default_Switches ("ada") use ("-s");
+      end case;
+   end Builder;
+
+end Colors;
+
