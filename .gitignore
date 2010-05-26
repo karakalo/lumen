@@ -1,6 +1,7 @@
 *~
 *.ali
 *.o
+*.html
 lib
 obj
 demo/colors
