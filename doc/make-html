@@ -31,7 +31,7 @@ header = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" type="text/css" href="/styles/docpage.css" />
-    <title>%s Cabin</title>
+    <title>%s</title>
   </head>
   <body>
     <p align="center">
