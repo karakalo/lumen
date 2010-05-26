@@ -6,16 +6,15 @@
 # List of doc files
 PAGES = \
 	index \
-	old-intro
+	install \
+	old-intro \
+	rationale
 
 NARRS = \
 	narrative-lumen \
 	narrative-colors
 
-RATS = \
-	rationale
-
-FILES = ${PAGES} ${NARRS} ${RATS}
+FILES = ${PAGES} ${NARRS}
 
 MDS   = $(addsuffix .markdown, ${FILES})
 HTMLS = $(addsuffix .html,     ${FILES})
@@ -25,10 +24,7 @@ HTMLS = $(addsuffix .html,     ${FILES})
 	./make-html $<
 
 # The top-level target
-all: narratives
-
-# Build targets
-narratives: ${HTMLS}
+all: ${HTMLS}
 
 # Cleanup targets
 clean:
