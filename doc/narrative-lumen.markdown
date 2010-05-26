@@ -6,12 +6,14 @@ coded now, are probably slanted toward the X window system; MS-Windows and Mac
 users of Lumen, if there ever are any, may not be familiar with some of the
 terms.
 
+------------------------------------------------------------------------------
 
 # Lumen
 
 The root of the Lumen package family is the empty spec `Lumen`.  Okay, it's
 not totally empty--it has a `pragma Pure` in it, for no real reason.
 
+------------------------------------------------------------------------------
 
 # Lumen.Window
 
@@ -158,7 +160,7 @@ double buffering, don't use this call.
 I expect that this call, and `Create`, will be the most-used routines in this
 package; the others are for much more specialized situations.
 
-
+------------------------------------------------------------------------------
 
 # Lumen.Internal
 
@@ -166,6 +168,7 @@ Don't look at this package.  It's not for applications, and exists only to
 allow the `Lumen.Window` and `Lumen.Events` packages to share some of the
 internal X window binding stuff.
 
+------------------------------------------------------------------------------
 
 # Lumen.Events
 
