@@ -4,6 +4,9 @@
 # Chip Richards, NiEstu, Phoenix AZ, Spring 2010
 
 # List of doc files
+PAGES = \
+	index
+
 NARRS = \
 	narrative-lumen \
 	narrative-colors
