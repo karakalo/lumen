@@ -2,7 +2,7 @@ with "../lumen.gpr";
 
 project Colors is
 
-   for Source_Files use ("colors.adb", "red.adb");
+   for Source_Files use ("colors.adb");
    for Main use ("colors.adb");
    type Build_Type is
       ("Debug", "Normal");
