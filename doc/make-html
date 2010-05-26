@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+
+# Call python markdown to convert Lumen's doc files to usable HTML pages
+
+# Chip Richards, NiEstu, Phoenix AZ, Spring 2010
+#
+# ISC license
+#
+# The error-checking in this script is very limited because it's not intended
+# for general interactive use, but to be called from a makefile.
+
+# Initial configuration
+app  = "make-html"
+fail = app + " failed"
+
+# Environment
+import sys
+import time
+
+try:
+    import markdown
+except:
+    sys.stderr.write ("Unable to load the markdown module.  Make sure you have python-markdown installed.\n")
+    sys.exit (fail)
+
+# Our HTML header and footer texts.  Will be used with string formatting
+# later, so the embedded conversion specs must match up with the value lists
+# below.
+header = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="/styles/docpage.css" />
+    <title>%s Cabin</title>
+  </head>
+  <body>
+    <p align="center">
+      <img height="104" width="428" alt="[lumen logo]" src="logo-1.png" />
+    </p>
+    <hr>
+"""
+footer = """
+    <hr>
+    <p><em>Last Updated: %s</em></p>
+  </body>
+</html>
+"""
+
+# Open the given input file and read its contents
+iname = sys.argv [1]
+mfile = open (iname, "r")
+mdata = mfile.read ()
+mfile.close ()
+
+# Make our converter object, adding the meta-data extension
+md = markdown.Markdown (extensions=['meta'])
+
+# Convert the input text, which will gather the meta-data; right now that's
+# just the document title
+body = md.convert (mdata)
+title = md.Meta ['title'] [0].encode ('utf-8', 'xmlcharrefreplace')
+
+# Convert the input filename to its output equivalent and open for writing
+oname = iname.replace ("markdown", "html")
+hfile = open (oname, "w")
+
+# Write the header
+hfile.write (header % (title))
+
+# Write the body
+hfile.write (body)
+
+# Get the date and write the footer
+date = time.strftime ("%d %b %Y  %H:%M:%S")
+hfile.write (footer % (date))
+
+# Close up and we're done
+hfile.close ()
