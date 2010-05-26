@@ -14,7 +14,7 @@ NARRS = \
 RATS = \
 	rationale
 
-FILES = ${NARRS} ${RATS}
+FILES = ${PAGES} ${NARRS} ${RATS}
 
 MDS   = $(addsuffix .markdown, ${FILES})
 HTMLS = $(addsuffix .html,     ${FILES})
