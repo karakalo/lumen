@@ -1,5 +1,7 @@
 Title: The Lumen User Interface Library
 
+<h1 class="centered">The Lumen User Interface Library</h1>
+
 Lumen is a user interface library designed to support visually oriented
 applications such as games, simulations, and visualization.  It draws
 inspiration from, and somewhat resembles, [PUI][], [GLUT][], {GLUI][],
