@@ -5,7 +5,8 @@
 
 # List of doc files
 PAGES = \
-	index
+	index \
+	old-intro
 
 NARRS = \
 	narrative-lumen \
