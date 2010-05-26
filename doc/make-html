@@ -35,7 +35,7 @@ header = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http
   </head>
   <body>
     <p align="center">
-      <img height="104" width="428" alt="[lumen logo]" src="logo-1.png" />
+      <img height="104" width="428" alt="[lumen logo]" src="images/logo-1.png" />
     </p>
     <hr>
 """

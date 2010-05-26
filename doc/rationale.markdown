@@ -150,7 +150,7 @@ Case Studies
 Enough yakking, time for some concrete show and tell.
 
 
-###Conventional GUI
+### Conventional GUI
 
 First, here's a typical 2D GUI dialog window, this one from the xchat IRC
 program, created using the Gtk+ widget library.  It has several types of
@@ -171,7 +171,7 @@ people would find it useful.  So go ahead with that if you want, but we're off
 in a different direction.  We'll refer back to this dialog shortly, though.
 
 
-###Simple OpenGL
+### Simple OpenGL
 
 Let's consider a program that does actual graphics, in this case Lars
 Forsberg's [Lunar Lander 2000](http://www.student.nada.kth.se/~f96-lfo/lunar/).
@@ -204,7 +204,7 @@ more tools at his disposal, one can imagine Peter adding an optional
 astronauts in his audience.
 
 
-###Hybrid: Wrappers
+### Hybrid: Wrappers
 
 Note also another addition to Peter's version: the menubar at the top, with
 its "File" and "Help" choices.  Those aren't part of the OpenGL display
@@ -234,7 +234,7 @@ even graphics inside the OpenGL canvas, in the "pane" he set aside on the
 right-hand side of the image.
 
 
-###Hybrid: Popups
+### Hybrid: Popups
 
 Another way of using native widgets is is the form of a pop-up, like a dialog
 or a menu.  Here's an app called [DIVE](http://www.sics.se/dive/), which
@@ -266,7 +266,7 @@ made in their apps (and often quite a bit of fun as well), it's rather
 pointless unless we think we have an alternative.  So let's consider all of
 this from another angle.
 
-###Widget Panes
+### Widget Panes
 
 Here is a traditional GUI dialog window, our old friend the XChat preferences:
 
@@ -321,7 +321,7 @@ Okay, that might not be very useful, but it does give some hints as to where
 we're headed.
 
 
-###Widget Objects
+### Widget Objects
 
 A lot of the initial inspiration for Lumen came from comments (which we can no
 longer locate, help appreciated) by Steve Baker about his OpenGL toolkit
@@ -402,7 +402,7 @@ a flat rectangle full of conventional GUI widgets that's bolted across the
 bottom of your window, you can certainly have that.
 
 
-###Readout Objects
+### Readout Objects
 
 So far we have discussed input widgets, but there are also output widgets.
 These are somewhat simpler, because they're under the control of the
