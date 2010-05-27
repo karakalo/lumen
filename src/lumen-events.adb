@@ -205,128 +205,93 @@ package body Lumen.Events is
       case X_Event.X_Event_Type is
          when X_Key_Press =>
             Result := (Which     => Key_Press,
-                       X         => X_Event.Key_X,
-                       Y         => X_Event.Key_Y,
-                       Abs_X     => X_Event.Key_Root_X,
-                       Abs_Y     => X_Event.Key_Root_Y,
-                       Key_Code  => Raw_Keycode (X_Event.Key_Code),
-                       Modifiers => Modifier_Mask_To_Set (X_Event.Key_State));
+                       Key_Data  => (X         => X_Event.Key_X,
+                                     Y         => X_Event.Key_Y,
+                                     Abs_X     => X_Event.Key_Root_X,
+                                     Abs_Y     => X_Event.Key_Root_Y,
+                                     Modifiers => Modifier_Mask_To_Set (X_Event.Key_State),
+                                     Key_Code  => Raw_Keycode (X_Event.Key_Code)));
 
          when X_Key_Release =>
             Result := (Which     => Key_Release,
-                       X         => X_Event.Key_X,
-                       Y         => X_Event.Key_Y,
-                       Abs_X     => X_Event.Key_Root_X,
-                       Abs_Y     => X_Event.Key_Root_Y,
-                       Key_Code  => Raw_Keycode (X_Event.Key_Code),
-                       Modifiers => Modifier_Mask_To_Set (X_Event.Key_State));
+                       Key_Data  => (X         => X_Event.Key_X,
+                                     Y         => X_Event.Key_Y,
+                                     Abs_X     => X_Event.Key_Root_X,
+                                     Abs_Y     => X_Event.Key_Root_Y,
+                                     Modifiers => Modifier_Mask_To_Set (X_Event.Key_State),
+                                     Key_Code  => Raw_Keycode (X_Event.Key_Code)));
 
          when X_Button_Press =>
-            Result := (Which     => Button_Press,
-                       X         => X_Event.Btn_X,
-                       Y         => X_Event.Btn_Y,
-                       Abs_X     => X_Event.Btn_Root_X,
-                       Abs_Y     => X_Event.Btn_Root_Y,
-                       Changed   => Button'Val (X_Event.Btn_Code - 1),
-                       Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State));
+            Result := (Which        => Button_Press,
+                       Button_Data  => (X         => X_Event.Btn_X,
+                                        Y         => X_Event.Btn_Y,
+                                        Abs_X     => X_Event.Btn_Root_X,
+                                        Abs_Y     => X_Event.Btn_Root_Y,
+                                        Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State),
+                                        Changed   => Button'Val (X_Event.Btn_Code - 1)));
 
          when X_Button_Release =>
-            Result := (Which     => Button_Release,
-                       X         => X_Event.Btn_X,
-                       Y         => X_Event.Btn_Y,
-                       Abs_X     => X_Event.Btn_Root_X,
-                       Abs_Y     => X_Event.Btn_Root_Y,
-                       Changed   => Button'Val (X_Event.Btn_Code - 1),
-                       Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State));
+            Result := (Which        => Button_Release,
+                       Button_Data  => (X         => X_Event.Btn_X,
+                                        Y         => X_Event.Btn_Y,
+                                        Abs_X     => X_Event.Btn_Root_X,
+                                        Abs_Y     => X_Event.Btn_Root_Y,
+                                        Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State),
+                                        Changed   => Button'Val (X_Event.Btn_Code - 1)));
 
          when X_Motion_Notify =>
-            Result := (Which     => Pointer_Motion,
-                       X         => X_Event.Mov_X,
-                       Y         => X_Event.Mov_Y,
-                       Abs_X     => X_Event.Mov_Root_X,
-                       Abs_Y     => X_Event.Mov_Root_Y,
-                       Modifiers => Modifier_Mask_To_Set (X_Event.Mov_State));
+            Result := (Which       => Pointer_Motion,
+                       Motion_Data => (X         => X_Event.Mov_X,
+                                       Y         => X_Event.Mov_Y,
+                                       Abs_X     => X_Event.Mov_Root_X,
+                                       Abs_Y     => X_Event.Mov_Root_Y,
+                                       Modifiers => Modifier_Mask_To_Set (X_Event.Mov_State)));
 
          when X_Enter_Notify =>
-            Result := (Which     => Enter_Window,
-                       X         => X_Event.Xng_X,
-                       Y         => X_Event.Xng_Y,
-                       Abs_X     => X_Event.Xng_Root_X,
-                       Abs_Y     => X_Event.Xng_Root_Y,
-                       Modifiers => No_Modifiers);
+            Result := (Which         => Enter_Window,
+                       Crossing_Data => (X         => X_Event.Xng_X,
+                                         Y         => X_Event.Xng_Y,
+                                         Abs_X     => X_Event.Xng_Root_X,
+                                         Abs_Y     => X_Event.Xng_Root_Y));
 
          when X_Leave_Notify =>
             Result := (Which     => Leave_Window,
-                       X         => X_Event.Xng_X,
-                       Y         => X_Event.Xng_Y,
-                       Abs_X     => X_Event.Xng_Root_X,
-                       Abs_Y     => X_Event.Xng_Root_Y,
-                       Modifiers => No_Modifiers);
+                       Crossing_Data => (X         => X_Event.Xng_X,
+                                         Y         => X_Event.Xng_Y,
+                                         Abs_X     => X_Event.Xng_Root_X,
+                                         Abs_Y     => X_Event.Xng_Root_Y));
 
          when X_Focus_In =>
-            Result := (Which     => Focus_In,
-                       X         => 0,
-                       Y         => 0,
-                       Abs_X     => 0,
-                       Abs_Y     => 0,
-                       Modifiers => No_Modifiers);
+            Result := (Which => Focus_In);
 
          when X_Focus_Out =>
-            Result := (Which     => Focus_Out,
-                       X         => 0,
-                       Y         => 0,
-                       Abs_X     => 0,
-                       Abs_Y     => 0,
-                       Modifiers => No_Modifiers);
+            Result := (Which => Focus_Out);
 
          when X_Expose =>
-            Result := (Which     => Exposed,
-                       X         => X_Event.Xps_X,
-                       Y         => X_Event.Xps_Y,
-                       Abs_X     => 0,
-                       Abs_Y     => 0,
-                       Modifiers => No_Modifiers,
-                       Width     => X_Event.Xps_Width,
-                       Height    => X_Event.Xps_Height);
+            Result := (Which       => Exposed,
+                       Expose_Data => (X         => X_Event.Xps_X,
+                                       Y         => X_Event.Xps_Y,
+                                       Width     => X_Event.Xps_Width,
+                                       Height    => X_Event.Xps_Height));
 
          when X_Resize_Request =>
-            Result := (Which     => Resized,
-                       X         => 0,
-                       Y         => 0,
-                       Abs_X     => 0,
-                       Abs_Y     => 0,
-                       Modifiers => No_Modifiers,
-                       Width     => X_Event.Siz_Width,
-                       Height    => X_Event.Siz_Height);
+            Result := (Which       => Resized,
+                       Resize_Data => (Width     => X_Event.Siz_Width,
+                                       Height    => X_Event.Siz_Height));
 
          when X_Client_Message =>
             declare
                use type Internal.Atom;
             begin
                if X_Event.Msg_Value = Internal.Delete_Window_Atom then
-                  Result := (Which     => Close_Window,
-                             X         => 0,
-                             Y         => 0,
-                             Abs_X     => 0,
-                             Abs_Y     => 0,
-                             Modifiers => No_Modifiers);
+                  Result := (Which => Close_Window);
                else
-                  Result := (Which     => No_Event,
-                             X         => 0,
-                             Y         => 0,
-                             Abs_X     => 0,
-                             Abs_Y     => 0,
-                             Modifiers => No_Modifiers);
+                  Result := (Which => No_Event);
                end if;
             end;
 
          when others =>
-            Result := (Which     => No_Event,
-                       X         => 0,
-                       Y         => 0,
-                       Abs_X     => 0,
-                       Abs_Y     => 0,
-                       Modifiers => No_Modifiers);
+            Result := (Which => No_Event);
       end case;
 
       -- Pass back our massaged result

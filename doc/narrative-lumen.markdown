@@ -226,11 +226,9 @@ entire screen, not the app's window.  The `Modifiers` are the set of things
 (keyboard keys and/or pointer buttons) that were pressed and held down when
 the event happened.
 
-Not all of the above values are set for every event: `Abs_X` and `Abs_Y` are
-not set for `Exposed`, and none of the above are set for focus events,
-`Resized`, or `Close_Window`.  In the X API, the values are actually in their
-own sub-records, and I may switch to that structure in Lumen, depending on how
-the initial coding experiences go.
+Not all of the above values are given for every event, obviously.  Some, like
+the focus-change and close-window events, have no data besides their presence.
+And a few events have extra data to go with them.
 
 The `Key_Code` value that accompanies `Key_Press` and `Key_Release` events is the
 raw numeric code for which key was pressed or released; it may not be directly

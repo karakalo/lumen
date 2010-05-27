@@ -44,20 +44,65 @@ package Lumen.Events is
    type Button_Set is array (Button) of Boolean;
 
    -- The data associated with an event
-   type Event_Data (Which : Event_Type := No_Event) is record
+   type Key_Event_Data is record
       X         : Natural;
       Y         : Natural;
       Abs_X     : Natural;
       Abs_Y     : Natural;
       Modifiers : Modifier_Set;
+      Key_Code  : Raw_Keycode;
+   end record;
+
+   type Button_Event_Data is record
+      X         : Natural;
+      Y         : Natural;
+      Abs_X     : Natural;
+      Abs_Y     : Natural;
+      Modifiers : Modifier_Set;
+      Changed   : Button;
+   end record;
+
+   type Motion_Event_Data is record
+      X         : Natural;
+      Y         : Natural;
+      Abs_X     : Natural;
+      Abs_Y     : Natural;
+      Modifiers : Modifier_Set;
+   end record;
+
+   type Crossing_Event_Data is record
+      X         : Natural;
+      Y         : Natural;
+      Abs_X     : Natural;
+      Abs_Y     : Natural;
+   end record;
+
+   type Expose_Event_Data is record
+      X         : Natural;
+      Y         : Natural;
+      Width     : Natural;
+      Height    : Natural;
+   end record;
+
+   type Resize_Event_Data is record
+      Width     : Natural;
+      Height    : Natural;
+   end record;
+
+   type Event_Data (Which : Event_Type := No_Event) is record
       case Which is
          when Key_Press | Key_Release =>
-            Key_Code    : Raw_Keycode;
+            Key_Data      : Key_Event_Data;
          when Button_Press | Button_Release =>
-            Changed     : Button;
-         when Exposed | Resized =>
-            Width       : Natural;
-            Height      : Natural;
+            Button_Data   : Button_Event_Data;
+         when Pointer_Motion =>
+            Motion_Data   : Motion_Event_Data;
+         when Enter_Window | Leave_Window =>
+            Crossing_Data : Crossing_Event_Data;
+         when Exposed =>
+            Expose_Data   : Expose_Event_Data;
+         when Resized =>
+            Resize_Data   : Resize_Event_Data;
          when others =>
             null;
       end case;
