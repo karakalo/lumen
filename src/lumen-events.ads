@@ -82,6 +82,7 @@ package Lumen.Events is
       Y         : Natural;
       Width     : Natural;
       Height    : Natural;
+      Count     : Natural;
    end record;
 
    type Resize_Event_Data is record

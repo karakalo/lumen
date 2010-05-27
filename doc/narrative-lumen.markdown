@@ -244,6 +244,20 @@ you the width and height of the newly-visible rectangle whose upper-left
 corner is at `X`, `Y`.  For a `Resized` event, they tell you the width and
 height the window now has after resizing.
 
+For `Exposed` events, a `Count` field is also included.  Because the exposure
+might involve several separate rectangular areas, like if you bring the window
+out from underneath several other overlapping windows, you might get several
+`Exposed` events in a row, each describing a different newly-exposed
+rectangle.  The `Count` field tell how many more are coming up after this one,
+and will be nonzero except for the very last of these.  To quote the X man
+page, "Simple applications that do not want to optimize redisplay by
+distinguishing between subareas of its window can just ignore all ... events
+with nonzero counts and perform full redisplays on events with zero counts."
+It also says that "if `Count` is nonzero, at least that number ... (and
+possibly more) follow".  So don't use it as a loop counter, for example.  It's
+more of a rough guide.
+
+
 ## Event Handling Routines
 
 These routines allow your app to receive input events, and pass them to your

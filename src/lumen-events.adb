@@ -119,6 +119,7 @@ package body Lumen.Events is
                Xps_Y      : Natural;
                Xps_Width  : Natural;
                Xps_Height : Natural;
+               Xps_Count  : Natural;
             when X_Resize_Request =>
                Siz_Width  : Natural;
                Siz_Height : Natural;
@@ -272,7 +273,8 @@ package body Lumen.Events is
                        Expose_Data => (X         => X_Event.Xps_X,
                                        Y         => X_Event.Xps_Y,
                                        Width     => X_Event.Xps_Width,
-                                       Height    => X_Event.Xps_Height));
+                                       Height    => X_Event.Xps_Height,
+                                       Count     => X_Event.Xps_Count));
 
          when X_Resize_Request =>
             Result := (Which       => Resized,
