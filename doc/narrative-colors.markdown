@@ -29,25 +29,16 @@ example of how to write your own event loop, yay!
 The first thing the event loop does is process any and all pending events.
 These will be key presses, plus any "unmaskable" events like client messages,
 plus structure-change notifications, which Lumen asks for automatically.
-Usually the first event it gets is a `Mapped` event, which says "your window
-is now present on the screen".  The first time it gets that event, the app
-sets the `Visible` flag, which causes the actual drawing to happen later in
-the event loop.
 
-The event processing also checks for key presses and close-window events,
-which cause it to exit the main (outer) event loop and terminate the app.  Key
+The event processing checks for key presses and close-window events, which
+cause it to exit the main (outer) event loop and terminate the app.  Key
 presses happen when you press any key on the keyboard, even modifiers like
 Shift or Control.  The `Close_Window` event is generated when you select the
 window manager's "Close" button, usually an "X" in the title bar or something
 like it, depending on your window manager and its configuration.
 
 After it has gobbled up and processed all the events in the inner loop, the
-app then goes into the actual OpenGL drawing code.  Finally!  It does the
-drawing only after the window becomes visible, because before that it would be
-a waste of time.  I guess one danger of the current code is that if the window
-doesn't become visible (mapped, in X parlance) right away, the app goes into a
-very tight loop waiting for that first `Mapped` event.  But testing hasn't
-shown that to happen, so meh.
+app then goes into the actual OpenGL drawing code.  Finally!
 
 Normal X apps spend much of their time blocked on the event queue, waiting for
 an event to show up, which doesn't take any real CPU time.  That's what
@@ -56,7 +47,11 @@ placed into a separate task, so the rest of the app can go about its business
 without waiting for an event to come along.  So-called "event-driven" apps, on
 the other hand, are actually designed to wait until an event comes along
 before taking any action; it's just up to the needs of your app which
-structure you'll use.
+structure you'll use.  This app, for example, could check for events in
+between color changes, so when you close the window or hit any key, you
+wouldn't have to wait until it cycled through all of the colors before
+responding.  But it doesn't; I guess that's "left as an exercise for the
+reader".
 
 The OpenGL "drawing" part of the demo is dirt simple: It clears the window
 successively to red, green, and then blue, waiting one second after each

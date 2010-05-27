@@ -28,7 +28,7 @@ package Lumen.Events is
    type Event_Type is (No_Event,
                        Key_Press, Key_Release, Button_Press, Button_Release, Pointer_Motion,
                        Enter_Window, Leave_Window, Focus_In, Focus_Out,
-                       Exposed, Mapped, Resized, Close_Window);
+                       Exposed, Resized, Close_Window);
 
    -- Raw keycode, not much use except at the very lowest level
    type Raw_Keycode is mod 2 ** Integer'Size;

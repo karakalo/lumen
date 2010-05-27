@@ -25,10 +25,8 @@ assload of parameters, but they all have defaults, and in most cases the
 defaults are at least "usable".  If you just call `Create` with no parameters,
 you get a 400x400 X window named using the application executable's filename,
 with a new double-buffered TrueColor OpenGL rendering context attached.  Such
-a window will receive only "structure" events, which currently is only the
-`Mapped` event, which tells you the window is now on the screen and you can
-start drawing in it.  Without any input events, maybe such a window has
-limited usefulness, but you certainly can draw in it.
+a window won't receive any input events, and without them maybe it has limited
+usefulness, but you certainly can draw in it.
 
 The first parameter is `Parent`, which tells which other window this one's
 parent is.  If you create more than one window, they can be either top-level
@@ -200,15 +198,6 @@ re-draw your scene, or at least the part of it that was covered up if your app
 is fortunate enough to be able to make that distinction.  Lumen has (or will
 have) automated exposure handling to allow you to not think about this event.
 
-The `Mapped` event is only useful when your app is just starting up.  It means
-that the window has actually been placed on the screen, so you can now start
-using it.  Before the window is mapped, it doesn't really "exist" as far as
-drawing calls are concerned, so you need to wait until this event is received
-before you start drawing.  I'm thinking of taking this one away entirely, and
-handling it internally, so don't get attached to it.  Yes, it has uses beyond
-just the "new window at app startup" case, but I'm not convinced those would
-be useful in a Lumen world.
-
 The `Resized` event tells you that the user has requested that the window be
 resized, so you might want to have your app adjust itself to the new size
 somehow.  You can do this by scaling the scene so it still fits the viewport,
@@ -239,9 +228,9 @@ the event happened.
 
 Not all of the above values are set for every event: `Abs_X` and `Abs_Y` are
 not set for `Exposed`, and none of the above are set for focus events,
-`Mapped`, `Resized`, or `Close_Window`.  In the X API, the values are actually
-in their own sub-records, and I may switch to that structure in Lumen,
-depending on how the initial coding experiences go.
+`Resized`, or `Close_Window`.  In the X API, the values are actually in their
+own sub-records, and I may switch to that structure in Lumen, depending on how
+the initial coding experiences go.
 
 The `Key_Code` value that accompanies `Key_Press` and `Key_Release` events is the
 raw numeric code for which key was pressed or released; it may not be directly

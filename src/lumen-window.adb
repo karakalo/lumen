@@ -134,6 +134,12 @@ package body Lumen.Window is
       subtype Pixel     is Long_Integer;
       subtype Position  is Short_Integer;
 
+      -- An extremely abbreviated version of the XMapEvent structure.
+      type Map_Event_Data is record
+         Event_Type : Integer;
+         Pad        : Padding;
+      end record;
+
       -- An extremely abbreviated version of the XSetWindowAttributes
       -- structure, containing only the fields we care about.
       --
@@ -195,6 +201,7 @@ package body Lumen.Window is
       -- Xlib constants needed only by Create
       Configure_Event_Mask : constant X_Window_Attributes_Mask := 2#00_1000_0000_0000#;  -- 11th bit
       Configure_Colormap   : constant X_Window_Attributes_Mask := 2#10_0000_0000_0000#;  -- 13th bit
+      X_Map_Notify         : constant := 19;  -- the one event we look for here
 
       -- Atom names
       WM_Del          : String := "WM_DELETE_WINDOW" & ASCII.NUL;
@@ -243,6 +250,7 @@ package body Lumen.Window is
       Our_Context    : GLX_Context;
       Did            : GL.GLboolean;
       Display        : Display_Pointer;
+      Mapped         : Map_Event_Data;
       Our_Parent     : Window_ID;
       Visual         : X_Visual_Info_Pointer;
       Win_Attributes : X_Set_Window_Attributes;
@@ -290,6 +298,12 @@ package body Lumen.Window is
                                  Visual.Depth, Input_Output, Visual.Visual,
                                  Configure_Colormap or Configure_Event_Mask, Win_Attributes'Address);
       X_Map_Window (Display, Window);
+
+      -- Wait for the window to be mapped
+      loop
+         X_Next_Event (Display, Mapped'Address);
+         exit when Mapped.Event_Type = X_Map_Notify;
+      end loop;
 
       -- Tell the window manager that we want the close button sent to us
       Delete_Window_Atom := X_Intern_Atom (Display, WM_Del'Address, 0);

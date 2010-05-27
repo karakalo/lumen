@@ -59,7 +59,6 @@ package body Lumen.Events is
       X_Focus_In       : constant :=  9;
       X_Focus_Out      : constant := 10;
       X_Expose         : constant := 12;
-      X_Map_Notify     : constant := 19;
       X_Resize_Request : constant := 25;
       X_Client_Message : constant := 33;
 
@@ -88,7 +87,6 @@ package body Lumen.Events is
       Bytes     : constant := Integer'Size / 8;
       Bits      : constant := Integer'Size - 1;
       Atom_Bits : constant := Internal.Atom'Size - 1;
-      type Padding is array (1 .. 23) of Long_Integer;
       type X_Event_Data (X_Event_Type : X_Event_Code := X_Error) is record
          case X_Event_Type is
             when X_Key_Press | X_Key_Release =>
@@ -127,7 +125,7 @@ package body Lumen.Events is
             when X_Client_Message =>
                Msg_Value  : Internal.Atom;
             when others =>
-               Pad        : Padding;
+               Pad        : Internal.Padding;
          end case;
       end record;
       for X_Event_Data use record
@@ -171,12 +169,6 @@ package body Lumen.Events is
 
       ------------------------------------------------------------------------
 
-      procedure X_Next_Event (Display : in Internal.Display_Pointer;
-                              Event   : in System.Address);
-      pragma Import (C, X_Next_Event, "XNextEvent");
-
-      ------------------------------------------------------------------------
-
       -- Convert an X modifier mask into a Lumen modifier set
       function Modifier_Mask_To_Set (Mask : Modifier_Mask) return Modifier_Set is
       begin  -- Modifier_Mask_To_Set
@@ -207,7 +199,7 @@ package body Lumen.Events is
    begin  -- Next_Event
 
       -- Get the event from the X server
-      X_Next_Event (Win.Display, X_Event'Address);
+      Internal.X_Next_Event (Win.Display, X_Event'Address);
 
       -- Based on the event type, transfer and convert the event data
       case X_Event.X_Event_Type is
@@ -296,14 +288,6 @@ package body Lumen.Events is
                        Modifiers => No_Modifiers,
                        Width     => X_Event.Xps_Width,
                        Height    => X_Event.Xps_Height);
-
-         when X_Map_Notify =>
-            Result := (Which     => Mapped,
-                       X         => 0,
-                       Y         => 0,
-                       Abs_X     => 0,
-                       Abs_Y     => 0,
-                       Modifiers => No_Modifiers);
 
          when X_Resize_Request =>
             Result := (Which     => Resized,

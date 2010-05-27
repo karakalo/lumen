@@ -73,4 +73,15 @@ package Lumen.Internal is
 
    ---------------------------------------------------------------------------
 
+   -- The maximum length of an event data record
+   type Padding is array (1 .. 23) of Long_Integer;
+
+   -- Binding to XNextEvent, used by Window for mapping notify events, and by
+   -- Events for everything else
+   procedure X_Next_Event (Display : in Display_Pointer;
+                           Event   : in System.Address);
+   pragma Import (C, X_Next_Event, "XNextEvent");
+
+   ---------------------------------------------------------------------------
+
 end Lumen.Internal;
