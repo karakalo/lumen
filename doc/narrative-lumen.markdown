@@ -186,7 +186,7 @@ a useful set of interactions to take place, I think.
 The events `Key_Press`, `Key_Release`, `Button_Press`, `Button_Release`, and
 `Pointer_Motion` should be self-explanatory.  The "pointer" is your window
 system's "core pointer", usually a mouse, touchpad, trackball, or other
-pointing device, and the "buttons" are those buttons associated with thatt
+pointing device, and the "buttons" are those buttons associated with that
 device.  A "key" is a key on your keyboard.  `Enter_Window` and `Leave_Window`
 tell you that the user's cursor has entered/left your Lumen window, and
 where.  The `Focus_In` and `Focus_Out` events just tell you when the window

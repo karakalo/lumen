@@ -23,7 +23,7 @@ bindings as part of Lumen; coming soon!
 ## Fetching
 
 A preliminary form of the Lumen library, and some demos for it, can be fetched
-using this command:
+using this [git][] command:
 
         git clone git://ftp.niestu.com/lumen
 
