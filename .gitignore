@@ -3,6 +3,7 @@
 *.o
 *.html
 demo/colors
+demo/sgi_simple
 lib
 obj
 test
