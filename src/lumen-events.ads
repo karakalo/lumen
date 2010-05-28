@@ -110,7 +110,7 @@ package Lumen.Events is
    end record;
 
    -- An event callback procedure
-   type Event_Callback is access procedure (Event : Event_Data);
+   type Event_Callback is access procedure (Event : in Event_Data);
    No_Callback : constant Event_Callback := null;
 
    -- A table of callback procedures, used to select on event type
