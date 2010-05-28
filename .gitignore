@@ -2,6 +2,7 @@
 *.ali
 *.o
 *.html
+demo/colors
 lib
 obj
-demo/colors
+test
