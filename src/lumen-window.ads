@@ -36,6 +36,8 @@ package Lumen.Window is
    No_Window : constant Handle := (Display => Internal.Null_Display_Pointer,
                                    Window  => 0,
                                    Visual  => null,
+                                   Width   => 0,
+                                   Height  => 0,
                                    Context => Internal.Null_Context);
 
    -- Means "no GL context"; for Create, means create a new one
@@ -45,7 +47,7 @@ package Lumen.Window is
    type Wanted_Event is (Want_Key_Press, Want_Key_Release, Want_Button_Press,  Want_Button_Release,
                          Want_Window_Enter, Want_Window_Leave,
                          Want_Pointer_Move, Want_Pointer_Drag,
-                         Want_Exposure, Want_Resize, Want_Focus_Change);
+                         Want_Exposure, Want_Focus_Change);
    type Wanted_Event_Set is array (Wanted_Event) of Boolean;
    Want_No_Events  : Wanted_Event_Set := (others => False);
    Want_All_Events : Wanted_Event_Set := (others => True);
