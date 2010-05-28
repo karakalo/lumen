@@ -239,7 +239,6 @@ package body Lumen.Window is
           Want_Pointer_Move    => 2#0000_0000_0000_0000_0100_0000#,
           Want_Pointer_Drag    => 2#0000_0000_0010_0000_0000_0000#,
           Want_Exposure        => 2#0000_0000_1000_0000_0000_0000#,
-          Want_Resize          => 2#0000_0100_0000_0000_0000_0000#,
           Want_Focus_Change    => 2#0010_0000_0000_0000_0000_0000#
          );
       Structure_Notify_Mask : constant X_Event_Mask := 2#0000_0010_0000_0000_0000_0000#;  -- 17th bit, always want this one
@@ -382,6 +381,8 @@ package body Lumen.Window is
       return Window_Info'(Display => Display,
                           Window  => Window,
                           Visual  => Visual,
+                          Width   => Width,
+                          Height  => Height,
                           Context => Our_Context);
    end Create;
 
