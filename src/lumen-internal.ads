@@ -63,6 +63,8 @@ package Lumen.Internal is
       Display : Display_Pointer       := Null_Display_Pointer;
       Window  : Window_ID             := 0;
       Visual  : X_Visual_Info_Pointer := null;
+      Width   : Natural               := 0;
+      Height  : Natural               := 0;
       Context : GLX_Context           := Null_Context;
    end record;
 
