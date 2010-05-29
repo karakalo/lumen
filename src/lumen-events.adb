@@ -5,7 +5,7 @@
 
 -- This code is covered by the ISC License:
 --
--- Copyright (c) 2010, NiEstu
+-- Copyright © 2010, NiEstu
 --
 -- Permission to use, copy, modify, and/or distribute this software for any
 -- purpose with or without fee is hereby granted, provided that the above
@@ -321,7 +321,7 @@ package body Lumen.Events is
 
    begin  -- Select_Events
 
-      -- Get events and pass them to the selected callback
+      -- Get events and pass them to the selected callback, if there is one
       loop
          if Calls (Event.Which) /= No_Callback then
             Calls (Event.Which) (Event);
