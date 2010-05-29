@@ -6,7 +6,7 @@
 
 -- This code is covered by the ISC License:
 --
--- Copyright (c) 2010, NiEstu
+-- Copyright © 2010, NiEstu
 --
 -- Permission to use, copy, modify, and/or distribute this software for any
 -- purpose with or without fee is hereby granted, provided that the above
@@ -29,6 +29,7 @@
 
 
 -- Environment
+with Ada.Calendar;
 with Ada.Command_Line;
 with Ada.Directories;
 with System;
@@ -378,12 +379,17 @@ package body Lumen.Window is
       end;
 
       -- Return the results
-      return Window_Info'(Display => Display,
-                          Window  => Window,
-                          Visual  => Visual,
-                          Width   => Width,
-                          Height  => Height,
-                          Context => Our_Context);
+      return Window_Info'(Display     => Display,
+                          Window      => Window,
+                          Visual      => Visual,
+                          Width       => Width,
+                          Height      => Height,
+                          Prior_Frame => Never,
+                          App_Start   => Ada.Calendar.Clock,
+                          Last_Start  => Ada.Calendar.Clock,
+                          App_Frames  => 0,
+                          Last_Frames => 0,
+                          Context     => Our_Context);
    end Create;
 
    ---------------------------------------------------------------------------
