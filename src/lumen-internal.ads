@@ -5,7 +5,7 @@
 
 -- This code is covered by the ISC License:
 --
--- Copyright (c) 2010, NiEstu
+-- Copyright © 2010, NiEstu
 --
 -- Permission to use, copy, modify, and/or distribute this software for any
 -- purpose with or without fee is hereby granted, provided that the above
@@ -21,6 +21,7 @@
 
 -- Environment
 with System;
+with Ada.Calendar;
 
 
 package Lumen.Internal is
@@ -58,14 +59,26 @@ package Lumen.Internal is
 
    ---------------------------------------------------------------------------
 
+   -- Count of frames displayed from Animate
+   type Frame_Count is new Long_Integer range 0 .. Long_Integer'Last;
+
+   -- A time that won't ever happen during the execution of a Lumen app
+   Never : constant Ada.Calendar.Time := Ada.Calendar.Time_Of (Year  => Ada.Calendar.Year_Number'First,
+                                                               Month => Ada.Calendar.Month_Number'First,
+                                                               Day   => Ada.Calendar.Day_Number'First);
    -- The native window type
    type Window_Info is record
-      Display : Display_Pointer       := Null_Display_Pointer;
-      Window  : Window_ID             := 0;
-      Visual  : X_Visual_Info_Pointer := null;
-      Width   : Natural               := 0;
-      Height  : Natural               := 0;
-      Context : GLX_Context           := Null_Context;
+      Display     : Display_Pointer       := Null_Display_Pointer;
+      Window      : Window_ID             := 0;
+      Visual      : X_Visual_Info_Pointer := null;
+      Width       : Natural               := 0;
+      Height      : Natural               := 0;
+      Prior_Frame : Ada.Calendar.Time     := Never;
+      App_Start   : Ada.Calendar.Time     := Never;
+      Last_Start  : Ada.Calendar.Time     := Never;
+      App_Frames  : Frame_Count           := 0;
+      Last_Frames : Frame_Count           := 0;
+      Context     : GLX_Context           := Null_Context;
    end record;
 
    ---------------------------------------------------------------------------
