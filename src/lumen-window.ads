@@ -6,7 +6,7 @@
 
 -- This code is covered by the ISC License:
 --
--- Copyright (c) 2010, NiEstu
+-- Copyright © 2010, NiEstu
 --
 -- Permission to use, copy, modify, and/or distribute this software for any
 -- purpose with or without fee is hereby granted, provided that the above
@@ -33,12 +33,8 @@ package Lumen.Window is
    subtype Context_Handle is Internal.GLX_Context;
 
    -- Null window; in X, this means the root window is the parent
-   No_Window : constant Handle := (Display => Internal.Null_Display_Pointer,
-                                   Window  => 0,
-                                   Visual  => null,
-                                   Width   => 0,
-                                   Height  => 0,
-                                   Context => Internal.Null_Context);
+   Default_Window_Values : Handle;
+   No_Window : constant Handle := Default_Window_Values;
 
    -- Means "no GL context"; for Create, means create a new one
    No_Context : constant Context_Handle := Internal.Null_Context;
