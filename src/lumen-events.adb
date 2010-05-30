@@ -1,4 +1,4 @@
-with ada.text_io;   use ada.text_io;
+
 -- Lumen.Events -- Manage input events in Lumen windows
 --
 -- Chip Richards, NiEstu, Phoenix AZ, Spring 2010
