@@ -70,15 +70,16 @@ procedure Spinner is
       glClearColor (0.0, 0.0, 0.0, 0.0);
       glClear (GL_COLOR_BUFFER_BIT);
 
+      -- Draw a smooth-blended (the default mode) square going from red to yellow
       glBegin (GL_POLYGON);
       begin
-         glColor3f (1.0, 0.0, 0.0);
+         glColor3f (1.0, 0.0, 0.0);  -- red
          glVertex2f (-1.0, -1.0);
-         glColor3f (1.0, 0.0, 0.0);
+         glColor3f (1.0, 0.0, 0.0);  -- red
          glVertex2f (-1.0,  1.0);
-         glColor3f (1.0, 1.0, 0.0);
+         glColor3f (1.0, 1.0, 0.0);  -- yellow
          glVertex2f ( 1.0,  1.0);
-         glColor3f (1.0, 1.0, 0.0);
+         glColor3f (1.0, 1.0, 0.0);  -- yellow
          glVertex2f ( 1.0, -1.0);
       end;
       glEnd;
