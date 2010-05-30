@@ -59,9 +59,6 @@ package Lumen.Internal is
 
    ---------------------------------------------------------------------------
 
-   -- Count of frames displayed from Animate
-   type Frame_Count is new Long_Integer range 0 .. Long_Integer'Last;
-
    -- A time that won't ever happen during the execution of a Lumen app
    Never : constant Ada.Calendar.Time := Ada.Calendar.Time_Of (Year  => Ada.Calendar.Year_Number'First,
                                                                Month => Ada.Calendar.Month_Number'First,
@@ -76,8 +73,8 @@ package Lumen.Internal is
       Prior_Frame : Ada.Calendar.Time     := Never;
       App_Start   : Ada.Calendar.Time     := Never;
       Last_Start  : Ada.Calendar.Time     := Never;
-      App_Frames  : Frame_Count           := 0;
-      Last_Frames : Frame_Count           := 0;
+      App_Frames  : Long_Integer          := 0;
+      Last_Frames : Long_Integer          := 0;
       Context     : GLX_Context           := Null_Context;
    end record;
 
