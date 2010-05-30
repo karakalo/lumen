@@ -27,14 +27,13 @@ with Lumen.Internal;
 package Lumen.Window is
 
    -- Handle for a Lumen window
-   subtype Handle is Internal.Window_Info;
+   type Handle is access Internal.Window_Info;
 
    -- Handle for an OpenGL rendering context
    subtype Context_Handle is Internal.GLX_Context;
 
    -- Null window; in X, this means the root window is the parent
-   Default_Window_Values : Handle;
-   No_Window : constant Handle := Default_Window_Values;
+   No_Window : constant Handle := null;
 
    -- Means "no GL context"; for Create, means create a new one
    No_Context : constant Context_Handle := Internal.Null_Context;

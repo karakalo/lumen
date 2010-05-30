@@ -32,6 +32,7 @@
 with Ada.Calendar;
 with Ada.Command_Line;
 with Ada.Directories;
+with Ada.Unchecked_Deallocation;
 with System;
 
 with GNAT.Case_Util;
@@ -379,17 +380,17 @@ package body Lumen.Window is
       end;
 
       -- Return the results
-      return Window_Info'(Display     => Display,
-                          Window      => Window,
-                          Visual      => Visual,
-                          Width       => Width,
-                          Height      => Height,
-                          Prior_Frame => Never,
-                          App_Start   => Ada.Calendar.Clock,
-                          Last_Start  => Ada.Calendar.Clock,
-                          App_Frames  => 0,
-                          Last_Frames => 0,
-                          Context     => Our_Context);
+      return new Window_Info'(Display     => Display,
+                              Window      => Window,
+                              Visual      => Visual,
+                              Width       => Width,
+                              Height      => Height,
+                              Prior_Frame => Never,
+                              App_Start   => Ada.Calendar.Clock,
+                              Last_Start  => Ada.Calendar.Clock,
+                              App_Frames  => 0,
+                              Last_Frames => 0,
+                              Context     => Our_Context);
    end Create;
 
    ---------------------------------------------------------------------------
@@ -400,9 +401,11 @@ package body Lumen.Window is
       procedure X_Destroy_Window (Display : in Display_Pointer;   Window : in Window_ID);
       pragma Import (C, X_Destroy_Window, "XDestroyWindow");
 
+      procedure Free is new Ada.Unchecked_Deallocation (Window_Info, Handle);
+
    begin  -- Destroy
       X_Destroy_Window (Win.Display, Win.Window);
-      Win := No_Window;
+      Free (Win);
    end Destroy;
 
    ---------------------------------------------------------------------------
