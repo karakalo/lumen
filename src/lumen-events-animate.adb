@@ -30,11 +30,10 @@ package body Lumen.Events.Animate is
 
    -- Module-local procedure to wait until next frame time, if necessary
    procedure Wait_Frame (Win : in Window.Handle;
-                         FPS : in Frame_Count) is
+                         SPF : in Duration) is
 
       use Ada.Calendar;
 
-      SPF  : Duration := Duration (1.0) / Duration (FPS);
       Been : Duration := Clock - Win.Prior_Frame;
 
    begin  -- Wait_Frame
@@ -57,18 +56,38 @@ package body Lumen.Events.Animate is
                              Call  : in Event_Callback;
                              FPS   : in Frame_Count;
                              Frame : in Animate_Callback) is
+
+      SPF : Duration;
+
    begin  -- Receive_Events
 
-      -- Get events and pass them to the callback
-      while Pending (Win) > 0 loop
-         Call (Next_Event (Win));
+      -- Check for special FPS value
+      if FPS = Flat_Out then
+         SPF := 0.0;
+      else
+         SPF := Duration (1.0) / Duration (FPS);
+      end if;
+
+      -- Main loop never returns
+      loop
+
+         -- Get events and pass them to the callback
+         while Pending (Win) > 0 loop
+            Call (Next_Event (Win));
+         end loop;
+
+         -- No more events pending; wait until next frame time if necessary
+         Wait_Frame (Win, SPF);
+
+         -- Draw next frame
+         Frame.all;
+
+         -- Note its time, and count it
+         Win.Prior_Frame := Ada.Calendar.Clock;
+         Win.App_Frames  := Win.App_Frames + 1;
+         Win.Last_Frames := Win.Last_Frames + 1;
+
       end loop;
-
-      -- No more events pending; wait until next frame time if necessary
-      Wait_Frame (Win, FPS);
-
-      -- Draw next frame
-      Frame.all;
 
    end Receive_Events;
 
@@ -82,32 +101,50 @@ package body Lumen.Events.Animate is
                             Frame : in Animate_Callback) is
 
       Event : Event_Data;
+      SPF   : Duration;
 
    begin  -- Select_Events
 
-      -- Get events and pass them to the selected callback, if there is one
-      while Pending (Win) > 0 loop
-         Event := Next_Event (Win);
+      -- Check for special FPS value
+      if FPS = Flat_Out then
+         SPF := 0.0;
+      else
+         SPF := Duration (1.0) / Duration (FPS);
+      end if;
 
-         if Calls (Event.Which) /= Events.No_Callback then
-            Calls (Event.Which) (Event);
-         end if;
+      -- Main loop never returns
+      loop
+
+         -- Get events and pass them to the selected callback, if there is one
+         while Pending (Win) > 0 loop
+            Event := Next_Event (Win);
+
+            if Calls (Event.Which) /= Events.No_Callback then
+               Calls (Event.Which) (Event);
+            end if;
+         end loop;
+
+         -- No more events pending; wait until next frame time if necessary
+         Wait_Frame (Win, SPF);
+
+         -- Draw next frame
+         Frame.all;
+
+         -- Note its time, and count it
+         Win.Prior_Frame := Ada.Calendar.Clock;
+         Win.App_Frames  := Win.App_Frames + 1;
+         Win.Last_Frames := Win.Last_Frames + 1;
+
       end loop;
-
-      -- No more events pending; wait until next frame time if necessary
-      Wait_Frame (Win, FPS);
-
-      -- Draw next frame
-      Frame.all;
 
    end Select_Events;
 
    ---------------------------------------------------------------------------
 
-   -- Procedure to fetch FPS (and reset rolling average if necessary)
-   procedure FPS (Win   : in out Window.Handle;
-                  Since : in     FPS_Type := FPS_Since_Prior;
-                  Count :    out Float) is
+   -- Function to fetch FPS (and reset rolling average if necessary)
+   function FPS (Win   : Window.Handle;
+                 Since : FPS_Type := FPS_Since_Prior)
+   return Float is
 
       use Ada.Calendar;
 
@@ -120,11 +157,11 @@ package body Lumen.Events.Animate is
       case Since is
          when FPS_Overall =>
             Elapsed := Clock - Win.App_Start;
-            Frames := Win.App_Frames;
+            Frames := Frame_Count (Win.App_Frames);
 
          when FPS_Since_Prior =>
             Elapsed := Clock - Win.Last_Start;
-            Frames := Win.Last_Frames;
+            Frames := Frame_Count (Win.Last_Frames);
 
             -- Reset the last-called values
             Win.Last_Start  := Clock;
@@ -132,7 +169,8 @@ package body Lumen.Events.Animate is
       end case;
 
       -- Calculate and return the frames per second
-      Count := Float (Frames) / Float (Elapsed);
+      return Float (Frames) / Float (Elapsed);
+
    end FPS;
 
    ---------------------------------------------------------------------------

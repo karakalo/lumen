@@ -28,7 +28,11 @@ package Lumen.Events.Animate is
 
    ---------------------------------------------------------------------------
 
-   subtype Frame_Count is Internal.Frame_Count;
+   -- Count of frames displayed from Animate
+   type Frame_Count is new Long_Integer range 0 .. Long_Integer'Last;
+
+   -- Means "display frames as fast as you can"
+   Flat_Out : constant Frame_Count := 0;
 
    ---------------------------------------------------------------------------
 
@@ -56,10 +60,10 @@ package Lumen.Events.Animate is
    -- started; "Since_Prior" means since the last time you called FPS.
    type FPS_Type is (FPS_Overall, FPS_Since_Prior);
 
-   -- Procedure to fetch FPS (and reset rolling average if necessary)
-   procedure FPS (Win   : in out Window.Handle;
-                  Since : in     FPS_Type := FPS_Since_Prior;
-                  Count :    out Float);
+   -- Function to fetch FPS (and reset rolling average if necessary)
+   function FPS (Win   : Window.Handle;
+                 Since : FPS_Type := FPS_Since_Prior)
+   return Float;
 
    ---------------------------------------------------------------------------
 
