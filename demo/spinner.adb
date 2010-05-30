@@ -70,14 +70,15 @@ procedure Spinner is
       glClearColor (0.0, 0.0, 0.0, 0.0);
       glClear (GL_COLOR_BUFFER_BIT);
 
-      -- Draw a hideous orange square
-      glColor3f (1.0, 1.0, 0.5);
-
       glBegin (GL_POLYGON);
       begin
+         glColor3f (1.0, 0.0, 0.0);
          glVertex2f (-1.0, -1.0);
+         glColor3f (1.0, 0.0, 0.0);
          glVertex2f (-1.0,  1.0);
+         glColor3f (1.0, 1.0, 0.0);
          glVertex2f ( 1.0,  1.0);
+         glColor3f (1.0, 1.0, 0.0);
          glVertex2f ( 1.0, -1.0);
       end;
       glEnd;
