@@ -1,0 +1,22 @@
+with "lumen.gpr";
+
+project Demos is
+
+   package Ide is
+      for Vcs_Kind use "Git";
+   end Ide;
+
+   for Source_Dirs use ("demo");
+   for Object_Dir use "demo";
+   for Main use ("colors.adb", "sgi_simple.adb", "spinner.adb");
+
+   package Builder is
+      for Default_Switches ("ada") use ("-s");
+   end Builder;
+
+   package Linker is
+      for Default_Switches ("ada") use ("-lGLU");
+   end Linker;
+
+end Demos;
+
