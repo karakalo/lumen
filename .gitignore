@@ -4,6 +4,7 @@
 *.html
 demo/colors
 demo/sgi_simple
+demo/spinner
 lib
 obj
 test
