@@ -1,7 +1,5 @@
 
 -- Simple Lumen demo/test program, using earliest incomplete library
---
--- Build with: gnatmake colors
 
 with Lumen.Window;
 with Lumen.Events;

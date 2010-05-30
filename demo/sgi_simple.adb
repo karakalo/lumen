@@ -3,10 +3,8 @@
 -- on an old SGI demo called "simple", which contained the following
 -- BSD-flavored copyright notice:
 --
---  (c) Copyright 1993, Silicon Graphics, Inc.
---  ALL RIGHTS RESERVED
---
--- Build with: gnatmake -P sgi_simple.gpr
+-- (c) Copyright 1993, Silicon Graphics, Inc.
+-- ALL RIGHTS RESERVED
 
 with Lumen.Window;
 with Lumen.Events;
