@@ -25,10 +25,10 @@ with Lumen.Window;
 package Lumen.Events is
 
    -- The types of events that can be reported
-   type Event_Type is (No_Event,
+   type Event_Type is (Unknown_Event,
                        Key_Press, Key_Release, Button_Press, Button_Release, Pointer_Motion,
                        Enter_Window, Leave_Window, Focus_In, Focus_Out,
-                       Exposed, Resized, Close_Window);
+                       Exposed, Hidden, Resized, Close_Window);
 
    -- Raw keycode, not much use except at the very lowest level
    type Raw_Keycode is mod 2 ** Integer'Size;
@@ -90,7 +90,7 @@ package Lumen.Events is
       Height    : Natural;
    end record;
 
-   type Event_Data (Which : Event_Type := No_Event) is record
+   type Event_Data (Which : Event_Type := Unknown_Event) is record
       case Which is
          when Key_Press | Key_Release =>
             Key_Data      : Key_Event_Data;

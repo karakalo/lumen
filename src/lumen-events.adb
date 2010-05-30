@@ -1,4 +1,4 @@
-
+with ada.text_io;   use ada.text_io;
 -- Lumen.Events -- Manage input events in Lumen windows
 --
 -- Chip Richards, NiEstu, Phoenix AZ, Spring 2010
@@ -33,7 +33,7 @@ package body Lumen.Events is
    -- Useful for more complex event loops.
    function Pending (Win : Window.Handle) return Natural is
 
-      function X_Pending (Display : in Internal.Display_Pointer) return Natural;
+      function X_Pending (Display : Internal.Display_Pointer) return Natural;
       pragma Import (C, X_Pending, "XPending");
 
    begin  -- Pending
@@ -59,6 +59,8 @@ package body Lumen.Events is
       X_Focus_In         : constant :=  9;
       X_Focus_Out        : constant := 10;
       X_Expose           : constant := 12;
+      X_Map_Notify       : constant := 18;
+      X_Unmap_Notify     : constant := 19;
       X_Configure_Notify : constant := 22;
       X_Client_Message   : constant := 33;
 
@@ -121,6 +123,8 @@ package body Lumen.Events is
                Xps_Height : Natural;
                Xps_Count  : Natural;
             when X_Configure_Notify =>
+               Cfg_X      : Natural;
+               Cfg_Y      : Natural;
                Cfg_Width  : Natural;
                Cfg_Height : Natural;
             when X_Client_Message =>
@@ -162,6 +166,8 @@ package body Lumen.Events is
          Xps_Width    at 12 * Bytes range 0 .. Bits;
          Xps_Height   at 13 * Bytes range 0 .. Bits;
 
+         Cfg_X        at 12 * Bytes range 0 .. Bits;
+         Cfg_Y        at 13 * Bytes range 0 .. Bits;
          Cfg_Width    at 14 * Bytes range 0 .. Bits;
          Cfg_Height   at 15 * Bytes range 0 .. Bits;
 
@@ -198,104 +204,129 @@ package body Lumen.Events is
 
    begin  -- Next_Event
 
-      -- Get the event from the X server; discard events we don't want
-      loop
-         Internal.X_Next_Event (Win.Display, X_Event'Address);
+      -- Get the event from the X server
+      Internal.X_Next_Event (Win.Display, X_Event'Address);
 
-         -- Based on the event type, transfer and convert the event data
-         case X_Event.X_Event_Type is
-            when X_Key_Press =>
-               return (Which     => Key_Press,
-                       Key_Data  => (X         => X_Event.Key_X,
-                                     Y         => X_Event.Key_Y,
-                                     Abs_X     => X_Event.Key_Root_X,
-                                     Abs_Y     => X_Event.Key_Root_Y,
-                                     Modifiers => Modifier_Mask_To_Set (X_Event.Key_State),
-                                     Key_Code  => Raw_Keycode (X_Event.Key_Code)));
+      -- Based on the event type, transfer and convert the event data
+      case X_Event.X_Event_Type is
 
-            when X_Key_Release =>
-               return (Which     => Key_Release,
-                       Key_Data  => (X         => X_Event.Key_X,
-                                     Y         => X_Event.Key_Y,
-                                     Abs_X     => X_Event.Key_Root_X,
-                                     Abs_Y     => X_Event.Key_Root_Y,
-                                     Modifiers => Modifier_Mask_To_Set (X_Event.Key_State),
-                                     Key_Code  => Raw_Keycode (X_Event.Key_Code)));
+         when X_Key_Press =>
+            return (Which     => Key_Press,
+                    Key_Data  => (X         => X_Event.Key_X,
+                                  Y         => X_Event.Key_Y,
+                                  Abs_X     => X_Event.Key_Root_X,
+                                  Abs_Y     => X_Event.Key_Root_Y,
+                                  Modifiers => Modifier_Mask_To_Set (X_Event.Key_State),
+                                  Key_Code  => Raw_Keycode (X_Event.Key_Code)));
 
-            when X_Button_Press =>
-               return (Which        => Button_Press,
-                       Button_Data  => (X         => X_Event.Btn_X,
-                                        Y         => X_Event.Btn_Y,
-                                        Abs_X     => X_Event.Btn_Root_X,
-                                        Abs_Y     => X_Event.Btn_Root_Y,
-                                        Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State),
-                                        Changed   => Button'Val (X_Event.Btn_Code - 1)));
+         when X_Key_Release =>
+            return (Which     => Key_Release,
+                    Key_Data  => (X         => X_Event.Key_X,
+                                  Y         => X_Event.Key_Y,
+                                  Abs_X     => X_Event.Key_Root_X,
+                                  Abs_Y     => X_Event.Key_Root_Y,
+                                  Modifiers => Modifier_Mask_To_Set (X_Event.Key_State),
+                                  Key_Code  => Raw_Keycode (X_Event.Key_Code)));
 
-            when X_Button_Release =>
-               return (Which        => Button_Release,
-                       Button_Data  => (X         => X_Event.Btn_X,
-                                        Y         => X_Event.Btn_Y,
-                                        Abs_X     => X_Event.Btn_Root_X,
-                                        Abs_Y     => X_Event.Btn_Root_Y,
-                                        Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State),
-                                        Changed   => Button'Val (X_Event.Btn_Code - 1)));
+         when X_Button_Press =>
+            return (Which        => Button_Press,
+                    Button_Data  => (X         => X_Event.Btn_X,
+                                     Y         => X_Event.Btn_Y,
+                                     Abs_X     => X_Event.Btn_Root_X,
+                                     Abs_Y     => X_Event.Btn_Root_Y,
+                                     Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State),
+                                     Changed   => Button'Val (X_Event.Btn_Code - 1)));
 
-            when X_Motion_Notify =>
-               return (Which       => Pointer_Motion,
-                       Motion_Data => (X         => X_Event.Mov_X,
-                                       Y         => X_Event.Mov_Y,
-                                       Abs_X     => X_Event.Mov_Root_X,
-                                       Abs_Y     => X_Event.Mov_Root_Y,
-                                       Modifiers => Modifier_Mask_To_Set (X_Event.Mov_State)));
+         when X_Button_Release =>
+            return (Which        => Button_Release,
+                    Button_Data  => (X         => X_Event.Btn_X,
+                                     Y         => X_Event.Btn_Y,
+                                     Abs_X     => X_Event.Btn_Root_X,
+                                     Abs_Y     => X_Event.Btn_Root_Y,
+                                     Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State),
+                                     Changed   => Button'Val (X_Event.Btn_Code - 1)));
 
-            when X_Enter_Notify =>
-               return (Which         => Enter_Window,
-                       Crossing_Data => (X         => X_Event.Xng_X,
-                                         Y         => X_Event.Xng_Y,
-                                         Abs_X     => X_Event.Xng_Root_X,
-                                         Abs_Y     => X_Event.Xng_Root_Y));
+         when X_Motion_Notify =>
+            return (Which       => Pointer_Motion,
+                    Motion_Data => (X         => X_Event.Mov_X,
+                                    Y         => X_Event.Mov_Y,
+                                    Abs_X     => X_Event.Mov_Root_X,
+                                    Abs_Y     => X_Event.Mov_Root_Y,
+                                    Modifiers => Modifier_Mask_To_Set (X_Event.Mov_State)));
 
-            when X_Leave_Notify =>
-               return (Which     => Leave_Window,
-                       Crossing_Data => (X         => X_Event.Xng_X,
-                                         Y         => X_Event.Xng_Y,
-                                         Abs_X     => X_Event.Xng_Root_X,
-                                         Abs_Y     => X_Event.Xng_Root_Y));
+         when X_Enter_Notify =>
+            return (Which         => Enter_Window,
+                    Crossing_Data => (X         => X_Event.Xng_X,
+                                      Y         => X_Event.Xng_Y,
+                                      Abs_X     => X_Event.Xng_Root_X,
+                                      Abs_Y     => X_Event.Xng_Root_Y));
 
-            when X_Focus_In =>
-               return (Which => Focus_In);
+         when X_Leave_Notify =>
+            return (Which     => Leave_Window,
+                    Crossing_Data => (X         => X_Event.Xng_X,
+                                      Y         => X_Event.Xng_Y,
+                                      Abs_X     => X_Event.Xng_Root_X,
+                                      Abs_Y     => X_Event.Xng_Root_Y));
 
-            when X_Focus_Out =>
-               return (Which => Focus_Out);
+         when X_Focus_In =>
+            return (Which => Focus_In);
 
-            when X_Expose =>
+         when X_Focus_Out =>
+            return (Which => Focus_Out);
+
+         when X_Expose =>
+            return (Which       => Exposed,
+                    Expose_Data => (X         => X_Event.Xps_X,
+                                    Y         => X_Event.Xps_Y,
+                                    Width     => X_Event.Xps_Width,
+                                    Height    => X_Event.Xps_Height,
+                                    Count     => X_Event.Xps_Count));
+
+         when X_Map_Notify =>
+            -- Fake up a "whole window exposed" event
+            return (Which       => Exposed,
+                    Expose_Data => (X         => 0,
+                                    Y         => 0,
+                                    Width     => Win.Width,
+                                    Height    => Win.Height,
+                                    Count     => 0));
+
+         when X_Unmap_Notify =>
+            return (Which       => Hidden);
+
+         when X_Configure_Notify =>
+            if X_Event.Cfg_Width /= Win.Width or X_Event.Cfg_Height /= Win.Height then
+               Win.Width  := X_Event.Cfg_Width;
+               Win.Height := X_Event.Cfg_Height;
+               return (Which       => Resized,
+                       Resize_Data => (Width     => X_Event.Cfg_Width,
+                                       Height    => X_Event.Cfg_Height));
+            else
+               -- Fake up a "whole window exposed" event
                return (Which       => Exposed,
-                       Expose_Data => (X         => X_Event.Xps_X,
-                                       Y         => X_Event.Xps_Y,
-                                       Width     => X_Event.Xps_Width,
-                                       Height    => X_Event.Xps_Height,
-                                       Count     => X_Event.Xps_Count));
+                       Expose_Data => (X         => 0,
+                                       Y         => 0,
+                                       Width     => X_Event.Cfg_Width,
+                                       Height    => X_Event.Cfg_Height,
+                                       Count     => 0));
+            end if;
 
-            when X_Configure_Notify =>
-               if X_Event.Cfg_Width /= Win.Width or X_Event.Cfg_Height /= Win.Height then
-                  return (Which       => Resized,
-                          Resize_Data => (Width     => X_Event.Cfg_Width,
-                                          Height    => X_Event.Cfg_Height));
+         when X_Client_Message =>
+            declare
+               use type Internal.Atom;
+            begin
+               if X_Event.Msg_Value = Internal.Delete_Window_Atom then
+                  return (Which => Close_Window);
+               else
+                  return (Which => Unknown_Event);
                end if;
+            end;
 
-            when X_Client_Message =>
-               declare
-                  use type Internal.Atom;
-               begin
-                  if X_Event.Msg_Value = Internal.Delete_Window_Atom then
-                     return (Which => Close_Window);
-                  end if;
-               end;
+         when others =>
+            return (Which => Unknown_Event);
 
-            when others =>
-               null;
-         end case;
-      end loop;
+      end case;
+
    end Next_Event;
 
    ---------------------------------------------------------------------------
