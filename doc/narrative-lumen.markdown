@@ -6,16 +6,25 @@ coded now, are probably slanted toward the X window system; MS-Windows and Mac
 users of Lumen, if there ever are any, may not be familiar with some of the
 terms.
 
+# Contents
+
+* [Lumen](#lumen)
+* [Lumen.Window](#lumen-window)
+* [Lumen.Events](#lumen-events)
+* [Lumen.Events.Animate](#lumen-events-animate)
+* [Lumen.Binary](#lumen-binary)
+* [Lumen.Internal](#lumen-internal)
+
 ------------------------------------------------------------------------------
 
-# Lumen
+# Lumen {#lumen}
 
 The root of the Lumen package family is the empty spec `Lumen`.  Okay, it's
 not totally empty--it has a `pragma Pure` in it, for no real reason.
 
 ------------------------------------------------------------------------------
 
-# Lumen.Window
+# Lumen.Window {#lumen-window}
 
 ## Create
 
@@ -160,15 +169,7 @@ package; the others are for much more specialized situations.
 
 ------------------------------------------------------------------------------
 
-# Lumen.Internal
-
-Don't look at this package.  It's not for applications, and exists only to
-allow the `Lumen.Window` and `Lumen.Events` packages to share some of the
-internal X window binding stuff.
-
-------------------------------------------------------------------------------
-
-# Lumen.Events
+# Lumen.Events {#lumen-events}
 
 This is the package that allows your app to receive input events from the
 windowing system.  Currently it's probably very heavily influenced by X
@@ -197,6 +198,11 @@ another window, but now is visible again.  That usually means you should
 re-draw your scene, or at least the part of it that was covered up if your app
 is fortunate enough to be able to make that distinction.  Lumen has (or will
 have) automated exposure handling to allow you to not think about this event.
+
+The `Hidden` event is sort of the opposite of `Exposed`: it means the user can
+no longer see your window.  I guess your application could use this as an
+indicator that it no longer needs to stay busy updating the view, until the
+next `Exposed` event.
 
 The `Resized` event tells you that the user has requested that the window be
 resized, so you might want to have your app adjust itself to the new size
@@ -268,12 +274,14 @@ of a misnomer.
 
 The `Pending` function returns the count of events that are waiting in the
 event queue.  If you don't pull them out with `Next_Event`, they'll just pile
-up there and make a mess.  This function is most useful if you want to "poll"
-for events, in case your code has better things to do than hang around waiting
-for the user to hit a key or move the mouse.  Usually, though, it's better to
-wait for events than to poll for them; if your app has other processing it
-needs to do while waiting, use a separate task for it.  This is Ada, after
-all, so that's easy.
+up there and make a mess.  If you use one of the canned event-loop routines
+(`Receive_Events` or `Select_Events`), they'll pull the events out for you, so
+you don't want to call `Next_Event` directly if you use one of those.  The
+`Pending` function is most useful if you want to "poll" for events, in case
+your code has better things to do than hang around waiting for the user to hit
+a key or move the mouse.  Usually, though, it's better to wait for events than
+to poll for them; if your app has other processing it needs to do while
+waiting, use a separate task for it.  This is Ada, after all, so that's easy.
 
 ### Next_Event
 
@@ -306,3 +314,73 @@ be set to `No_Callback` in the table.  If you requested those events at window
 creation time, they'll simply be ignored; if you didn't request them, then
 your app won't even receive them, and it doesn't matter what you put in the
 callback table in their slots.
+
+------------------------------------------------------------------------------
+
+# Lumen.Events.Animate {#lumen-events-animate}
+
+This package implements simple frame-based animation.  Or rather, it makes it
+easier for you to do so, using your own drawing routine.
+
+
+## Event-Loop Routines
+
+The `Receive_Events` and `Select_Events` procedures in the `Animate` package
+are the direct equivalents of the same-named procedures in `Lumen.Events`,
+with one addition: They both accept a `Frame` parameter, which is a pointer to
+a procedure that draws one frame of an animated scene.  They also accept an
+`FPS` parameter, which is the framerate you want in frames per second.
+
+You provide the `Frame` procedure, and the Lumen event-loop routines will call
+it repeatedly.  If your hardware can handle it, meaning if your drawing code
+doesn't take longer than the frame rate to execute, then it will be called
+`FPS` times per second.
+
+These routines should probably always be used with a double-buffered OpenGL
+rendering context, meaning you passed `Animated => True` to
+`Lumen.Window.Create`.  Therefore, your `Frame` procedure should call
+`Lumen.Window.Swap` once it's done drawing.  You don't *have* to do either of
+those things, but I bet you won't like the result if you don't.
+
+And what do I mean by "if your drawing code doesn't take longer than the frame
+rate to execute"?  Well, let's say you set FPS to 60, meaning "I want my
+animation to run at 60 frames per second".  That means your `Frame` procedure
+had better do its business and return in less than 1/60th of a second, or just
+over 16 milliseconds.  With today's hardware, that shouldn't be a problem
+until your scene and/or its underlying calculations get pretty darned complex.
+And if it *does* take longer than that, then Lumen will call `Frame` as
+frequently as possible, with no delay in between calls.
+
+
+## Information Routines
+
+You can find out what your actual frame rate is by calling the `FPS`
+function.  It can return either of two values:  The overall framerate since
+the application started (`FPS_Overall`) which may or may not be meaningful
+depending on your app and its needs, and the framerate since the last time you
+called the `FPS` function (`FPS_Since_Prior`), which may or may not be
+meaningful depending on how long it's been since you last called it, and what
+your app has been doing in between.
+
+These are both calculated by taking the difference in wall-clock time between
+the selected intervals, and dividing by the number of frames rendered in that
+interval.  So they can be considered "averages" in some sense of the word.
+Suggestions for other kinds of framerate returns are welcome.
+
+------------------------------------------------------------------------------
+
+# Lumen.Binary {#lumen-binary}
+
+This is a little set of declarations that are useful for low-level bit and
+byte thwacking.  You're welcome to use them in your own apps if you find them
+appealing.
+
+------------------------------------------------------------------------------
+
+# Lumen.Internal {#lumen-internal}
+
+Don't look at this package.  It's not for applications, and exists only to
+allow the `Lumen.Window` and `Lumen.Events` packages to share some of the
+internal X window binding stuff.
+
+------------------------------------------------------------------------------

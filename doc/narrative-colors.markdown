@@ -1,17 +1,20 @@
 Title: Narrative Description of "colors" Demo
 
 This is a simple narrative description of the `colors` application included
-with the Lumen library as a demo.  It is probably slanted toward the X window
-system; MS-Windows and Mac users of Lumen, if there ever are any, may not be
-familiar with some of the terms.
+with the Lumen library as a demo.
+
+The `colors` demo has no command-line parameters, so you just invoke it by
+typing its name, like `./colors` if you're sitting in the `demo` directory, or
+`demo/colors` if you're in the `lumen` directory.  When run, `colors` creates
+a window which rotates through solid red, blue, and green at one-second
+intervals.  Terminate it by pressing any key, or closing the window.
 
 The `colors` demo was the very first application written to use the Lumen
 library.  It uses low-level calls, and most real Lumen apps won't look much
 like it.  But it did help Lumen get up and stumbling with its two most
 fundamental services: Opening a window into which OpenGL rendering can be
 done, and reporting user input events to the app.  It was adapted from
-[the simple `glXIntro` demo program](http://glprogramming.com/blue/ch07.html)
-I found on the web.
+[the simple `glXIntro` demo program][glxintro] I found on the web.
 
 It starts off using `Lumen.Window.Create` to create its window, which creates
 a native window and an OpenGL rendering context to go with it.  It sets the
@@ -32,15 +35,16 @@ plus structure-change notifications, which Lumen asks for automatically.
 
 The event processing checks for key presses and close-window events, which
 cause it to exit the main (outer) event loop and terminate the app.  Key
-presses happen when you press any key on the keyboard, even modifiers like
-Shift or Control.  The `Close_Window` event is generated when you select the
-window manager's "Close" button, usually an "X" in the title bar or something
-like it, depending on your window manager and its configuration.
+presses happen when you press any key on the keyboard, even "modifier" keys
+like Shift or Control.  The `Close_Window` event is generated when you trigger
+the window manager's "Close Window" action, usually by clicking an "X" in the
+title bar or something like it, depending on your window manager and its
+configuration.
 
 After it has gobbled up and processed all the events in the inner loop, the
 app then goes into the actual OpenGL drawing code.  Finally!
 
-Normal X apps spend much of their time blocked on the event queue, waiting for
+Most GUI apps spend much of their time blocked on the event queue, waiting for
 an event to show up, which doesn't take any real CPU time.  That's what
 Lumen's canned event-loop routines do, too, which is why they'll sometimes be
 placed into a separate task, so the rest of the app can go about its business
@@ -66,3 +70,5 @@ drawing normally happens in the invisible "back buffer", and that buffer is
 only displayed once you swap it to the front.  Any good OpenGL reference can
 explain what that's all about, and how it avoids "tearing" and other enemies
 of smooth animation, but we don't need it here.
+
+[glxintro]: http://glprogramming.com/blue/ch07.html

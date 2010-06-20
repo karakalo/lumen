@@ -12,7 +12,10 @@ PAGES = \
 
 NARRS = \
 	narrative-lumen \
-	narrative-colors
+	narrative-demos \
+	narrative-colors \
+	narrative-sgi_simple \
+	narrative-spinner
 
 FILES = ${PAGES} ${NARRS}
 

@@ -1,7 +1,12 @@
 
 /* Basic CSS for Lumen documentation */
 
+code
+{
+    font-weight : bold;
+}
+
 .centered
 {
-    text-align: center;
+    text-align : center;
 }

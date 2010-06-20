@@ -44,14 +44,13 @@ directory.
 
 ## Building the Demos
 
-Once you have built the library, you should be able to build the `colors` demo
-with this command:
+Once you have built the library, you should be able to build
+[the demo programs][demos] with this command:
 
-        gnatmake -P demo/colors.gpr
+        gnatmake -P demos.gpr
 
-That should create an executable named `demo/colors`, which you can run just
-by typing its name.  It should show a window with alternating red, green, and
-blue, and will terminate when you press any key.
+That should create various executables in the `demo` directory, which you can
+run according to the instructions on their respective description pages.
 
 ## Future
 
@@ -65,3 +64,4 @@ That's all for now, but more is coming soon!
 [x.org]:   http://www.x.org/wiki/
 [oglada]:  http://www.niestu.com/software/oglada-0.3.tar.bz2
 [holm]:    http://adaopengl.sourceforge.net/
+[demos]:   narrative-demos.html
