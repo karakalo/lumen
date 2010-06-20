@@ -89,11 +89,10 @@ package body Lumen.Events is
       Bytes     : constant := Internal.Word_Bytes;
       Bits      : constant := Internal.Word_Bits;
       Atom_Bits : constant := Internal.Atom'Size - 1;
-      -- Best-guess for 32-bit offsets:  14, 8, 10, 11
-      Base_1_32 : constant := 14;
-      Base_2_32 : constant :=  8;
-      Base_3_32 : constant := 10;
-      Base_4_32 : constant := 11;
+      Base_1_32 : constant :=  8;
+      Base_2_32 : constant :=  5;
+      Base_3_32 : constant :=  6;
+      Base_4_32 : constant :=  7;
       Base_1_64 : constant := 16;
       Base_2_64 : constant := 10;
       Base_3_64 : constant := 12;
