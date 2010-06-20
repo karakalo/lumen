@@ -86,9 +86,22 @@ package body Lumen.Events is
 
       type X_Event_Code is new Integer range X_First_Event .. X_Last_Event;
 
-      Bytes     : constant := Integer'Size / 8;
-      Bits      : constant := Integer'Size - 1;
+      Bytes     : constant := Internal.Word_Bytes;
+      Bits      : constant := Internal.Word_Bits;
       Atom_Bits : constant := Internal.Atom'Size - 1;
+      -- Best-guess for 32-bit offsets:  14, 8, 10, 11
+      Base_1_32 : constant := 14;
+      Base_2_32 : constant :=  8;
+      Base_3_32 : constant := 10;
+      Base_4_32 : constant := 11;
+      Base_1_64 : constant := 16;
+      Base_2_64 : constant := 10;
+      Base_3_64 : constant := 12;
+      Base_4_64 : constant := 14;
+      Base_1    : constant := (Base_1_32 * Internal.Is_32) + (Base_1_64 * Internal.Is_64);
+      Base_2    : constant := (Base_2_32 * Internal.Is_32) + (Base_2_64 * Internal.Is_64);
+      Base_3    : constant := (Base_3_32 * Internal.Is_32) + (Base_3_64 * Internal.Is_64);
+      Base_4    : constant := (Base_4_32 * Internal.Is_32) + (Base_4_64 * Internal.Is_64);
       type X_Event_Data (X_Event_Type : X_Event_Code := X_Error) is record
          case X_Event_Type is
             when X_Key_Press | X_Key_Release =>
@@ -136,42 +149,42 @@ package body Lumen.Events is
       for X_Event_Data use record
          X_Event_Type at  0 * Bytes range 0 .. Bits;
 
-         Key_X        at 16 * Bytes range 0 .. Bits;
-         Key_Y        at 17 * Bytes range 0 .. Bits;
-         Key_Root_X   at 18 * Bytes range 0 .. Bits;
-         Key_Root_Y   at 19 * Bytes range 0 .. Bits;
-         Key_State    at 20 * Bytes range 0 .. Bits;
-         Key_Code     at 21 * Bytes range 0 .. Bits;
+         Key_X        at (Base_1 + 0) * Bytes range 0 .. Bits;
+         Key_Y        at (Base_1 + 1) * Bytes range 0 .. Bits;
+         Key_Root_X   at (Base_1 + 2) * Bytes range 0 .. Bits;
+         Key_Root_Y   at (Base_1 + 3) * Bytes range 0 .. Bits;
+         Key_State    at (Base_1 + 4) * Bytes range 0 .. Bits;
+         Key_Code     at (Base_1 + 5) * Bytes range 0 .. Bits;
 
-         Btn_X        at 16 * Bytes range 0 .. Bits;
-         Btn_Y        at 17 * Bytes range 0 .. Bits;
-         Btn_Root_X   at 18 * Bytes range 0 .. Bits;
-         Btn_Root_Y   at 19 * Bytes range 0 .. Bits;
-         Btn_State    at 20 * Bytes range 0 .. Bits;
-         Btn_Code     at 21 * Bytes range 0 .. Bits;
+         Btn_X        at (Base_1 + 0) * Bytes range 0 .. Bits;
+         Btn_Y        at (Base_1 + 1) * Bytes range 0 .. Bits;
+         Btn_Root_X   at (Base_1 + 2) * Bytes range 0 .. Bits;
+         Btn_Root_Y   at (Base_1 + 3) * Bytes range 0 .. Bits;
+         Btn_State    at (Base_1 + 4) * Bytes range 0 .. Bits;
+         Btn_Code     at (Base_1 + 5) * Bytes range 0 .. Bits;
 
-         Mov_X        at 16 * Bytes range 0 .. Bits;
-         Mov_Y        at 17 * Bytes range 0 .. Bits;
-         Mov_Root_X   at 18 * Bytes range 0 .. Bits;
-         Mov_Root_Y   at 19 * Bytes range 0 .. Bits;
-         Mov_State    at 20 * Bytes range 0 .. Bits;
+         Mov_X        at (Base_1 + 0) * Bytes range 0 .. Bits;
+         Mov_Y        at (Base_1 + 1) * Bytes range 0 .. Bits;
+         Mov_Root_X   at (Base_1 + 2) * Bytes range 0 .. Bits;
+         Mov_Root_Y   at (Base_1 + 3) * Bytes range 0 .. Bits;
+         Mov_State    at (Base_1 + 4) * Bytes range 0 .. Bits;
 
-         Xng_X        at 16 * Bytes range 0 .. Bits;
-         Xng_Y        at 17 * Bytes range 0 .. Bits;
-         Xng_Root_X   at 18 * Bytes range 0 .. Bits;
-         Xng_Root_Y   at 19 * Bytes range 0 .. Bits;
+         Xng_X        at (Base_1 + 0) * Bytes range 0 .. Bits;
+         Xng_Y        at (Base_1 + 1) * Bytes range 0 .. Bits;
+         Xng_Root_X   at (Base_1 + 2) * Bytes range 0 .. Bits;
+         Xng_Root_Y   at (Base_1 + 3) * Bytes range 0 .. Bits;
 
-         Xps_X        at 10 * Bytes range 0 .. Bits;
-         Xps_Y        at 11 * Bytes range 0 .. Bits;
-         Xps_Width    at 12 * Bytes range 0 .. Bits;
-         Xps_Height   at 13 * Bytes range 0 .. Bits;
+         Xps_X        at (Base_2 + 0) * Bytes range 0 .. Bits;
+         Xps_Y        at (Base_2 + 1) * Bytes range 0 .. Bits;
+         Xps_Width    at (Base_2 + 2) * Bytes range 0 .. Bits;
+         Xps_Height   at (Base_2 + 3) * Bytes range 0 .. Bits;
 
-         Cfg_X        at 12 * Bytes range 0 .. Bits;
-         Cfg_Y        at 13 * Bytes range 0 .. Bits;
-         Cfg_Width    at 14 * Bytes range 0 .. Bits;
-         Cfg_Height   at 15 * Bytes range 0 .. Bits;
+         Cfg_X        at (Base_3 + 0) * Bytes range 0 .. Bits;
+         Cfg_Y        at (Base_3 + 1) * Bytes range 0 .. Bits;
+         Cfg_Width    at (Base_3 + 2) * Bytes range 0 .. Bits;
+         Cfg_Height   at (Base_3 + 3) * Bytes range 0 .. Bits;
 
-         Msg_Value    at 14 * Bytes range 0 .. Atom_Bits;
+         Msg_Value    at (Base_4 + 0) * Bytes range 0 .. Atom_Bits;
       end record;
 
       ------------------------------------------------------------------------

@@ -145,18 +145,19 @@ package body Lumen.Window is
       -- An extremely abbreviated version of the XSetWindowAttributes
       -- structure, containing only the fields we care about.
       --
-      -- NOTE: offset multiplier values are for 64-bit systems; values for
-      -- 32-bit systems are 10 and 13, since long size equals int size and the
-      -- record has no padding.
-      Long_Bytes : constant := Long_Integer'Size / 8;
-      Long_Bits  : constant := Long_Integer'Size - 1;
+      -- NOTE: offset multiplier values differ between 32-bit and 64-bit
+      -- systems since on 32-bit systems long size equals int size and the
+      -- record has no padding.  The byte and bit widths come from Internal.
+      Start_32 : constant := 10;
+      Start_64 : constant :=  9;
+      Start    : constant := (Is_32 * Start_32) + (Is_64 * Start_64);
       type X_Set_Window_Attributes is record
          Event_Mask  : X_Event_Mask := 0;
          Colormap    : Colormap_ID  := 0;
       end record;
       for X_Set_Window_Attributes use record
-         Event_Mask  at Long_Bytes *  9 range 0 .. Long_Bits;
-         Colormap    at Long_Bytes * 12 range 0 .. Long_Bits;
+         Event_Mask  at (Start + 0) * Long_Bytes range 0 .. Long_Bits;
+         Colormap    at (Start + 1) * Long_Bytes range 0 .. Long_Bits;
       end record;
 
       -- Xlib functions needed only by Create
