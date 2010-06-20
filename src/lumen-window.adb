@@ -157,7 +157,7 @@ package body Lumen.Window is
       end record;
       for X_Set_Window_Attributes use record
          Event_Mask  at (Start + 0) * Long_Bytes range 0 .. Long_Bits;
-         Colormap    at (Start + 1) * Long_Bytes range 0 .. Long_Bits;
+         Colormap    at (Start + 3) * Long_Bytes range 0 .. Long_Bits;
       end record;
 
       -- Xlib functions needed only by Create
