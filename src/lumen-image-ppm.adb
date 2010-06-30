@@ -28,14 +28,14 @@ with Ada.Characters.Handling;
 with Ada.Characters.Latin_1;
 with Ada.Streams.Stream_IO;
 
-with Lumen.Binary;
+with Lumen.Binary.Endian.Shorts;
 
 
 package body Lumen.Image.PPM is
 
    ---------------------------------------------------------------------------
 
-   function From_File (File : in Byte_IO.File_Type;   PPM_Format : in Character) return Descriptor is
+   function From_File (File : in Binary.IO.File_Type;   PPM_Format : in Character) return Descriptor is
 
       ------------------------------------------------------------------------
 
@@ -48,15 +48,20 @@ package body Lumen.Image.PPM is
 
       ------------------------------------------------------------------------
 
-      -- Return the next character from the input stream
+      -- Return the next character from the input stream; used only when
+      -- reading the header/metadata
       function Next_Char return Character is
+
+         BS : Binary.Byte_String := Binary.IO.Read (File, 1);
+
       begin  -- Next_Char
-         return Character'Val (Byte_IO.Read (File, 1) (1));
+         return Character'Val (BS (1));
       end Next_Char;
 
       ------------------------------------------------------------------------
 
-      -- Skip intervening whitespace and comments, and return the next character
+      -- Skip intervening whitespace and comments, and return the next
+      -- character; used only when reading the header/metadata
       function Skip return Character is
 
          C : Character;
@@ -79,7 +84,7 @@ package body Lumen.Image.PPM is
       ------------------------------------------------------------------------
 
       -- Read a nonnegative decimal integer from the stream, represented as
-      -- Latin_1 digits
+      -- Latin_1 digits; used only when reading the header/metadata
       function Read_Num (First : in Character) return Natural is
 
          Number : Natural := 0;
@@ -102,10 +107,67 @@ package body Lumen.Image.PPM is
 
       -- Read a PBM (portable bitmap) file
       procedure Read_PBM is
+
+         use Binary;
+
+         Row_Size : Natural := (Result.Width + Byte_LB) / Byte_Bits;
+         Row_Buf  : Byte_String (0 .. Row_Size - 1);
+         Last     : Natural;
+         Col      : Natural;
+         Pix      : Pixel;
+
       begin  -- Read_PBM
 
-         -- Read the data and unpack it into our internal format
-         null;
+         -- Read the data a row at a time and unpack it into our internal format
+         for Row in Result.Values'Range (1) loop
+            Binary.IO.Read (File, Row_Buf, Last);
+
+            -- Move the image data into our output buffer a pixel at a time,
+            -- expanding bitmap data to RGB and adding an alpha value to each
+            Col := Result.Values'First (2);
+            Buffer : for Row_Byte in Row_Buf'Range loop
+               for Bits in 1 .. Byte_Bits loop
+
+                  -- Test top bit; 1 = black, 0 = white (yeah, that's right)
+                  if Row_Buf (Row_Byte) > Byte'Last / 2 then
+                     Pix := Black_Pixel;
+                  else
+                     Pix := White_Pixel;
+                  end if;
+
+                  Row_Buf (Row_Byte) := Row_Buf (Row_Byte) * 2;
+                  Result.Values (Row, Col) := Pix;
+                  Col := Col + 1;
+
+                  exit Buffer when Col > Result.Values'Last (2);  -- rest of buffer is don't-care bits
+
+               end loop;
+            end loop Buffer;
+
+            -- Check for early EOF
+            if Last < Row_Size - 1 then
+               Col := (Last + 1) * Byte_Bits;
+               for Fill in Col .. Result.Values'Last (2) loop
+                  Result.Values (Row, Col) := Transparent_Pixel;  -- disappear missing columns in current row
+               end loop;
+
+               -- Disappear missing rows, if any
+               if Row < Result.Height - 1 then
+                  for Fill in Row + 1 .. Result.Values'Last (1) loop
+                     for Col in Result.Values'Range (2) loop
+                        Result.Values (Fill, Col) := Transparent_Pixel;
+                     end loop;
+                  end loop;
+               end if;
+
+               -- Signal truncated image, if the caller cares
+               Result.Complete := False;
+
+               exit;  -- EOF ends the input process
+            end if;
+
+         end loop ;
+
       end Read_PBM;
 
       ------------------------------------------------------------------------
@@ -113,9 +175,7 @@ package body Lumen.Image.PPM is
       -- Read a PGM (portable greymap) file
       procedure Read_PGM is
 
-         Maxval   : Natural;
-         BPP      : Bytes_Per_Pixel_Range;
-         Resample : Boolean := False;
+         Maxval : Natural;
 
       begin  -- Read_PGM
 
@@ -124,12 +184,120 @@ package body Lumen.Image.PPM is
          if Maxval > 65535 then
             raise Invalid_Format;
          elsif Maxval > 255 then
-            BPP := 2;
-         else
-            BPP := 1;
-         end if;
 
-         -- Read the data and unpack it into our internal format
+            -- Wide greymap pixels, 2 bytes each.  Calculate the row size and
+            -- create an environment in which that type exists.
+            declare
+
+               use Binary;
+
+               package BS is new Endian.Shorts (Short);
+
+               Mult : constant Short := Short'Last / Short (Maxval);  -- multiplier to maximize pixel value retention
+               Div  : constant := Short (Byte'Last) + 1;              -- divisor to convert shorts to bytes
+
+               Row_Buf : Short_String (0 .. Result.Width - 1);
+               Last    : Natural;
+               Grey    : Byte;
+
+            begin  -- block to read 16-bit PGM data
+
+               -- Read the data a row at a time and unpack it into our internal format
+               for Row in Result.Values'Range (1) loop
+                  IO.Read (File, Row_Buf, Last);
+
+                  -- Move the image data into our output buffer a pixel at a
+                  -- time, trying to retain as much grey data as possible,
+                  -- expanding greymap data to RGB and adding an alpha value
+                  -- to each
+                  for Col in Result.Values'Range (2) loop
+                     Grey := Byte ((BS.From_Big (Row_Buf (Col)) * Mult) / Div);
+                     Result.Values (Row, Col).R := Grey;
+                     Result.Values (Row, Col).G := Grey;
+                     Result.Values (Row, Col).B := Grey;
+                     Result.Values (Row, Col).A := Byte'Last;  -- PGMs don't have alpha, so use max
+                  end loop ;
+
+                  -- Check for early EOF
+                  if Last < Result.Width - 1 then
+                     for Col in Last + 1 .. Result.Values'Last (2) loop
+                        Result.Values (Row, Col) := Transparent_Pixel;  -- disappear missing columns in current row
+                     end loop;
+
+                     -- Disappear missing rows, if any
+                     if Row < Result.Height - 1 then
+                        for Fill in Row + 1 .. Result.Values'Last (1) loop
+                           for Col in Result.Values'Range (2) loop
+                              Result.Values (Fill, Col) := Transparent_Pixel;
+                           end loop;
+                        end loop;
+                     end if;
+
+                     -- Signal truncated image, if the caller cares
+                     Result.Complete := False;
+
+                     exit;  -- EOF ends the input process
+                  end if;
+
+               end loop;
+
+            end;
+
+         else
+
+            -- Regular greymap pixels, 1 byte each.  Create the byte string to
+            -- use as an input buffer.
+            declare
+
+               use type Binary.Byte;
+
+               Row_Buf : Binary.Byte_String (0 .. Result.Width - 1);
+               Last    : Natural;
+               Grey    : Binary.Byte;
+
+            begin  -- block to read 8-bit PGM data
+
+               -- Read the data a row at a time and unpack it into our internal format
+               for Row in Result.Values'Range (1) loop
+                  Binary.IO.Read (File, Row_Buf, Last);
+
+                  -- Move the image data into our output buffer a pixel at a
+                  -- time, expanding greymap data to RGB and adding an alpha
+                  -- value to each
+                  for Col in Result.Values'Range (2) loop
+                     Grey := Row_Buf (Col);
+                     Result.Values (Row, Col).R := Grey;
+                     Result.Values (Row, Col).G := Grey;
+                     Result.Values (Row, Col).B := Grey;
+                     Result.Values (Row, Col).A := Binary.Byte'Last;  -- PGMs don't have alpha, so use max
+                  end loop ;
+
+                  -- Check for early EOF
+                  if Last < Result.Width - 1 then
+                     for Col in Last + 1 .. Result.Values'Last (2) loop
+                        Result.Values (Row, Col) := Transparent_Pixel;  -- disappear missing columns in current row
+                     end loop;
+
+                     -- Disappear missing rows, if any
+                     if Row < Result.Height - 1 then
+                        for Fill in Row + 1 .. Result.Values'Last (1) loop
+                           for Col in Result.Values'Range (2) loop
+                              Result.Values (Fill, Col) := Transparent_Pixel;
+                           end loop;
+                        end loop;
+                     end if;
+
+                     -- Signal truncated image, if the caller cares
+                     Result.Complete := False;
+
+                     exit;  -- EOF ends the input process
+                  end if;
+
+               end loop;
+
+            end;
+
+         end if;
 
       end Read_PGM;
 
@@ -138,9 +306,7 @@ package body Lumen.Image.PPM is
       -- Read a PPM (portable pixmap) file
       procedure Read_PPM is
 
-         Maxval   : Natural;
-         BPP      : Bytes_Per_Pixel_Range;
-         Resample : Boolean := False;
+         Maxval : Natural;
 
       begin  -- Read_PPM
 
@@ -149,72 +315,114 @@ package body Lumen.Image.PPM is
          if Maxval > 65535 then
             raise Invalid_Format;
          elsif Maxval > 255 then
-            BPP := 6;
-            Resample := True;
-         else
-            BPP := 3;
-         end if;
 
-         -- Calculate the row size and create an environment in which that type exists
-         declare
+            -- Wide pixels, 2 bytes per color value.  Calculate the row size
+            -- and create an environment in which that type exists.
+            declare
 
-            use type Binary.Byte;
+               use Binary;
 
-            Row_Size : Natural := Result.Width * BPP;
-            Row_Buf  : Binary.Byte_String (0 .. Row_Size - 1);
-            Last     : Natural;
+               package BS is new Endian.Shorts (Short);
 
-         begin
+               Mult : constant Short := Short'Last / Short (Maxval);  -- multiplier to maximize pixel value retention
+               Div  : constant := Short (Byte'Last) + 1;              -- divisor to convert shorts to bytes
 
-            -- Read the data a row at a time and unpack it into our internal format
-            for Row in Result.Values'Range (1) loop
-               Byte_IO.Read (File, Row_Buf, Last);
+               Row_Size : Natural := Result.Width * 3;  -- 3 color values per pixel
+               Row_Buf  : Short_String (0 .. Row_Size - 1);
+               Last     : Natural;
 
-               -- Do we need to resample wide values to our internal form?
-               -- And should this really be a more complex calculation, taking
-               -- gamma into account?
-               if Resample then
+            begin  -- block to read 16-bit PPM data
+
+               -- Read the data a row at a time and unpack it into our internal format
+               for Row in Result.Values'Range (1) loop
+                  IO.Read (File, Row_Buf, Last);
+
+                  -- Move the image data into our output buffer a pixel at a
+                  -- time, trying to retain as much color data as possible,
+                  -- and adding an alpha value to each
                   for Col in Result.Values'Range (2) loop
-                     -- FIXME: this is all wrong, need to fetch words, not
-                     -- bytes!  Luckily, I've never once seen a PPM file with
-                     -- maxval > 255.
-                     Result.Values (Row, Col).R := Row_Buf ((Col * 3) + 0) / Binary.Byte'Last;
-                     Result.Values (Row, Col).G := Row_Buf ((Col * 3) + 1) / Binary.Byte'Last;
-                     Result.Values (Row, Col).B := Row_Buf ((Col * 3) + 2) / Binary.Byte'Last;
-                     Result.Values (Row, Col).A := Binary.Byte'Last;  -- PPMs don't have alpha, so use max
+                     Result.Values (Row, Col).R := Byte ((BS.From_Big (Row_Buf ((Col * 3) + 0)) * Mult) / Div);
+                     Result.Values (Row, Col).G := Byte ((BS.From_Big (Row_Buf ((Col * 3) + 1)) * Mult) / Div);
+                     Result.Values (Row, Col).B := Byte ((BS.From_Big (Row_Buf ((Col * 3) + 2)) * Mult) / Div);
+                     Result.Values (Row, Col).A := Byte'Last;  -- PPMs don't have alpha, so use max
                   end loop ;
-               else
-                  for Col in Result.Values'Range (2) loop
-                     Result.Values (Row, Col).R := Row_Buf ((Col * BPP) + 0);
-                     Result.Values (Row, Col).G := Row_Buf ((Col * BPP) + 1);
-                     Result.Values (Row, Col).B := Row_Buf ((Col * BPP) + 2);
-                     Result.Values (Row, Col).A := Binary.Byte'Last;  -- PPMs don't have alpha, so use max
-                  end loop ;
-               end if;
 
-               -- Check for early EOF
-               if Last < Row_Size - 1 then
-                  for Col in (Last / BPP) + 1 .. Result.Values'Last (2) loop
-                     Result.Values (Row, Col) := Transparent_Pixel;  -- disappear missing columns in current row
-                  end loop;
-
-                  -- Disappear missing rows, if any
-                  if Row < Result.Height - 1 then
-                     for Fill in Row + 1 .. Result.Values'Last (1) loop
-                        for Col in Result.Values'Range (2) loop
-                           Result.Values (Fill, Col) := Transparent_Pixel;
-                        end loop;
+                  -- Check for early EOF
+                  if Last < Row_Size - 1 then
+                     for Col in (Last / 3) + 1 .. Result.Values'Last (2) loop
+                        Result.Values (Row, Col) := Transparent_Pixel;  -- disappear missing columns in current row
                      end loop;
+
+                     -- Disappear missing rows, if any
+                     if Row < Result.Height - 1 then
+                        for Fill in Row + 1 .. Result.Values'Last (1) loop
+                           for Col in Result.Values'Range (2) loop
+                              Result.Values (Fill, Col) := Transparent_Pixel;
+                           end loop;
+                        end loop;
+                     end if;
+
+                     -- Signal truncated image, if the caller cares
+                     Result.Complete := False;
+
+                     exit;  -- EOF ends the input process
                   end if;
 
-                  -- Signal truncated image, if the caller cares
-                  Result.Complete := False;
+               end loop;
+            end;
 
-                  exit;  -- EOF ends the input process
-               end if;
+         else
 
-            end loop ;
-         end;
+            -- Regular pixels, 1 byte per color value.  Calculate the row size
+            -- and create an environment in which that type exists.
+            declare
+
+               use type Binary.Byte;
+
+               Row_Size : Natural := Result.Width * 3;  -- 3 color values per pixel
+               Row_Buf  : Binary.Byte_String (0 .. Row_Size - 1);
+               Last     : Natural;
+
+            begin  -- block to read 8-bit PPM data
+
+               -- Read the data a row at a time and unpack it into our internal format
+               for Row in Result.Values'Range (1) loop
+                  Binary.IO.Read (File, Row_Buf, Last);
+
+                  -- Move the image data into our output buffer a pixel at a
+                  -- time, adding an alpha value to each
+                  for Col in Result.Values'Range (2) loop
+                     Result.Values (Row, Col).R := Row_Buf ((Col * 3) + 0);
+                     Result.Values (Row, Col).G := Row_Buf ((Col * 3) + 1);
+                     Result.Values (Row, Col).B := Row_Buf ((Col * 3) + 2);
+                     Result.Values (Row, Col).A := Binary.Byte'Last;  -- PPMs don't have alpha, so use max
+                  end loop ;
+
+                  -- Check for early EOF
+                  if Last < Row_Size - 1 then
+                     for Col in (Last / 3) + 1 .. Result.Values'Last (2) loop
+                        Result.Values (Row, Col) := Transparent_Pixel;  -- disappear missing columns in current row
+                     end loop;
+
+                     -- Disappear missing rows, if any
+                     if Row < Result.Height - 1 then
+                        for Fill in Row + 1 .. Result.Values'Last (1) loop
+                           for Col in Result.Values'Range (2) loop
+                              Result.Values (Fill, Col) := Transparent_Pixel;
+                           end loop;
+                        end loop;
+                     end if;
+
+                     -- Signal truncated image, if the caller cares
+                     Result.Complete := False;
+
+                     exit;  -- EOF ends the input process
+                  end if;
+
+               end loop;
+            end;
+
+         end if;
 
       end Read_PPM;
 

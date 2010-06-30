@@ -24,11 +24,11 @@
 
 
 -- Environment
-with Lumen.Byte_IO;
+with Lumen.Binary.IO;
 
 private package Lumen.Image.PPM is
 
-   function From_File (File : in Byte_IO.File_Type;   PPM_Format : in Character) return Descriptor;
+   function From_File (File : in Binary.IO.File_Type;   PPM_Format : in Character) return Descriptor;
 
 end Lumen.Image.PPM;
 
