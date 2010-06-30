@@ -24,8 +24,7 @@
 
 
 -- Environment
-with Lumen.Binary;
-with Lumen.Byte_IO;
+with Lumen.Binary.IO;
 with Lumen.Image.PPM;
 
 
@@ -48,7 +47,7 @@ package body Lumen.Image is
       PNG_Signature  : constant Byte_String := (16#89#, 16#50#, 16#4E#, 16#47#, 16#0D#, 16#0A#, 16#1A#, 16#0A#);
       Whitespace     : constant Byte_String := (16#09#, 16#0A#, 16#0D#, 16#20#);
 
-      File    : Byte_IO.File_Type;
+      File    : Binary.IO.File_Type;
       Sig     : Byte_String (1 .. Max_Signature) := (others => 16#00#);
       Len     : Natural := 0;
       Result  : Descriptor;
@@ -73,34 +72,34 @@ package body Lumen.Image is
    begin  -- From_File
 
       -- Grab enough data to get any signature
-      Byte_IO.Open (File, Pathname);
-      Byte_IO.Read (File, Sig, Len);
+      Binary.IO.Open (File, Pathname);
+      Binary.IO.Read (File, Sig, Len);
 
       -- Classify the format based on the signature data
       if    Sig (Sig'First .. Sig'First + PNG_Signature'Length - 1)  = PNG_Signature then
-         Byte_IO.Close (File);
+         Binary.IO.Close (File);
          raise Unknown_Format;  -- until we start to support PNG
       elsif Sig (Sig'First .. Sig'First + JFIF_Signature'Length - 1) = JFIF_Signature then
-         Byte_IO.Close (File);
+         Binary.IO.Close (File);
          raise Unknown_Format;  -- until we start to support JPEG/JFIF
       elsif Sig (Sig'First .. Sig'First + FITS_Signature'Length - 1) = FITS_Signature then
-         Byte_IO.Close (File);
+         Binary.IO.Close (File);
          raise Unknown_Format;  -- until we start to support FITS
       elsif Sig (Sig'First .. Sig'First + BMP_Signature'Length - 1)  = BMP_Signature then
-         Byte_IO.Close (File);
+         Binary.IO.Close (File);
          raise Unknown_Format;  -- until we start to support BMP
       elsif Sig (Sig'First) = 16#50# and Is_In (Sig (Sig'First + 2), Whitespace) then  -- "P"
          PPM_Sub := Character'Val (Sig (Sig'First + 1));
          if PPM_Sub in '4' .. '6' then
             Result := PPM.From_File (File, PPM_Sub);
-            Byte_IO.Close (File);
+            Binary.IO.Close (File);
             return Result;
          else
-            Byte_IO.Close (File);
+            Binary.IO.Close (File);
             raise Unknown_Format;  -- something else that starts with "P"
          end if;
       else
-         Byte_IO.Close (File);
+         Binary.IO.Close (File);
          raise Unknown_Format;  -- some format we don't recognize
       end if;
 
