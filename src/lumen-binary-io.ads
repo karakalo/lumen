@@ -1,5 +1,6 @@
 
--- Lumen.Byte_IO -- Read and write streams of bytes from external files.
+-- Lumen.Binary.IO -- Read and write streams of binary data from external
+--                    files.
 --
 -- Chip Richards, NiEstu, Phoenix AZ, Summer 2010
 
@@ -25,10 +26,9 @@
 
 -- Environment
 with Ada.Streams.Stream_IO;
-with Lumen.Binary;
 
 
-package Lumen.Byte_IO is
+package Lumen.Binary.IO is
 
    -- Our interpretation of the various file exceptions
    Nonexistent_File : exception;
@@ -49,17 +49,26 @@ package Lumen.Byte_IO is
    -- Close open file
    procedure Close  (File : in out File_Type);
 
-
    -- Read and return a stream of bytes up to the given length
    function Read (File     : File_Type;
                   Length   : Positive)
-   return Binary.Byte_String;
+   return Byte_String;
 
    -- Read and return a stream of bytes up to the given length
    procedure Read (File : in     File_Type;
-                   Item :    out Binary.Byte_String;
+                   Item :    out Byte_String;
+                   Last :    out Natural);
+
+   -- Read and return a stream of shorts up to the given length
+   function Read (File     : File_Type;
+                  Length   : Positive)
+   return Short_String;
+
+   -- Read and return a stream of shorts up to the given length
+   procedure Read (File : in     File_Type;
+                   Item :    out Short_String;
                    Last :    out Natural);
 
    -- Writing will go here
 
-end Lumen.Byte_IO;
+end Lumen.Binary.IO;

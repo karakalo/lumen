@@ -1,5 +1,6 @@
 
--- Lumen.Byte_IO -- Read and write streams of bytes from external files.
+-- Lumen.Binary.IO -- Read and write streams of binary data from external
+--                    files.
 --
 -- Chip Richards, NiEstu, Phoenix AZ, Summer 2010
 
@@ -25,11 +26,15 @@
 
 -- Environment
 with Ada.Streams.Stream_IO;
-with Lumen.Binary;
 with System.Address_To_Access_Conversions;
 
 
-package body Lumen.Byte_IO is
+package body Lumen.Binary.IO is
+
+   ---------------------------------------------------------------------------
+
+   -- Useful constant for our short I/O routines
+   Bytes_Per_Short : constant := Short'Size / Ada.Streams.Stream_Element'Size;
 
    ---------------------------------------------------------------------------
 
@@ -67,7 +72,7 @@ package body Lumen.Byte_IO is
    -- Read and return a stream of bytes up to the given length
    function Read (File   : File_Type;
                   Length : Positive)
-   return Binary.Byte_String is
+   return Byte_String is
 
       use Ada.Streams;
 
@@ -75,7 +80,7 @@ package body Lumen.Byte_IO is
       subtype SEA is Stream_Element_Array (1 .. Stream_Element_Offset (Length));
       package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
 
-      Into : Binary.Byte_String (1 .. Length);
+      Into : Byte_String (1 .. Length);
       Item : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Into'Address);
       Got  : Stream_Element_Offset;
 
@@ -93,7 +98,7 @@ package body Lumen.Byte_IO is
 
    -- Read and return a stream of bytes up to the given length
    procedure Read (File : in     File_Type;
-                   Item :    out Binary.Byte_String;
+                   Item :    out Byte_String;
                    Last :    out Natural) is
 
       use Ada.Streams;
@@ -117,8 +122,61 @@ package body Lumen.Byte_IO is
 
    ---------------------------------------------------------------------------
 
+   -- Read and return a stream of shorts up to the given length
+   function Read (File   : File_Type;
+                  Length : Positive)
+   return Short_String is
+
+      use Ada.Streams;
+
+      -- Pointer-fumbling routines used to read data without copying it
+      subtype SEA is Stream_Element_Array (1 .. Stream_Element_Offset (Length * Bytes_Per_Short));
+      package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
+
+      Into : Short_String (1 .. Length);
+      Item : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Into'Address);
+      Got  : Stream_Element_Offset;
+
+   begin  -- Read
+
+      Stream_IO.Read (File, Item.all, Got);
+      return Into (Into'First .. Natural (Got / Bytes_Per_Short));
+
+   exception
+      when others =>
+         raise Read_Error;
+   end Read;
+
+   ---------------------------------------------------------------------------
+
+   -- Read and return a stream of shorts up to the given length
+   procedure Read (File : in     File_Type;
+                   Item :    out Short_String;
+                   Last :    out Natural) is
+
+      use Ada.Streams;
+
+      -- Pointer-fumbling routines used to read data without copying it
+      subtype SEA is Stream_Element_Array (1 .. Stream_Element_Offset (Item'Length * Bytes_Per_Short));
+      package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
+
+      Into : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);
+      Got  : Stream_Element_Offset;
+
+   begin  -- Read
+
+      Stream_IO.Read (File, Into.all, Got);
+      Last := Natural (Got);
+
+   exception
+     when others =>
+        raise Read_Error;
+   end Read;
+
+   ---------------------------------------------------------------------------
+
    -- Writing will go here
 
    ---------------------------------------------------------------------------
 
-end Lumen.Byte_IO;
+end Lumen.Binary.IO;
