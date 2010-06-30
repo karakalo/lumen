@@ -61,6 +61,29 @@ package body Lumen.Binary.IO is
 
    ---------------------------------------------------------------------------
 
+   -- Create a file for writing
+   procedure Create (File     : in out File_Type;
+                     Pathname : in     String) is
+   begin  -- Create
+
+      -- Just regular stream create, for writing
+      Ada.Streams.Stream_IO.Create (File => File,
+                                    Mode => Ada.Streams.Stream_IO.Out_File,
+                                    Name => Pathname);
+
+   exception
+      when Ada.Streams.Stream_IO.Name_Error =>
+         raise Malformed_Name;
+      when Ada.Streams.Stream_IO.Use_Error =>
+         raise Unwriteable_File;
+      when Ada.Streams.Stream_IO.Device_Error =>
+         raise Access_Failed;
+      when others =>
+         raise Unknown_Error;
+   end Create;
+
+   ---------------------------------------------------------------------------
+
    -- Close open file
    procedure Close  (File : in out File_Type) is
    begin  -- Close
@@ -175,7 +198,26 @@ package body Lumen.Binary.IO is
 
    ---------------------------------------------------------------------------
 
-   -- Writing will go here
+   -- Write a stream of bytes of the given length
+   procedure Write (File : in File_Type;
+                    Item : in Byte_String) is
+
+      use Ada.Streams;
+
+      -- Pointer-fumbling routines used to write data without copying it
+      subtype SEA is Stream_Element_Array (Stream_Element_Offset (Item'First) .. Stream_Element_Offset (Item'Last));
+      package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
+
+      From : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);
+
+   begin  -- Write
+
+      Stream_IO.Write (File, From.all);
+
+   exception
+     when others =>
+        raise Write_Error;
+   end Write;
 
    ---------------------------------------------------------------------------
 

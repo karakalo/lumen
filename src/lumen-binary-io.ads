@@ -31,13 +31,14 @@ with Ada.Streams.Stream_IO;
 package Lumen.Binary.IO is
 
    -- Our interpretation of the various file exceptions
+   Access_Failed    : exception;
+   Malformed_Name   : exception;
    Nonexistent_File : exception;
+   Read_Error       : exception;
+   Unknown_Error    : exception;
    Unreadable_File  : exception;
    Unwriteable_File : exception;
-   Access_Failed    : exception;
-   Read_Error       : exception;
    Write_Error      : exception;
-   Unknown_Error    : exception;
 
    -- Our version of the Stream_IO file type
    subtype File_Type is Ada.Streams.Stream_IO.File_Type;
@@ -45,6 +46,10 @@ package Lumen.Binary.IO is
    -- Open a file for reading
    procedure Open (File     : in out File_Type;
                    Pathname : in     String);
+
+   -- Create a file for writing
+   procedure Create (File     : in out File_Type;
+                     Pathname : in     String);
 
    -- Close open file
    procedure Close  (File : in out File_Type);
@@ -69,6 +74,8 @@ package Lumen.Binary.IO is
                    Item :    out Short_String;
                    Last :    out Natural);
 
-   -- Writing will go here
+   -- Write a stream of bytes of the given length
+   procedure Write (File : in File_Type;
+                    Item : in Byte_String);
 
 end Lumen.Binary.IO;
