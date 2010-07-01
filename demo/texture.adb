@@ -25,8 +25,8 @@ procedure Texture is
 
    Win      : Lumen.Window.Handle;
    Event    : Lumen.Events.Event_Data;
-   Wide     : Natural := 400;
-   High     : Natural := 400;
+   Wide     : Natural;  -- no longer have default values since they're now set by the image size
+   High     : Natural;
    Rotation : Natural := 0;
    Image    : Lumen.Image.Descriptor;
    Img_Wide : GL.glFloat;
@@ -76,7 +76,6 @@ procedure Texture is
       glTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA, GLsizei (Image.Width), GLsizei (Image.Height), 0,
                     GL_RGBA, GL_UNSIGNED_BYTE, IP);
 
-
    end Create_Texture;
 
    ---------------------------------------------------------------------------
@@ -110,7 +109,7 @@ procedure Texture is
 
       -- Set up a 3D viewing frustum, which is basically a truncated pyramid
       -- in which the scene takes place.  Roughly, the narrow end is your
-      -- screen, and the wide end is 10 units farther away.
+      -- screen, and the wide end is 10 units away from the camera.
       if W <= H then
          Aspect := GLdouble (H) / GLdouble (W);
          glFrustum (-1.0, 1.0, -Aspect, Aspect, 2.0, 10.0);
