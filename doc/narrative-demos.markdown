@@ -15,6 +15,10 @@ there ever are any, may not be familiar with some of the terms.
 * **[`spinner`][spinner]**: Showing use of the animation package, and a third
   way to do event handlers.
 
+* **[`texture`][texture]**: A variant of `spinner` showing use of the image
+    loading package.
+
 [colors]:     narrative-colors.html
 [sgi_simple]: narrative-sgi_simple.html
 [spinner]:    narrative-spinner.html
+[texture]:    narrative-texture.html

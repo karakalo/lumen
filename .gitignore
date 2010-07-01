@@ -5,6 +5,7 @@
 demo/colors
 demo/sgi_simple
 demo/spinner
+demo/texture
 lib
 obj
 test
