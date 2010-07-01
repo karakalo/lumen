@@ -11,11 +11,12 @@ PAGES = \
 	rationale
 
 NARRS = \
-	narrative-lumen \
-	narrative-demos \
 	narrative-colors \
+	narrative-demos \
+	narrative-lumen \
 	narrative-sgi_simple \
-	narrative-spinner
+	narrative-spinner \
+	narrative-texture
 
 FILES = ${PAGES} ${NARRS}
 
