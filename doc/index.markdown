@@ -25,7 +25,7 @@ And some older documents which still have some interesting information in them:
 
 Look for more to be added to this page in the days and weeks ahead!
 
-<h2 class="centered">News About Lumen</h1>
+<h2 class="centered">News About Lumen</h2>
 
 I'm going to start adding notable events here, so you can check quickly
 whether there's something new since you last visited the site.

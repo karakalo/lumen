@@ -382,7 +382,7 @@ Right now this package has a couple of serious limitations:
   [the netpbm image formats][netpbm].  While they're widely recognized,
   they're not sufficient, and more formats will be added "soon".  Near-term
   plans are for PNG, JPG, and BMP, at least.  Probably won't ever add GIF, or
-  PAM, or ASCII netpbm.  Things like TIFF and Targa and FITS so on will be
+  PAM, or ASCII netpbm.  Things like TIFF and Targa and FITS and so on will be
   determined by demand.
 
 But even with those limitations, it's still useful.  It accepts a pathname,
@@ -413,8 +413,8 @@ appealing.
 
 # Lumen.Binary.IO {#lumen-binary-io}
 
-A simple package that uses Ada.Streams.Stream_IO to implement the reading and
-writing of some of the data types in its parent package.
+A simple package that uses `Ada.Streams.Stream_IO` to implement the reading
+and writing of some of the data types in its parent package.
 
 ------------------------------------------------------------------------------
 
