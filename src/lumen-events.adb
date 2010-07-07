@@ -48,7 +48,7 @@ package body Lumen.Events is
       ------------------------------------------------------------------------
 
       -- X event type codes
-      X_Error            : constant :=  0;
+      X_Error            : constant :=  0;  -- we don't actually use this, just there to define bounds
       X_Key_Press        : constant :=  2;
       X_Key_Release      : constant :=  3;
       X_Button_Press     : constant :=  4;
@@ -63,9 +63,10 @@ package body Lumen.Events is
       X_Unmap_Notify     : constant := 19;
       X_Configure_Notify : constant := 22;
       X_Client_Message   : constant := 33;
+      X_Generic_Event    : constant := 35;  -- we don't actually use this, just there to define bounds
 
       X_First_Event    : constant := X_Error;
-      X_Last_Event     : constant := X_Client_Message;
+      X_Last_Event     : constant := X_Generic_Event + 1;
 
       -- X modifier mask and its values
       type Modifier_Mask is mod 2 ** Integer'Size;
