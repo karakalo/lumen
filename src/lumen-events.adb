@@ -220,6 +220,11 @@ package body Lumen.Events is
       -- Get the event from the X server
       Internal.X_Next_Event (Win.Display, X_Event'Address);
 
+      -- Guard against pathological X servers
+      if not X_Event.X_Event_Type'Valid then
+         return (Which => Unknown_Event);
+      end if;
+
       -- Based on the event type, transfer and convert the event data
       case X_Event.X_Event_Type is
 
