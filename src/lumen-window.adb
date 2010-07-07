@@ -37,8 +37,6 @@ with System;
 
 with GNAT.Case_Util;
 
-with GL;
-
 -- This is really "part of" this package, just packaged separately so it can
 -- be used in Events
 with Lumen.Internal;
@@ -94,18 +92,20 @@ package body Lumen.Window is
 
    ---------------------------------------------------------------------------
 
+   GL_TRUE : constant Character := Character'Val (1);
+
    -- GLX stuff needed by more than one of the routines below
    function GLX_Create_Context (Display    : Display_Pointer;
                                 Visual     : X_Visual_Info_Pointer;
                                 Share_List : GLX_Context;
-                                Direct     : GL.GLboolean)
+                                Direct     : Character)
    return GLX_Context;
    pragma Import (C, GLX_Create_Context, "glXCreateContext");
 
    function GLX_Make_Current (Display  : Display_Pointer;
                               Drawable : Window_ID;
                               Context  : GLX_Context)
-   return GL.GLboolean;
+   return Character;
    pragma Import (C, GLX_Make_Current, "glXMakeCurrent");
 
    ---------------------------------------------------------------------------
@@ -250,7 +250,7 @@ package body Lumen.Window is
       Con_Attributes : GLX_Attribute_List := (others => GLX_None);
       Con_Attr_Index : Positive := Con_Attributes'First;
       Our_Context    : GLX_Context;
-      Did            : GL.GLboolean;
+      Did            : Character;
       Display        : Display_Pointer;
       Mapped         : Map_Event_Data;
       Our_Parent     : Window_ID;
@@ -367,18 +367,14 @@ package body Lumen.Window is
 
       -- Connect the OpenGL context to the new X window
       if Context = No_Context then
-         Our_Context := GLX_Create_Context (Display, Visual, GLX_Context (System.Null_Address), GL.GL_TRUE);
+         Our_Context := GLX_Create_Context (Display, Visual, GLX_Context (System.Null_Address), GL_TRUE);
       else
          Our_Context := Context;
       end if;
       Did := GLX_Make_Current (Display, Window, Our_Context);
-      declare
-         use GL;
-      begin
-         if Did /= GL_TRUE then
-            raise Context_Failed;
-         end if;
-      end;
+      if Did /= GL_TRUE then
+         raise Context_Failed;
+      end if;
 
       -- Return the results
       return new Window_Info'(Display     => Display,
@@ -456,7 +452,7 @@ package body Lumen.Window is
    -- with
    function Create_Context (Win : Handle) return Context_Handle is
    begin  -- Create_Context
-      return GLX_Create_Context (Win.Display, Win.Visual, GLX_Context (System.Null_Address), GL.GL_TRUE);
+      return GLX_Create_Context (Win.Display, Win.Visual, GLX_Context (System.Null_Address), GL_TRUE);
    end Create_Context;
 
    ---------------------------------------------------------------------------
@@ -478,9 +474,6 @@ package body Lumen.Window is
    -- Make a rendering context the current one for a window
    procedure Make_Current (Win     : in out Handle;
                            Context : in     Context_Handle) is
-
-      use GL;
-
    begin  -- Make_Current
       if GLX_Make_Current (Win.Display, Win.Window, Context) = GL_TRUE then
          Win.Context := Context;
