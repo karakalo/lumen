@@ -50,9 +50,58 @@ package Lumen.Window is
    -- Rendering context's color depth
    type Color_Depth is (Pseudo_Color, True_Color);
 
+   -- OpenGL context ("visual") attribute specifiers
+   type Context_Attribute_Name is
+      (
+       Attr_None,
+       Attr_Use_GL,             -- unused
+       Attr_Buffer_Size,        -- color index buffer size, ignored if TrueColor
+       Attr_Level,              -- buffer level for over/underlays
+       Attr_RGBA,               -- set by Depth => TrueColor
+       Attr_Doublebuffer,       -- set by Animate => True
+       Attr_Stereo,             -- wow, you have stereo visuals?
+       Attr_Aux_Buffers,        -- number of auxiliary buffers
+       Attr_Red_Size,           -- bit depth, red
+       Attr_Green_Size,         -- bit depth, green
+       Attr_Blue_Size,          -- bit depth, blue
+       Attr_Alpha_Size,         -- bit depth, alpha
+       Attr_Depth_Size,         -- depth buffer size
+       Attr_Stencil_Size,       -- stencil buffer size
+       Attr_Accum_Red_Size,     -- accumulation buffer bit depth, red
+       Attr_Accum_Green_Size,   -- accumulation buffer bit depth, green
+       Attr_Accum_Blue_Size,    -- accumulation buffer bit depth, blue
+       Attr_Accum_Alpha_Size    -- accumulation buffer bit depth, alpha
+      );
+
+   type Context_Attribute (Name  : Context_Attribute_Name := Attr_None) is record
+      case Name is
+         when Attr_None | Attr_Use_GL | Attr_RGBA | Attr_Doublebuffer | Attr_Stereo =>
+            null;  -- all present or not, no value
+         when Attr_Level =>
+            Level : Integer := 0;
+         when Attr_Buffer_Size | Attr_Aux_Buffers | Attr_Depth_Size | Attr_Stencil_Size |
+              Attr_Red_Size | Attr_Green_Size | Attr_Blue_Size | Attr_Alpha_Size |
+              Attr_Accum_Red_Size | Attr_Accum_Green_Size | Attr_Accum_Blue_Size | Attr_Accum_Alpha_Size =>
+            Size : Natural := 0;
+      end case;
+   end record;
+
+   type Context_Attributes is array (Positive range <>) of Context_Attribute;
+
+   -- These are what we normally use, but other values are also possible
+   Default_Context_Attributes : constant Context_Attributes :=
+      (
+       (Attr_Red_Size,    8),
+       (Attr_Green_Size,  8),
+       (Attr_Blue_Size,   8),
+       (Attr_Alpha_Size,  8),
+       (Attr_Depth_Size, 24)
+      );
+
    -- Local exceptions raised by these procedures
    Connection_Failed : exception;  -- can't connect to X server
    Context_Failed    : exception;  -- can't create or attach OpenGL context
+   Not_Available     : exception;  -- can't find a visual with given attributes
 
    -- Create a native window, with defaults for configuration intended to
    -- create a "usable" window.  Details about the parameters are:
@@ -83,17 +132,18 @@ package Lumen.Window is
    --
    -- Animated: Whether the GL rendering context will be double-buffered, thus
    -- allowing smooth animation.
-   function Create (Parent        : Handle           := No_Window;
-                    Width         : Natural          := 400;
-                    Height        : Natural          := 400;
-                    Events        : Wanted_Event_Set := Want_No_Events;
-                    Name          : String           := "";
-                    Icon_Name     : String           := "";
-                    Class_Name    : String           := "";
-                    Instance_Name : String           := "";
-                    Context       : Context_Handle   := No_Context;
-                    Depth         : Color_Depth      := True_Color;
-                    Animated      : Boolean          := True)
+   function Create (Parent        : Handle             := No_Window;
+                    Width         : Natural            := 400;
+                    Height        : Natural            := 400;
+                    Events        : Wanted_Event_Set   := Want_No_Events;
+                    Name          : String             := "";
+                    Icon_Name     : String             := "";
+                    Class_Name    : String             := "";
+                    Instance_Name : String             := "";
+                    Context       : Context_Handle     := No_Context;
+                    Depth         : Color_Depth        := True_Color;
+                    Animated      : Boolean            := True;
+                    Attributes    : Context_Attributes := Default_Context_Attributes)
    return Handle;
 
    -- Destroy a native window, including its current rendering context.

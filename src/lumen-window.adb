@@ -111,17 +111,18 @@ package body Lumen.Window is
    ---------------------------------------------------------------------------
 
    -- Create a native window
-   function Create (Parent        : Handle           := No_Window;
-                    Width         : Natural          := 400;
-                    Height        : Natural          := 400;
-                    Events        : Wanted_Event_Set := Want_No_Events;
-                    Name          : String           := "";
-                    Icon_Name     : String           := "";
-                    Class_Name    : String           := "";
-                    Instance_Name : String           := "";
-                    Context       : Context_Handle   := No_Context;
-                    Depth         : Color_Depth      := True_Color;
-                    Animated      : Boolean          := True)
+   function Create (Parent        : Handle             := No_Window;
+                    Width         : Natural            := 400;
+                    Height        : Natural            := 400;
+                    Events        : Wanted_Event_Set   := Want_No_Events;
+                    Name          : String             := "";
+                    Icon_Name     : String             := "";
+                    Class_Name    : String             := "";
+                    Instance_Name : String             := "";
+                    Context       : Context_Handle     := No_Context;
+                    Depth         : Color_Depth        := True_Color;
+                    Animated      : Boolean            := True;
+                    Attributes    : Context_Attributes := Default_Context_Attributes)
    return Handle is
 
       -- Xlib types needed only by Create
@@ -212,7 +213,13 @@ package body Lumen.Window is
       ------------------------------------------------------------------------
 
       -- GLX types needed only by Create
-      Max_GLX_Attributes : constant := 3;
+
+      -- This should be more space than we'll ever need, allowing a value for
+      -- every attr (which not all of them have), and adding 2 for our "extra"
+      -- values of RGBA and double-buffered, which are (or at least can be)
+      -- set separately
+      Max_GLX_Attributes : constant := (Context_Attribute_Name'Pos (Context_Attribute_Name'Last) + 1) * 2 + 2;
+
       type GLX_Attribute_List     is array (1 .. Max_GLX_Attributes) of Integer;
       type GLX_Attribute_List_Ptr is new System.Address;
 
@@ -222,11 +229,6 @@ package body Lumen.Window is
                                   Attribute_List : GLX_Attribute_List_Ptr)
       return X_Visual_Info_Pointer;
       pragma Import (C, GLX_Choose_Visual, "glXChooseVisual");
-
-      -- GLX constants needed only by Create
-      GLX_None            : constant := 0;
-      GLX_RGBA            : constant := 4;
-      GLX_Double_Buffered : constant := 5;
 
       ------------------------------------------------------------------------
 
@@ -247,7 +249,7 @@ package body Lumen.Window is
       Structure_Notify_Mask : constant X_Event_Mask := 2#0000_0010_0000_0000_0000_0000#;  -- 17th bit, always want this one
 
       -- Variables used in Create
-      Con_Attributes : GLX_Attribute_List := (others => GLX_None);
+      Con_Attributes : GLX_Attribute_List := (others => Context_Attribute_Name'Pos (Attr_None));
       Con_Attr_Index : Positive := Con_Attributes'First;
       Our_Context    : GLX_Context;
       Did            : Character;
@@ -268,16 +270,38 @@ package body Lumen.Window is
          raise Connection_Failed;
       end if;
 
-      -- Get an appropriate visual
+      -- Set up the attributes array (first putting in our separately-specified
+      -- ones if given) and use it to get an appropriate visual
       if Depth = True_Color then
-         Con_Attributes (Con_Attr_Index) := GLX_RGBA;
+         Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attr_RGBA);
          Con_Attr_Index := Con_Attr_Index + 1;
       end if;
       if Animated then
-         Con_Attributes (Con_Attr_Index) := GLX_Double_Buffered;
+         Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attr_Doublebuffer);
          Con_Attr_Index := Con_Attr_Index + 1;
       end if;
+      for Attr in Attributes'Range loop
+         Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attributes (Attr).Name);
+         Con_Attr_Index := Con_Attr_Index + 1;
+         case Attributes (Attr).Name is
+            when Attr_None | Attr_Use_GL | Attr_RGBA | Attr_Doublebuffer | Attr_Stereo =>
+               null;  -- present or not, no value
+            when Attr_Level =>
+               Con_Attributes (Con_Attr_Index) := Attributes (Attr).Level;
+               Con_Attr_Index := Con_Attr_Index + 1;
+            when Attr_Buffer_Size | Attr_Aux_Buffers | Attr_Depth_Size | Attr_Stencil_Size |
+                 Attr_Red_Size | Attr_Green_Size | Attr_Blue_Size | Attr_Alpha_Size |
+                 Attr_Accum_Red_Size | Attr_Accum_Green_Size | Attr_Accum_Blue_Size | Attr_Accum_Alpha_Size =>
+               Con_Attributes (Con_Attr_Index) := Attributes (Attr).Size;
+               Con_Attr_Index := Con_Attr_Index + 1;
+         end case;
+      end loop;
       Visual := GLX_Choose_Visual (Display, X_Default_Screen (Display), GLX_Attribute_List_Ptr (Con_Attributes'Address));
+
+      -- Make sure we actually found a visual to use
+      if Visual = null then
+         raise Not_Available;
+      end if;
 
       -- Pick the parent window to use
       if Parent = No_Window then
