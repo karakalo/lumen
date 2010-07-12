@@ -119,7 +119,7 @@ package body Lumen.Binary.IO is
 
    ---------------------------------------------------------------------------
 
-   -- Read and return a stream of bytes up to the given length
+   -- Read and return a stream of bytes up to the length of the given buffer
    procedure Read (File : in     File_Type;
                    Item :    out Byte_String;
                    Last :    out Natural) is
@@ -172,7 +172,7 @@ package body Lumen.Binary.IO is
 
    ---------------------------------------------------------------------------
 
-   -- Read and return a stream of shorts up to the given length
+   -- Read and return a stream of shorts up to the length of the given buffer
    procedure Read (File : in     File_Type;
                    Item :    out Short_String;
                    Last :    out Natural) is
@@ -198,7 +198,7 @@ package body Lumen.Binary.IO is
 
    ---------------------------------------------------------------------------
 
-   -- Write a stream of bytes of the given length
+   -- Write a stream of bytes
    procedure Write (File : in File_Type;
                     Item : in Byte_String) is
 

@@ -59,7 +59,7 @@ package Lumen.Binary.IO is
                   Length   : Positive)
    return Byte_String;
 
-   -- Read and return a stream of bytes up to the given length
+   -- Read and return a stream of bytes up to the length of the given buffer
    procedure Read (File : in     File_Type;
                    Item :    out Byte_String;
                    Last :    out Natural);
@@ -69,12 +69,12 @@ package Lumen.Binary.IO is
                   Length   : Positive)
    return Short_String;
 
-   -- Read and return a stream of shorts up to the given length
+   -- Read and return a stream of shorts up to the length of the given buffer
    procedure Read (File : in     File_Type;
                    Item :    out Short_String;
                    Last :    out Natural);
 
-   -- Write a stream of bytes of the given length
+   -- Write a stream of bytes
    procedure Write (File : in File_Type;
                     Item : in Byte_String);
 
