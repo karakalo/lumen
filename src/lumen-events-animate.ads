@@ -37,7 +37,7 @@ package Lumen.Events.Animate is
    ---------------------------------------------------------------------------
 
    -- An animate-frame callback procedure
-   type Animate_Callback is access procedure;
+   type Animate_Callback is access procedure (Frame_Delta : in Duration);
    No_Callback : constant Animate_Callback := null;
 
    ---------------------------------------------------------------------------

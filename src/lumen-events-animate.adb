@@ -80,7 +80,11 @@ package body Lumen.Events.Animate is
          Wait_Frame (Win, SPF);
 
          -- Draw next frame
-         Frame.all;
+         declare
+            use Ada.Calendar;
+         begin
+            Frame (Clock - Win.Prior_Frame);
+         end;
 
          -- Note its time, and count it
          Win.Prior_Frame := Ada.Calendar.Clock;
@@ -128,7 +132,11 @@ package body Lumen.Events.Animate is
          Wait_Frame (Win, SPF);
 
          -- Draw next frame
-         Frame.all;
+         declare
+            use Ada.Calendar;
+         begin
+            Frame (Clock - Win.Prior_Frame);
+         end;
 
          -- Note its time, and count it
          Win.Prior_Frame := Ada.Calendar.Clock;
