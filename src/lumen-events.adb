@@ -59,8 +59,8 @@ package body Lumen.Events is
       X_Focus_In         : constant :=  9;
       X_Focus_Out        : constant := 10;
       X_Expose           : constant := 12;
-      X_Map_Notify       : constant := 18;
-      X_Unmap_Notify     : constant := 19;
+      X_Unmap_Notify     : constant := 18;
+      X_Map_Notify       : constant := 19;
       X_Configure_Notify : constant := 22;
       X_Client_Message   : constant := 33;
       X_Generic_Event    : constant := 35;  -- we don't actually use this, just there to define bounds
@@ -300,6 +300,9 @@ package body Lumen.Events is
                                     Height    => X_Event.Xps_Height,
                                     Count     => X_Event.Xps_Count));
 
+         when X_Unmap_Notify =>
+            return (Which       => Hidden);
+
          when X_Map_Notify =>
             -- Fake up a "whole window exposed" event
             return (Which       => Exposed,
@@ -308,9 +311,6 @@ package body Lumen.Events is
                                     Width     => Win.Width,
                                     Height    => Win.Height,
                                     Count     => 0));
-
-         when X_Unmap_Notify =>
-            return (Which       => Hidden);
 
          when X_Configure_Notify =>
             if X_Event.Cfg_Width /= Win.Width or X_Event.Cfg_Height /= Win.Height then
@@ -366,12 +366,14 @@ package body Lumen.Events is
    procedure Select_Events (Win   : in Window.Handle;
                             Calls : in Event_Callback_Table) is
 
-      Event : Event_Data := Next_Event (Win);
+      Event : Event_Data;
 
    begin  -- Select_Events
 
       -- Get events and pass them to the selected callback, if there is one
       loop
+         Event := Next_Event (Win);
+
          if Calls (Event.Which) /= No_Callback then
             Calls (Event.Which) (Event);
          end if;
