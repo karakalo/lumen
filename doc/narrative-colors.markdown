@@ -19,7 +19,7 @@ done, and reporting user input events to the app.  It was adapted from
 It starts off using `Lumen.Window.Create` to create its window, which creates
 a native window and an OpenGL rendering context to go with it.  It sets the
 window name (which on my system appears in the window's title bar), asks for
-it *nnt* to be double-buffered (`Animated => False`, I'll explain why in a
+it *not* to be double-buffered (`Animated => False`, I'll explain why in a
 bit), and asks to see key-press events sent to the new window.
 
 Having created the window successfully, which it knows because otherwise an
