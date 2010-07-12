@@ -126,7 +126,7 @@ procedure Spinner is
    ---------------------------------------------------------------------------
 
    -- Our draw-a-frame routine, should get called FPS times a second
-   procedure New_Frame is
+   procedure New_Frame (Frame_Delta : in Duration) is
    begin  -- New_Frame
       if Rotation >= Max_Rotation then
          Rotation := 0;
