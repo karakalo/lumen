@@ -37,6 +37,8 @@ with System;
 
 with GNAT.Case_Util;
 
+with Lumen.Window.X_Input;
+
 -- This is really "part of" this package, just packaged separately so it can
 -- be used in Events
 with Lumen.Internal;
@@ -131,7 +133,6 @@ package body Lumen.Window is
       type Colormap_ID              is new Long_Integer;
       type X_Window_Attributes_Mask is mod 2 ** Integer'Size;
       type Window_Class             is (Copy_From_Parent, Input_Output, Input_Only);
-      type X_Event_Mask             is mod 2 ** Long_Integer'Size;
 
       subtype Dimension is Short_Integer;
       subtype Pixel     is Long_Integer;
@@ -259,6 +260,7 @@ package body Lumen.Window is
       Visual         : X_Visual_Info_Pointer;
       Win_Attributes : X_Set_Window_Attributes;
       Window         : Window_ID;
+      Result         : Handle;
 
       ------------------------------------------------------------------------
 
@@ -400,8 +402,8 @@ package body Lumen.Window is
          raise Context_Failed;
       end if;
 
-      -- Return the results
-      return new Window_Info'(Display     => Display,
+      -- Create the new window and register it with the event task
+      Result := new Window_Info'(Display     => Display,
                               Window      => Window,
                               Visual      => Visual,
                               Width       => Width,
@@ -411,7 +413,13 @@ package body Lumen.Window is
                               Last_Start  => Ada.Calendar.Clock,
                               App_Frames  => 0,
                               Last_Frames => 0,
-                              Context     => Our_Context);
+                              Context     => Our_Context,
+                              Events      => new Event_Queue_Pkg.Protected_Queue_Type);
+
+      X_Input.Add_Window (Result);
+
+      -- Return the results
+      return Result;
    end Create;
 
    ---------------------------------------------------------------------------
@@ -422,12 +430,35 @@ package body Lumen.Window is
       procedure X_Destroy_Window (Display : in Display_Pointer;   Window : in Window_ID);
       pragma Import (C, X_Destroy_Window, "XDestroyWindow");
 
+      procedure Free is new Ada.Unchecked_Deallocation (Event_Queue_Pkg.Protected_Queue_Type, Event_Queue_Pointer);
       procedure Free is new Ada.Unchecked_Deallocation (Window_Info, Handle);
 
    begin  -- Destroy
       X_Destroy_Window (Win.Display, Win.Window);
+      X_Input.Drop_Window (Win);
+      Free (Win.Events);
       Free (Win);
    end Destroy;
+
+   ---------------------------------------------------------------------------
+
+   -- Terminates Lumen
+   procedure Shutdown is
+
+      -- Binding to XSendEvent, used to fake up a close-window event so we can
+      -- get the event task unstuck
+      procedure X_Send_Event (Display    : in Display_Pointer;
+                              Window     : in Window_ID;
+                              Propagate  : in Integer;
+                              Event_Mask : in X_Event_Mask;
+                              Event      : in System.Address);
+      pragma Import (C, X_Send_Event, "XSendEvent");
+
+   begin  -- Shutdown
+
+      -- Terminate input-event tasks
+      X_Input.Shutdown;
+   end Shutdown;
 
    ---------------------------------------------------------------------------
 

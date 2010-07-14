@@ -149,6 +149,9 @@ package Lumen.Window is
    -- Destroy a native window, including its current rendering context.
    procedure Destroy (Win : in out Handle);
 
+   -- Terminates Lumen
+   procedure Shutdown;
+
    -- Set various textual names associated with a window.  Null string means
    -- leave the current value unchanged;
    procedure Set_Names (Win           : in Handle;
