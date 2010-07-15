@@ -28,12 +28,4 @@ private package Lumen.Window.X_Input is
    -- De-register a window with the X input event task
    procedure Drop_Window (Win : in Handle);
 
-   -- Shut down the events task
-   procedure Shutdown;
-
-   -- The task that reads events from the X server
-   task X_Input_Event_Task is
-      entry Startup;
-   end X_Input_Event_Task;
-
 end Lumen.Window.X_Input;

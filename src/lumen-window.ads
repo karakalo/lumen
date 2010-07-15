@@ -21,19 +21,20 @@
 -- in connection with the use or performance of this software.
 
 -- Environment
+with Ada.Finalization;
+
 with Lumen.Internal;
 
 
 package Lumen.Window is
 
-   -- Handle for a Lumen window
-   type Handle is access Internal.Window_Info;
+   -- Local exceptions raised by these procedures
+   Connection_Failed : exception;  -- can't connect to X server
+   Context_Failed    : exception;  -- can't create or attach OpenGL context
+   Not_Available     : exception;  -- can't find a visual with given attributes
 
    -- Handle for an OpenGL rendering context
    subtype Context_Handle is Internal.GLX_Context;
-
-   -- Null window; in X, this means the root window is the parent
-   No_Window : constant Handle := null;
 
    -- Means "no GL context"; for Create, means create a new one
    No_Context : constant Context_Handle := Internal.Null_Context;
@@ -98,10 +99,15 @@ package Lumen.Window is
        (Attr_Depth_Size, 24)
       );
 
-   -- Local exceptions raised by these procedures
-   Connection_Failed : exception;  -- can't connect to X server
-   Context_Failed    : exception;  -- can't create or attach OpenGL context
-   Not_Available     : exception;  -- can't find a visual with given attributes
+   -- Handle for a Lumen window
+   type Info_Pointer is access Internal.Window_Info;
+   type Handle is new Ada.Finalization.Limited_Controlled with record
+      Info : Info_Pointer;
+   end record;
+   procedure Finalize   (Win : in out Handle);
+
+   -- Null window; in X, this means the root window is the parent
+   function No_Window return Handle;
 
    -- Create a native window, with defaults for configuration intended to
    -- create a "usable" window.  Details about the parameters are:
@@ -132,25 +138,22 @@ package Lumen.Window is
    --
    -- Animated: Whether the GL rendering context will be double-buffered, thus
    -- allowing smooth animation.
-   function Create (Parent        : Handle             := No_Window;
-                    Width         : Natural            := 400;
-                    Height        : Natural            := 400;
-                    Events        : Wanted_Event_Set   := Want_No_Events;
-                    Name          : String             := "";
-                    Icon_Name     : String             := "";
-                    Class_Name    : String             := "";
-                    Instance_Name : String             := "";
-                    Context       : Context_Handle     := No_Context;
-                    Depth         : Color_Depth        := True_Color;
-                    Animated      : Boolean            := True;
-                    Attributes    : Context_Attributes := Default_Context_Attributes)
-   return Handle;
+   procedure Create (Win           : in out Handle;
+                     Parent        : in     Handle             := No_Window;
+                     Width         : in     Natural            := 400;
+                     Height        : in     Natural            := 400;
+                     Events        : in     Wanted_Event_Set   := Want_No_Events;
+                     Name          : in     String             := "";
+                     Icon_Name     : in     String             := "";
+                     Class_Name    : in     String             := "";
+                     Instance_Name : in     String             := "";
+                     Context       : in     Context_Handle     := No_Context;
+                     Depth         : in     Color_Depth        := True_Color;
+                     Animated      : in     Boolean            := True;
+                     Attributes    : in     Context_Attributes := Default_Context_Attributes);
 
    -- Destroy a native window, including its current rendering context.
    procedure Destroy (Win : in out Handle);
-
-   -- Terminates Lumen
-   procedure Shutdown;
 
    -- Set various textual names associated with a window.  Null string means
    -- leave the current value unchanged;

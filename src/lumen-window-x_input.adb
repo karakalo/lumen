@@ -36,10 +36,10 @@ package body Lumen.Window.X_Input is
 
    -- Types to manage a list of windows, so we can check new incoming events
    -- to the correct window
-   type Handle_Array is array (Positive range <>) of Handle;
+   type Info_Array is array (Positive range <>) of Info_Pointer;
    type Window_List (Size : Natural) is record
       Curr : Natural := 0;
-      List : Handle_Array (1 .. Size);
+      List : Info_Array (1 .. Size);
    end record;
    type Window_List_Pointer is access Window_List;
 
@@ -50,6 +50,11 @@ package body Lumen.Window.X_Input is
    -- For now, we assume all windows are on the same display.  What we
    -- *should* do is start a separate task for each display, sheesh.
    Display : Internal.Display_Pointer := Internal.Null_Display_Pointer;
+
+   -- The task that reads events from the X server
+   task X_Input_Event_Task is
+      entry Startup;
+   end X_Input_Event_Task;
 
    ---------------------------------------------------------------------------
    --
@@ -85,7 +90,35 @@ package body Lumen.Window.X_Input is
 
    ---------------------------------------------------------------------------
    --
-   -- Public task
+   -- Package subroutines
+   --
+   ---------------------------------------------------------------------------
+
+   -- Terminates the X input events task
+   procedure Shutdown is
+
+      use Lumen.Internal;
+
+      -- Binding to XUnmapWindow, which creates a final event needed to get
+      -- the event task unstuck, and XFlush, to push the event through
+      procedure X_Unmap_Window (Display : in Display_Pointer;   Window : in Window_ID);
+      pragma Import (C, X_Unmap_Window, "XUnmapWindow");
+      procedure X_Flush (Display : in Display_Pointer);
+      pragma Import (C, X_Flush, "XFlush");
+
+      Win : Window_ID := Windows.List (Windows.List'First).Window;  -- should be the only one left
+
+   begin  -- Shutdown
+
+      -- Terminate X input event task
+--      X_Unmap_Window (Display, Win);
+      X_Flush (Display);
+      Shutdown_Signal.Set;
+   end Shutdown;
+
+   ---------------------------------------------------------------------------
+   --
+   -- The event task, reads events from the X server, then sends them to the app
    --
    ---------------------------------------------------------------------------
 
@@ -160,7 +193,7 @@ package body Lumen.Window.X_Input is
 
       -- Now add the new window
       Windows.Curr := Windows.Curr + 1;
-      Windows.List (Windows.Curr) := Win;
+      Windows.List (Windows.Curr) := Win.Info;
 
       -- Tuck away the display pointer for the task to use.  Once we have a
       -- display, start the event task looking for events on it.  This will
@@ -169,7 +202,7 @@ package body Lumen.Window.X_Input is
          use type Internal.Display_Pointer;
       begin
          if Display = Internal.Null_Display_Pointer then
-            Display := Win.Display;
+            Display := Win.Info.Display;
             X_Input_Event_Task.Startup;
          end if;
       end;
@@ -179,36 +212,37 @@ package body Lumen.Window.X_Input is
 
    -- De-register a window with the X input event task
    procedure Drop_Window (Win : in Handle) is
+
+      use type Internal.Window_ID;
+
    begin  -- Drop_Window
 
-      -- Will eventually have code here to find the given window and remove it
-      -- from the list
-      null;
+      -- Find the window in our list
+      for W in Windows.List'Range loop
+         if Windows.List (W).Window = Win.Info.Window then
+
+            -- Found it.  First, see if it's the last one left
+            if Windows.Curr = Windows.List'First then
+
+               -- Dropping last window, so shut down the events task
+               Shutdown;
+
+            else
+
+               -- Found it, but it's not the last window, so just remove it
+               -- from the list by skootching the ones after it down
+               for Move in W + 1 .. Windows.Curr loop
+                  Windows.List (Move - 1) := Windows.List (Move);
+               end loop;
+            end if;
+
+            -- Removed it, so we're done
+            Windows.Curr := Windows.Curr - 1;
+            return;
+         end if;
+      end loop;
+
    end Drop_Window;
-
-   ---------------------------------------------------------------------------
-
-   -- Terminates the X input events task
-   procedure Shutdown is
-
-      use Lumen.Internal;
-
-      -- Binding to XUnmapWindow, which creates a final event needed to get
-      -- the event task unstuck, and XFlush, to push the event through
-      procedure X_Unmap_Window (Display : in Display_Pointer;   Window : in Window_ID);
-      pragma Import (C, X_Unmap_Window, "XUnmapWindow");
-      procedure X_Flush (Display : in Display_Pointer);
-      pragma Import (C, X_Flush, "XFlush");
-
-      Win : Window_ID := Windows.List (Windows.List'First).Window;  -- just grab the first one
-
-   begin  -- Shutdown
-
-      -- Terminate X input event task
-      X_Unmap_Window (Display, Win);
-      X_Flush (Display);
-      Shutdown_Signal.Set;
-   end Shutdown;
 
    ---------------------------------------------------------------------------
 
