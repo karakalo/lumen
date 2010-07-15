@@ -63,6 +63,7 @@ package Lumen.Image is
       Complete : Boolean := False;
       Values   : Pixel_Matrix (1 .. Width, 1 .. Height);
    end record;
+   pragma Warnings (Off, Data);  -- yes yes, it could be very large
 
    type Descriptor is record
       Complete : Boolean := False;
