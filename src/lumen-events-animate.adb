@@ -34,7 +34,7 @@ package body Lumen.Events.Animate is
 
       use Ada.Calendar;
 
-      Been : Duration := Clock - Win.Prior_Frame;
+      Been : Duration := Clock - Win.Info.Prior_Frame;
 
    begin  -- Wait_Frame
 
@@ -84,13 +84,13 @@ package body Lumen.Events.Animate is
          declare
             use Ada.Calendar;
          begin
-            Frame (Clock - Win.Prior_Frame);
+            Frame (Clock - Win.Info.Prior_Frame);
          end;
 
          -- Note its time, and count it
-         Win.Prior_Frame := Ada.Calendar.Clock;
-         Win.App_Frames  := Win.App_Frames + 1;
-         Win.Last_Frames := Win.Last_Frames + 1;
+         Win.Info.Prior_Frame := Ada.Calendar.Clock;
+         Win.Info.App_Frames  := Win.Info.App_Frames + 1;
+         Win.Info.Last_Frames := Win.Info.Last_Frames + 1;
 
       end loop;
 
@@ -137,13 +137,13 @@ package body Lumen.Events.Animate is
          declare
             use Ada.Calendar;
          begin
-            Frame (Clock - Win.Prior_Frame);
+            Frame (Clock - Win.Info.Prior_Frame);
          end;
 
          -- Note its time, and count it
-         Win.Prior_Frame := Ada.Calendar.Clock;
-         Win.App_Frames  := Win.App_Frames + 1;
-         Win.Last_Frames := Win.Last_Frames + 1;
+         Win.Info.Prior_Frame := Ada.Calendar.Clock;
+         Win.Info.App_Frames  := Win.Info.App_Frames + 1;
+         Win.Info.Last_Frames := Win.Info.Last_Frames + 1;
 
       end loop;
 
@@ -166,16 +166,16 @@ package body Lumen.Events.Animate is
       -- Pick which values to use based on caller's preference
       case Since is
          when FPS_Overall =>
-            Elapsed := Clock - Win.App_Start;
-            Frames := Frame_Count (Win.App_Frames);
+            Elapsed := Clock - Win.Info.App_Start;
+            Frames := Frame_Count (Win.Info.App_Frames);
 
          when FPS_Since_Prior =>
-            Elapsed := Clock - Win.Last_Start;
-            Frames := Frame_Count (Win.Last_Frames);
+            Elapsed := Clock - Win.Info.Last_Start;
+            Frames := Frame_Count (Win.Info.Last_Frames);
 
             -- Reset the last-called values
-            Win.Last_Start  := Clock;
-            Win.Last_Frames := 0;
+            Win.Info.Last_Start  := Clock;
+            Win.Info.Last_Frames := 0;
       end case;
 
       -- Calculate and return the frames per second

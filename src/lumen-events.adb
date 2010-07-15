@@ -216,14 +216,14 @@ package body Lumen.Events is
             return (Which       => Exposed,
                     Expose_Data => (X         => 0,
                                     Y         => 0,
-                                    Width     => Win.Width,
-                                    Height    => Win.Height,
+                                    Width     => Win.Info.Width,
+                                    Height    => Win.Info.Height,
                                     Count     => 0));
 
          when Internal.X_Configure_Notify =>
-            if X_Event.Cfg_Width /= Win.Width or X_Event.Cfg_Height /= Win.Height then
-               Win.Width  := X_Event.Cfg_Width;
-               Win.Height := X_Event.Cfg_Height;
+            if X_Event.Cfg_Width /= Win.Info.Width or X_Event.Cfg_Height /= Win.Info.Height then
+               Win.Info.Width  := X_Event.Cfg_Width;
+               Win.Info.Height := X_Event.Cfg_Height;
                return (Which       => Resized,
                        Resize_Data => (Width     => X_Event.Cfg_Width,
                                        Height    => X_Event.Cfg_Height));
@@ -278,7 +278,7 @@ package body Lumen.Events is
    begin  -- Next_Event
 
       -- Get the event from this window's event queue; may block
-      Win.Events.Dequeue (Event);
+      Win.Info.Events.Dequeue (Event);
 
       -- Handle it appropriately
       case Event.Which is
@@ -343,7 +343,7 @@ package body Lumen.Events is
    -- Useful for more complex event loops.
    function Pending (Win : Window.Handle) return Natural is
    begin  -- Pending
-      return Win.Events.Length;
+      return Win.Info.Events.Length;
    end Pending;
 
    ---------------------------------------------------------------------------
