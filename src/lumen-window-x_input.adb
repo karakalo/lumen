@@ -24,28 +24,19 @@
 with Ada.Unchecked_Deallocation;
 with System;
 
+with XArray;
+
 
 package body Lumen.Window.X_Input is
 
    ---------------------------------------------------------------------------
 
-   -- This is purely a tuning constant.  It's the size of chunk at which the
-   -- task's list of windows is allocated.  Each time you add this many new
-   -- windows plus one, it extends the list by this much.
-   Window_List_Increment : constant := 16;
+   -- Create an extensible array to hold the window list, with "chunk" size
+   -- 16.  For many apps, this will be all they'll ever need.
+   package Window_List is new XArray (Data_Type => Info_Pointer, Increment => 16);
 
-   -- Types to manage a list of windows, so we can check new incoming events
-   -- to the correct window
-   type Info_Array is array (Positive range <>) of Info_Pointer;
-   type Window_List (Size : Natural) is record
-      Curr : Natural := 0;
-      List : Info_Array (1 .. Size);
-   end record;
-   type Window_List_Pointer is access Window_List;
-
-   -- The window list, started at one "chunk" big.  For many apps, this will
-   -- be all they'll ever need.
-   Windows : Window_List_Pointer := new Window_List (Window_List_Increment);
+   -- The window list
+   Windows : Window_List.Pointer := Window_List.Create;
 
    -- For now, we assume all windows are on the same display.  What we
    -- *should* do is start a separate task for each display, sheesh.
@@ -101,12 +92,12 @@ package body Lumen.Window.X_Input is
 
       -- Binding to XUnmapWindow, which creates a final event needed to get
       -- the event task unstuck, and XFlush, to push the event through
-      procedure X_Unmap_Window (Display : in Display_Pointer;   Window : in Window_ID);
-      pragma Import (C, X_Unmap_Window, "XUnmapWindow");
+--      procedure X_Unmap_Window (Display : in Display_Pointer;   Window : in Window_ID);
+--      pragma Import (C, X_Unmap_Window, "XUnmapWindow");
       procedure X_Flush (Display : in Display_Pointer);
       pragma Import (C, X_Flush, "XFlush");
 
-      Win : Window_ID := Windows.List (Windows.List'First).Window;  -- should be the only one left
+--      Win : Window_ID := Windows.Data (Windows.Data'First).Window;  -- should be the only one left
 
    begin  -- Shutdown
 
@@ -146,11 +137,12 @@ package body Lumen.Window.X_Input is
 
          -- Find which window it came from; events coming from unregistered
          -- windows are ignored
-         for W in Windows.List'First .. Windows.List'First + Windows.Curr - 1 loop
 
-            if Windows.List (W).Window = X_Event.Window then
+         for W in Windows.Data'First .. Windows.Data'First + Windows.Current - 1 loop
+
+            if Windows.Data (W).Window = X_Event.Window then
                -- Found it, stick the event on the its event queue
-               Windows.List (W).Events.Enqueue ((Which => Internal.X_Input_Event, X => X_Event));
+               Windows.Data (W).Events.Enqueue ((Which => Internal.X_Input_Event, X => X_Event));
             end if;
 
          end loop;
@@ -167,37 +159,15 @@ package body Lumen.Window.X_Input is
 
    -- Register a new window with the X input event task
    procedure Add_Window (Win : in Handle) is
-
-      procedure Free is new Ada.Unchecked_Deallocation (Window_List, Window_List_Pointer);
-
-      Extended : Window_List_Pointer;
-
    begin  -- Add_Window
 
-      -- See if current list is full, and if so, extend it by allocating a new
-      -- list, copying the old list to it, and throwing the old list away
-      if Windows.Curr >= Windows.Size then
+      -- Add the new window
+      Window_List.Append (Windows, Win.Info);
 
-         Extended := new Window_List (Windows.Size + Window_List_Increment);
-
-         for W in Windows.List'Range loop
-            Extended.List (W) := Windows.List (W);
-         end loop;
-
-         Extended.Curr := Windows.Curr;
-
-         Free (Windows);
-
-         Windows := Extended;
-      end if;
-
-      -- Now add the new window
-      Windows.Curr := Windows.Curr + 1;
-      Windows.List (Windows.Curr) := Win.Info;
-
-      -- Tuck away the display pointer for the task to use.  Once we have a
-      -- display, start the event task looking for events on it.  This will
-      -- need to change when we support multiple displays.
+      -- Tuck away the display pointer of the first window we add, for the
+      -- task to use.  Once we have a display, start the event task looking
+      -- for events on it.  This will need to change when we support multiple
+      -- displays.
       declare
          use type Internal.Display_Pointer;
       begin
@@ -213,16 +183,15 @@ package body Lumen.Window.X_Input is
    -- De-register a window with the X input event task
    procedure Drop_Window (Win : in Handle) is
 
-      use type Internal.Window_ID;
+      Found : Natural := Window_List.Find (Windows, Win.Info);
 
    begin  -- Drop_Window
 
-      -- Find the window in our list
-      for W in Windows.List'Range loop
-         if Windows.List (W).Window = Win.Info.Window then
+      -- If window found, otherwise just ignore the request
+      if Found > 0 then
 
             -- Found it.  First, see if it's the last one left
-            if Windows.Curr = Windows.List'First then
+            if Windows.Current = Windows.Data'First then
 
                -- Dropping last window, so shut down the events task
                Shutdown;
@@ -230,17 +199,12 @@ package body Lumen.Window.X_Input is
             else
 
                -- Found it, but it's not the last window, so just remove it
-               -- from the list by skootching the ones after it down
-               for Move in W + 1 .. Windows.Curr loop
-                  Windows.List (Move - 1) := Windows.List (Move);
-               end loop;
+               -- from the list
+               Window_List.Delete (Windows, Found);
+
             end if;
 
-            -- Removed it, so we're done
-            Windows.Curr := Windows.Curr - 1;
-            return;
-         end if;
-      end loop;
+      end if;
 
    end Drop_Window;
 
