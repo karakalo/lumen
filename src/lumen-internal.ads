@@ -29,6 +29,16 @@ package Lumen.Internal is
 
    ---------------------------------------------------------------------------
 
+   -- A simple binary semaphore
+   protected type Signal is
+      procedure Set;
+      entry     Wait;
+   private
+      Is_Set : boolean := false;
+   end Signal;
+
+   ---------------------------------------------------------------------------
+
    -- Xlib stuff needed for our window info record
    type Atom            is new Long_Integer;
    type Display_Pointer is new System.Address;
@@ -83,12 +93,14 @@ package Lumen.Internal is
 
    -- Values used to compute record rep clause values that are portable
    -- between 32- and 64-bit systems
-   Is_32      : constant := Boolean'Pos (System.Word_Size = 32);
-   Is_64      : constant := 1 - Is_32;
-   Word_Bytes : constant := Integer'Size / System.Storage_Unit;
-   Word_Bits  : constant := Integer'Size - 1;
-   Long_Bytes : constant := Long_Integer'Size / System.Storage_Unit;
-   Long_Bits  : constant := Long_Integer'Size - 1;
+   Is_32       : constant := Boolean'Pos (System.Word_Size = 32);
+   Is_64       : constant := 1 - Is_32;
+   Short_Bytes : constant := 2;
+   Short_Bits  : constant := (Short_Bytes * System.Storage_Unit) - 1;
+   Word_Bytes  : constant := Integer'Size / System.Storage_Unit;
+   Word_Bits   : constant := Integer'Size - 1;
+   Long_Bytes  : constant := Long_Integer'Size / System.Storage_Unit;
+   Long_Bits   : constant := Long_Integer'Size - 1;
 
    ---------------------------------------------------------------------------
 
@@ -249,8 +261,18 @@ package Lumen.Internal is
 
    ---------------------------------------------------------------------------
 
-   -- Temporary joystick queue event type
-   type Joystick_Event_Data is null record;
+   -- Joystick queue event type
+   type Joystick_Event_Type is (Joystick_Axis_Change, Joystick_Button_Change);
+   type Joystick_Event_Data (Which : Joystick_Event_Type := Joystick_Axis_Change) is record
+      Stick  : Positive;
+      Number : Positive;
+      case Which is
+         when Joystick_Axis_Change =>
+            Axis_Value   : Integer;
+         when Joystick_Button_Change =>
+            Button_Value : Boolean;
+      end case;
+   end record;
 
    ---------------------------------------------------------------------------
 
@@ -262,7 +284,7 @@ package Lumen.Internal is
          when X_Input_Event =>
             X : X_Event_Data;
          when Joystick_Event =>
-            Joystick : Joystick_Event_Data;
+            J : Joystick_Event_Data;
       end case;
    end record;
 

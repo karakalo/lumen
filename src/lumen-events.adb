@@ -259,8 +259,32 @@ package body Lumen.Events is
 
    -- Process a joystick input event into a Lumen event
    function Process_Joystick_Event (Event : in Internal.Joystick_Event_Data) return Event_Data is
+
+      use Internal;
+
    begin  -- Process_Joystick_Event
-      return (Which => Unknown_Event);
+      case Event.Which is
+
+         when Joystick_Axis_Change =>
+            return (Which     => Joystick_Axis_Change,
+                    Axis_Data => (Stick => Event.Stick,
+                                  Axis  => Event.Number,
+                                  Value => Event.Axis_Value));
+
+         when Joystick_Button_Change =>
+            if Event.Button_Value then
+               -- It's a press
+               return (Which       => Joystick_Button_Press,
+                       Trigger_Data => (Stick  => Event.Stick,
+                                       Button => Event.Number));
+            else
+               -- It's a release
+               return (Which       => Joystick_Button_Release,
+                       Trigger_Data => (Stick  => Event.Stick,
+                                       Button => Event.Number));
+            end if;
+
+      end case;
    end Process_Joystick_Event;
 
    ---------------------------------------------------------------------------
@@ -285,7 +309,7 @@ package body Lumen.Events is
          when Internal.X_Input_Event =>
             return Process_X_Event (Event.X, Win, Translate);
          when Internal.Joystick_Event =>
-            return Process_Joystick_Event (Event.Joystick);
+            return Process_Joystick_Event (Event.J);
       end case;
 
    end Next_Event;
