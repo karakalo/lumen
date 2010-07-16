@@ -104,7 +104,7 @@ package Lumen.Window is
    type Handle is new Ada.Finalization.Limited_Controlled with record
       Info : Info_Pointer;
    end record;
-   procedure Finalize   (Win : in out Handle);
+   procedure Finalize (Win : in out Handle);
 
    -- Null window; in X, this means the root window is the parent
    function No_Window return Handle;
