@@ -24,6 +24,7 @@ procedure Texture is
    ---------------------------------------------------------------------------
 
    Win      : Lumen.Window.Handle;
+   Direct   : Boolean := True;
    Event    : Lumen.Events.Event_Data;
    Wide     : Natural;  -- no longer have default values since they're now set by the image size
    High     : Natural;
@@ -222,11 +223,18 @@ begin  -- Texture
    Wide := Image.Width;
    High := Image.Height;
 
+   -- If the user provides a second argument, it means "no direct rendering"
+   -- for the OpenGL context
+   if Ada.Command_Line.Argument_Count > 1 then
+      Direct := False;
+   end if;
+
    -- Create Lumen window, accepting most defaults; turn double buffering off
    -- for simplicity
    Lumen.Window.Create (Win, Name   => "Spinning Picture Demo",
                         Width  => Wide,
                         Height => High,
+                        Direct => Direct,
                         Events => (Lumen.Window.Want_Key_Press => True,
                                    Lumen.Window.Want_Exposure  => True,
                                    others => False));
