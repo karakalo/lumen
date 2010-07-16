@@ -121,8 +121,13 @@ package body Lumen.Window.X_Input is
 
    begin  -- X_Input_Event_Task
 
-      -- Wait until there's a display to use
-      accept Startup;
+      -- Wait until there's a display to use, or if the app quits before
+      -- creating a window then we just quit this task too
+      select
+         accept Startup;
+      or
+         terminate;
+      end select;
 
       loop
 
