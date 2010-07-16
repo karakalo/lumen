@@ -142,6 +142,7 @@ package body Lumen.Window is
                      Instance_Name : in     String             := "";
                      Context       : in     Context_Handle     := No_Context;
                      Depth         : in     Color_Depth        := True_Color;
+                     Direct        : in     Boolean            := True;
                      Animated      : in     Boolean            := True;
                      Attributes    : in     Context_Attributes := Default_Context_Attributes) is
 
@@ -410,7 +411,8 @@ package body Lumen.Window is
 
       -- Connect the OpenGL context to the new X window
       if Context = No_Context then
-         Our_Context := GLX_Create_Context (Display, Visual, GLX_Context (System.Null_Address), GL_TRUE);
+         Our_Context := GLX_Create_Context (Display, Visual, GLX_Context (System.Null_Address),
+                                            Character'Val (Boolean'Pos (Direct)));
       else
          Our_Context := Context;
       end if;
@@ -499,9 +501,12 @@ package body Lumen.Window is
    -- Create an OpenGL rendering context; needed only when you want a second
    -- or subsequent context for a window, since Create makes one to start
    -- with
-   function Create_Context (Win : Handle) return Context_Handle is
+   function Create_Context (Win    : in Handle;
+                            Direct : in Boolean := True)
+   return Context_Handle is
    begin  -- Create_Context
-      return GLX_Create_Context (Win.Info.Display, Win.Info.Visual, GLX_Context (System.Null_Address), GL_TRUE);
+      return GLX_Create_Context (Win.Info.Display, Win.Info.Visual, GLX_Context (System.Null_Address),
+                                 Character'Val (Boolean'Pos (Direct)));
    end Create_Context;
 
    ---------------------------------------------------------------------------
