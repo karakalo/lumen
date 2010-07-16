@@ -47,37 +47,8 @@ package body Lumen.Window.X_Input is
       entry Startup;
    end X_Input_Event_Task;
 
-   ---------------------------------------------------------------------------
-   --
-   -- Package objects
-   --
-   ---------------------------------------------------------------------------
-
-   -- A semaphore that allows Shutdown to abort the event task
-   protected Shutdown_Signal is
-      procedure Set;
-      entry     Wait;
-   private
-      Is_Set : boolean := false;
-   end Shutdown_Signal;
-
-   -- Simple binary semaphore, used to tell the event task that the app is
-   -- quitting
-   protected body Shutdown_Signal is
-
-      -- Indicate that a shutdown has occurred
-      procedure Set is
-      begin  -- Set
-         Is_Set := true;
-      end Set;
-
-      -- Block until the signal is set, then clear it
-      entry Wait when Is_Set is
-      begin  -- Wait
-         Is_Set := false;
-      end Wait;
-
-   end Shutdown_Signal;
+   -- Shutdown semaphore
+   Shutdown_Signal : Internal.Signal;
 
    ---------------------------------------------------------------------------
    --
@@ -142,12 +113,12 @@ package body Lumen.Window.X_Input is
 
          -- Find which window it came from; events coming from unregistered
          -- windows are ignored
-
          for W in Windows.Data'First .. Windows.Data'First + Windows.Current - 1 loop
 
             if Windows.Data (W).Window = X_Event.Window then
                -- Found it, stick the event on the its event queue
                Windows.Data (W).Events.Enqueue ((Which => Internal.X_Input_Event, X => X_Event));
+               exit;
             end if;
 
          end loop;
