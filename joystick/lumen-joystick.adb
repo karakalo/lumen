@@ -51,8 +51,8 @@ package body Lumen.Joystick is
    type Axis_Array is array (Positive range <>) of Integer;
    type Button_Array is array (Positive range <>) of Boolean;
    type Stick_Info (Name_Len : Natural;   N_Axes : Natural;   N_Buttons : Natural) is record
-      Number     : Positive;
       File       : Binary.IO.File_Type;
+      Number     : Positive;
       Name       : String (1 .. Name_Len);
       Axes       : Axis_Array (1 .. N_Axes);
       Buttons    : Button_Array (1 .. N_Buttons);
@@ -245,13 +245,17 @@ package body Lumen.Joystick is
 
    ---------------------------------------------------------------------------
 
+   -- Used by Close and Bind
+   procedure Free is new Ada.Unchecked_Deallocation (Internal.Event_Queue_Pkg.Protected_Queue_Type,
+                                                     Internal.Event_Queue_Pointer);
+
+   ---------------------------------------------------------------------------
+
    -- Close a joystick device
    procedure Close (Stick : in out Handle) is
 
       use type Internal.Event_Queue_Pointer;
 
-      procedure Free is new Ada.Unchecked_Deallocation (Internal.Event_Queue_Pkg.Protected_Queue_Type,
-                                                        Internal.Event_Queue_Pointer);
       procedure Free is new Ada.Unchecked_Deallocation (Stick_Info, Stick_Info_Pointer);
       procedure Free is new Ada.Unchecked_Deallocation (Joystick_Input_Event_Task, Joystick_Input_Event_Task_Pointer);
 
@@ -277,6 +281,71 @@ package body Lumen.Joystick is
          Free (Stick.Info);
       end if;
    end Close;
+
+   ---------------------------------------------------------------------------
+
+   -- Bind a joystick's events to a (possibly different) window, or convert to
+   -- direct reading by passing No_Window
+   procedure Bind (Stick : in out Handle;
+                   Win   : in     Window.Handle) is
+
+      use type Internal.Event_Queue_Pointer;
+      use type Window.Info_Pointer;
+
+   begin  -- Bind
+
+      -- Binding or unbinding?
+      if Win.Info = null then
+
+         -- Unbinding, allocate new internal queue if necessary
+         if Stick.Info.Our_Events = null then
+            Stick.Info.Our_Events := new Internal.Event_Queue_Pkg.Protected_Queue_Type;
+         end if;
+
+         -- Indicate we're no longer bound to a window
+         Stick.Info.Win_Events := null;
+
+      else
+
+         -- Binding to a (maybe different) window
+         Stick.Info.Win_Events := Win.Info.Events;
+
+         -- Free our internal event queue if there is one, which means we're
+         -- switching from direct reading to bound events.
+         if Stick.Info.Our_Events /= null then
+            Free (Stick.Info.Our_Events);
+         end if;
+      end if;
+   end Bind;
+
+   ---------------------------------------------------------------------------
+
+   -- Various joystick information functions
+   function Name    (Stick : in Handle) return String is
+   begin  -- Name
+      return Stick.Info.Name;
+   end Name;
+
+   ---------------------------------------------------------------------------
+
+   function Number  (Stick : in Handle) return Positive is
+   begin  -- Number
+      return Stick.Info.Number;
+   end Number;
+
+   ---------------------------------------------------------------------------
+
+   function Axes    (Stick : in Handle) return Natural is
+   begin  -- Axes
+      return Stick.Info.N_Axes;
+   end Axes;
+
+   ---------------------------------------------------------------------------
+
+   function Buttons (Stick : in Handle) return Natural is
+   begin  -- Buttons
+      return Stick.Info.N_Buttons;
+   end Buttons;
 
    ---------------------------------------------------------------------------
 

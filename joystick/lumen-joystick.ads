@@ -51,6 +51,17 @@ package Lumen.Joystick is
    -- Close a joystick device
    procedure Close (Stick : in out Handle);
 
+   -- Bind a joystick's events to a (possibly different) window, or convert to
+   -- direct reading by passing No_Window
+   procedure Bind (Stick : in out Handle;
+                   Win   : in     Window.Handle);
+
+   -- Various joystick information functions
+   function Name    (Stick : in Handle) return String;    -- joystick's name
+   function Number  (Stick : in Handle) return Positive;  -- serial number assigned by Lumen
+   function Axes    (Stick : in Handle) return Natural;   -- number of axes
+   function Buttons (Stick : in Handle) return Natural;   -- number of buttons
+
    -- If you don't bind a joystick to a window, then you need to read its
    -- events directly
    function Next_Event (Stick : in Handle) return Internal.Joystick_Event_Data;
