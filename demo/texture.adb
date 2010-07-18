@@ -71,7 +71,7 @@ procedure Texture is
 
       -- Create a pointer to the image.  This sort of horror show is going to
       -- be disappearing once Lumen includes its own OpenGL bindings.
-      IP := GLB.To_Pointer (Image.Values (0, 0)'Address).all'Unchecked_Access;
+      IP := GLB.To_Pointer (Image.Values.all'Address).all'Unchecked_Access;
 
       -- Build our texture from the image we loaded earlier
       glTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA, GLsizei (Image.Width), GLsizei (Image.Height), 0,
