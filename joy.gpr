@@ -16,7 +16,7 @@ project Joy is
    end Builder;
 
    package Compiler is
-      for Default_Switches ("ada") use ("-gnatn", "-fstack-check");
+      for Default_Switches ("ada") use ("-gnat05", "-gnatn", "-fstack-check");
    end Compiler;
 
    for Languages use ("Ada", "C");
