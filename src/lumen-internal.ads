@@ -160,19 +160,20 @@ package Lumen.Internal is
    Base_2_32 : constant :=  5;
    Base_3_32 : constant :=  6;
    Base_4_32 : constant :=  7;
-   Base_5_32 : constant :=  4;
+   Base_5_32 : constant :=  3;
    Base_1_64 : constant := 16;
    Base_2_64 : constant := 10;
    Base_3_64 : constant := 12;
    Base_4_64 : constant := 14;
-   Base_5_64 : constant :=  8;
+   Base_5_64 : constant :=  6;
    Base_1    : constant := (Base_1_32 * Is_32) + (Base_1_64 * Is_64);
    Base_2    : constant := (Base_2_32 * Is_32) + (Base_2_64 * Is_64);
    Base_3    : constant := (Base_3_32 * Is_32) + (Base_3_64 * Is_64);
    Base_4    : constant := (Base_4_32 * Is_32) + (Base_4_64 * Is_64);
    Base_5    : constant := (Base_5_32 * Is_32) + (Base_5_64 * Is_64);
    type X_Event_Data (X_Event_Type : X_Event_Code := X_Error) is record
-      Window : Window_ID;
+      Display : Display_Pointer;
+      Window  : Window_ID;
       case X_Event_Type is
          when X_Key_Press | X_Key_Release =>
             Key_X      : Natural;
@@ -219,7 +220,8 @@ package Lumen.Internal is
    for X_Event_Data use record
       X_Event_Type at  0 * Bytes range 0 .. Bits;
 
-      Window       at (Base_5 + 0) * Bytes range 0 .. Long_Bits;
+      Display      at (Base_5 * Bytes) + 0          range 0 .. Long_Bits;
+      Window       at (Base_5 * Bytes) + Long_Bytes range 0 .. Long_Bits;
 
       Key_X        at (Base_1 + 0) * Bytes range 0 .. Bits;
       Key_Y        at (Base_1 + 1) * Bytes range 0 .. Bits;
