@@ -26,6 +26,7 @@
 -- Environment
 with Lumen.Binary.IO;
 with Lumen.Image.PPM;
+with Lumen.Image.BMP;
 
 
 package body Lumen.Image is
@@ -86,8 +87,9 @@ package body Lumen.Image is
          Binary.IO.Close (File);
          raise Unknown_Format;  -- until we start to support FITS
       elsif Sig (Sig'First .. Sig'First + BMP_Signature'Length - 1)  = BMP_Signature then
+         Result := BMP.From_File (File);
          Binary.IO.Close (File);
-         raise Unknown_Format;  -- until we start to support BMP
+         return Result;
       elsif Sig (Sig'First) = 16#50# and Is_In (Sig (Sig'First + 2), Whitespace) then  -- "P"
          PPM_Sub := Character'Val (Sig (Sig'First + 1));
          if PPM_Sub in '4' .. '6' then
