@@ -184,6 +184,9 @@ package body Lumen.Window is
       end record;
 
       -- Xlib functions needed only by Create
+      function X_Init_Threads return Integer;
+      pragma Import (C, X_Init_Threads, "XInitThreads");
+
       function X_Create_Colormap (Display : Display_Pointer;
                                   Window  : Window_ID;
                                   Visual  : System.Address;
@@ -285,6 +288,11 @@ package body Lumen.Window is
       ------------------------------------------------------------------------
 
    begin  -- Create
+
+      -- Tell X to set up its mutexes
+      if X_Init_Threads = 0 then
+         raise Connection_Failed;
+      end if;
 
       -- Connect to the X server
       Display := X_Open_Display;

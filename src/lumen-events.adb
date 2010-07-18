@@ -43,7 +43,13 @@ package body Lumen.Events is
 
       ------------------------------------------------------------------------
 
-      -- Binding needed locally to translate keycodes
+      -- Bindings needed locally to translate keycodes
+      procedure X_Lock_Display (Display : in Internal.Display_Pointer);
+      pragma Import (C, X_Lock_Display, "XLockDisplay");
+
+      procedure X_Unlock_Display (Display : in Internal.Display_Pointer);
+      pragma Import (C, X_Unlock_Display, "XUnlockDisplay");
+
       function X_Lookup_String (Event   : in System.Address;
                                 Buffer  : in System.Address;
                                 Limit   : in Natural;
@@ -104,7 +110,9 @@ package body Lumen.Events is
             -- If caller wants keycode translation, ask X for the value, since
             -- he's the only one who knows
             if Translate then
+               X_Lock_Display (X_Event.Display);
                Got := X_Lookup_String (X_Event'Address, Buffer'Address, 1, X_Keysym'Address, System.Null_Address);
+               X_Unlock_Display (X_Event.Display);
 
                -- If X translated it to ASCII for us, just use that
                if Got > 0 then
