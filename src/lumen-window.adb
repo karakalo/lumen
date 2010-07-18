@@ -115,8 +115,8 @@ package body Lumen.Window is
    -- A function to return a no-window value, needed because Handle is limited
    function No_Window return Handle is
    begin  -- No_Window
-      return Result : Handle := (Ada.Finalization.Limited_Controlled with Info => null) do
-         null;
+      return Result : Handle do
+         Result.Info := null;
       end return;
    end No_Window;
 
