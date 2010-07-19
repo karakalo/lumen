@@ -1,6 +1,7 @@
 
 -- Simple Lumen demo/test program, using earliest incomplete library.
 
+with Ada.Characters.Handling;
 with Ada.Command_Line;
 with System.Address_To_Access_Conversions;
 
@@ -24,7 +25,7 @@ procedure Texture is
    ---------------------------------------------------------------------------
 
    Win      : Lumen.Window.Handle;
-   Direct   : Boolean := True;
+   Direct   : Boolean := True;  -- want direct rendering by default
    Event    : Lumen.Events.Event_Data;
    Wide     : Natural;  -- no longer have default values since they're now set by the image size
    High     : Natural;
@@ -34,9 +35,19 @@ procedure Texture is
    Img_High : GL.glFloat;
    Tx_Name  : aliased GL.GLuint;
 
+   Attrs    : Lumen.Window.Context_Attributes :=
+      (
+       (Lumen.Window.Attr_Red_Size,    8),
+       (Lumen.Window.Attr_Green_Size,  8),
+       (Lumen.Window.Attr_Blue_Size,   8),
+       (Lumen.Window.Attr_Alpha_Size,  8),
+       (Lumen.Window.Attr_Depth_Size, 24)
+      );
+
    ---------------------------------------------------------------------------
 
-   Program_Exit : exception;
+   Program_Error : exception;
+   Program_Exit  : exception;
 
    ---------------------------------------------------------------------------
 
@@ -214,8 +225,39 @@ begin  -- Texture
 
    -- If we haven't been given an image to work with, just do nothing
    if Ada.Command_Line.Argument_Count < 1 then
-      raise Program_Exit;
+      raise Program_Error with "You did not supply an image file pathname on the command line";
    end if;
+
+   -- If other command-line arguments were given then process them
+   for Index in 2 .. Ada.Command_Line.Argument_Count loop
+
+      declare
+         use Lumen.Window;
+         Arg : String := Ada.Command_Line.Argument (Index);
+      begin
+         case Arg (Arg'First) is
+
+            when 'a' =>
+               Attrs (4) := (Attr_Alpha_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+
+            when 'c' =>
+               Attrs (1) := (Attr_Red_Size,   Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+               Attrs (2) := (Attr_Blue_Size,  Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+               Attrs (3) := (Attr_Green_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+
+            when 'd' =>
+               Attrs (5) := (Attr_Depth_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+
+            when 'n' =>
+               Direct := False;
+
+            when others =>
+               null;
+
+         end case;
+      end;
+
+   end loop;
 
    -- Read image and use it to size the window.  This will suck if your image
    -- is very large.
@@ -223,21 +265,17 @@ begin  -- Texture
    Wide := Image.Width;
    High := Image.Height;
 
-   -- If the user provides a second argument, it means "no direct rendering"
-   -- for the OpenGL context
-   if Ada.Command_Line.Argument_Count > 1 then
-      Direct := False;
-   end if;
-
    -- Create Lumen window, accepting most defaults; turn double buffering off
    -- for simplicity
-   Lumen.Window.Create (Win, Name   => "Spinning Picture Demo",
-                        Width  => Wide,
-                        Height => High,
-                        Direct => Direct,
-                        Events => (Lumen.Window.Want_Key_Press => True,
-                                   Lumen.Window.Want_Exposure  => True,
-                                   others => False));
+   Lumen.Window.Create (Win,
+                        Name       => "Spinning Picture Demo",
+                        Width      => Wide,
+                        Height     => High,
+                        Direct     => Direct,
+                        Attributes => Attrs,
+                        Events     => (Lumen.Window.Want_Key_Press => True,
+                                       Lumen.Window.Want_Exposure  => True,
+                                       others => False));
 
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);

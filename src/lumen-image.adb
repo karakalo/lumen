@@ -3,9 +3,6 @@
 --
 -- Chip Richards, NiEstu, Phoenix AZ, Spring 2010
 
--- Lumen would not be possible without the support and contributions of a cast
--- of thousands, including and primarily Rod Kay.
-
 -- This code is covered by the ISC License:
 --
 -- Copyright © 2010, NiEstu
@@ -26,6 +23,7 @@
 -- Environment
 with Lumen.Binary.IO;
 with Lumen.Image.PPM;
+with Lumen.Image.BMP;
 
 
 package body Lumen.Image is
@@ -78,16 +76,17 @@ package body Lumen.Image is
       -- Classify the format based on the signature data
       if    Sig (Sig'First .. Sig'First + PNG_Signature'Length - 1)  = PNG_Signature then
          Binary.IO.Close (File);
-         raise Unknown_Format;  -- until we start to support PNG
+         raise Unknown_Format with "PNG image loading not yet supported";  -- until we start to support PNG
       elsif Sig (Sig'First .. Sig'First + JFIF_Signature'Length - 1) = JFIF_Signature then
          Binary.IO.Close (File);
-         raise Unknown_Format;  -- until we start to support JPEG/JFIF
+         raise Unknown_Format with "JPEG image loading not yet supported";  -- until we start to support JPEG/JFIF
       elsif Sig (Sig'First .. Sig'First + FITS_Signature'Length - 1) = FITS_Signature then
          Binary.IO.Close (File);
-         raise Unknown_Format;  -- until we start to support FITS
+         raise Unknown_Format with "FITS image loading not yet supported";  -- until we start to support FITS
       elsif Sig (Sig'First .. Sig'First + BMP_Signature'Length - 1)  = BMP_Signature then
+         Result := BMP.From_File (File);
          Binary.IO.Close (File);
-         raise Unknown_Format;  -- until we start to support BMP
+         return Result;
       elsif Sig (Sig'First) = 16#50# and Is_In (Sig (Sig'First + 2), Whitespace) then  -- "P"
          PPM_Sub := Character'Val (Sig (Sig'First + 1));
          if PPM_Sub in '4' .. '6' then
@@ -96,11 +95,11 @@ package body Lumen.Image is
             return Result;
          else
             Binary.IO.Close (File);
-            raise Unknown_Format;  -- something else that starts with "P"
+            raise Unknown_Format with "unsupported PPM or other unknown format";  -- something else that starts with "P"
          end if;
       else
          Binary.IO.Close (File);
-         raise Unknown_Format;  -- some format we don't recognize
+         raise Unknown_Format with "cannot recognize image format";  -- some format we don't recognize
       end if;
 
    end From_File;

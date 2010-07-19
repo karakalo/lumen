@@ -1,5 +1,5 @@
 
--- Lumen.Image.BMP -- Load and save netpbm's PPM image data
+-- Lumen.Image.BMP -- Load and save Microsoft BMP image data
 
 -- This code is covered by the ISC License:
 --
@@ -20,6 +20,7 @@
 
 -- Environment
 with Ada.Streams.Stream_IO;
+
 
 package body Lumen.Image.BMP is
 
@@ -130,7 +131,7 @@ package body Lumen.Image.BMP is
          end record; -- Bitmap_V4_Header
       pragma Pack (Bitmap_V4_Header);
       for Bitmap_V4_Header'Size use 108 * Binary.Byte_Bits; -- 108 Bytes long
-   
+
       -- Version 5
       type Bitmap_V5_Header is record
             Header_Size : Binary.Word; -- Size of this Structure
@@ -355,4 +356,3 @@ package body Lumen.Image.BMP is
    end From_File;
 
 end Lumen.Image.BMP;
-

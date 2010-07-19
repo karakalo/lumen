@@ -111,19 +111,20 @@ package body Lumen.Window is
    ---------------------------------------------------------------------------
 
    -- Create a native window
-   function Create (Parent        : Handle             := No_Window;
-                    Width         : Natural            := 400;
-                    Height        : Natural            := 400;
-                    Events        : Wanted_Event_Set   := Want_No_Events;
-                    Name          : String             := "";
-                    Icon_Name     : String             := "";
-                    Class_Name    : String             := "";
-                    Instance_Name : String             := "";
-                    Context       : Context_Handle     := No_Context;
-                    Depth         : Color_Depth        := True_Color;
-                    Animated      : Boolean            := True;
-                    Attributes    : Context_Attributes := Default_Context_Attributes)
-   return Handle is
+   procedure Create (Win           : in out Handle;
+                     Parent        : in     Handle             := No_Window;
+                     Width         : in     Natural            := 400;
+                     Height        : in     Natural            := 400;
+                     Events        : in     Wanted_Event_Set   := Want_No_Events;
+                     Name          : in     String             := "";
+                     Icon_Name     : in     String             := "";
+                     Class_Name    : in     String             := "";
+                     Instance_Name : in     String             := "";
+                     Context       : in     Context_Handle     := No_Context;
+                     Depth         : in     Color_Depth        := True_Color;
+                     Direct        : in     Boolean            := True;
+                     Animated      : in     Boolean            := True;
+                     Attributes    : in     Context_Attributes := Default_Context_Attributes) is
 
       -- Xlib types needed only by Create
       type Alloc_Mode               is (Alloc_None, Alloc_All);
@@ -391,17 +392,21 @@ package body Lumen.Window is
 
       -- Connect the OpenGL context to the new X window
       if Context = No_Context then
-         Our_Context := GLX_Create_Context (Display, Visual, GLX_Context (System.Null_Address), GL_TRUE);
+         Our_Context := GLX_Create_Context (Display, Visual, GLX_Context (System.Null_Address),
+                                            Character'Val (Boolean'Pos (Direct)));
       else
          Our_Context := Context;
       end if;
+      if Our_Context = Null_Context then
+         raise Context_Failed with "Cannot create OpenGL context";
+      end if;
       Did := GLX_Make_Current (Display, Window, Our_Context);
       if Did /= GL_TRUE then
-         raise Context_Failed;
+         raise Context_Failed with "Cannot make OpenGL context current";
       end if;
 
       -- Return the results
-      return new Window_Info'(Display     => Display,
+      Win := new Window_Info'(Display     => Display,
                               Window      => Window,
                               Visual      => Visual,
                               Width       => Width,
@@ -474,9 +479,12 @@ package body Lumen.Window is
    -- Create an OpenGL rendering context; needed only when you want a second
    -- or subsequent context for a window, since Create makes one to start
    -- with
-   function Create_Context (Win : Handle) return Context_Handle is
+   function Create_Context (Win    : in Handle;
+                            Direct : in Boolean := True)
+   return Context_Handle is
    begin  -- Create_Context
-      return GLX_Create_Context (Win.Display, Win.Visual, GLX_Context (System.Null_Address), GL_TRUE);
+      return GLX_Create_Context (Win.Display, Win.Visual, GLX_Context (System.Null_Address),
+                                 Character'Val (Boolean'Pos (Direct)));
    end Create_Context;
 
    ---------------------------------------------------------------------------
@@ -502,7 +510,7 @@ package body Lumen.Window is
       if GLX_Make_Current (Win.Display, Win.Window, Context) = GL_TRUE then
          Win.Context := Context;
       else
-         raise Context_Failed;
+         raise Context_Failed with "Cannot make given OpenGL context current";
       end if;
    end Make_Current;
 

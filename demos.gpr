@@ -15,7 +15,7 @@ project Demos is
    end Builder;
 
    package Compiler is
-      for Default_Switches ("ada") use ("-gnat05", "-gnatn", "-fstack-check");
+      for Default_Switches ("ada") use ("-gnat05", "-fstack-check");
    end Compiler;
 
    package Linker is
