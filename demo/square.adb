@@ -18,6 +18,7 @@ procedure Square is
 
    Win     : Lumen.Window.Handle;
    Event   : Lumen.Events.Event_Data;
+   Have_JS : Boolean;
    Stick   : Lumen.Joystick.Handle;
    Joy     : Lumen.Joystick.Joystick_Event_Data;
 
@@ -65,7 +66,15 @@ begin  -- Square
    Set_View (400, 400);
 
    -- Try opening first joystick
-   Lumen.Joystick.Open (Stick);
+   begin
+      Lumen.Joystick.Open (Stick);
+      Have_JS := True;
+
+   exception
+      when others =>
+         Ada.Text_IO.Put_Line ("You don't seem to have a joystick.  Too bad!");
+         Have_JS := False;
+   end;
 
    -- Loop until user hits a key or clicks the window's Close button
    Outer: loop
@@ -107,24 +116,26 @@ begin  -- Square
       end loop;
 
       -- Process joystick events if there are any pending
-      while Lumen.Joystick.Pending (Stick) > 0 loop
-         declare
-            use Ada.Text_IO;
-            use Lumen.Joystick;
-         begin
-            Joy := Next_Event (Stick);
-            case Joy.Which is
-               when Joystick_Button_Press =>
-                  Put_Line ("Button" & Positive'Image (Joy.Number) & " press");
+      if Have_JS then
+         while Lumen.Joystick.Pending (Stick) > 0 loop
+            declare
+               use Ada.Text_IO;
+               use Lumen.Joystick;
+            begin
+               Joy := Next_Event (Stick);
+               case Joy.Which is
+                  when Joystick_Button_Press =>
+                     Put_Line ("Button" & Positive'Image (Joy.Number) & " press");
 
-               when Joystick_Button_Release =>
-                  Put_Line ("Button" & Positive'Image (Joy.Number) & " release");
+                  when Joystick_Button_Release =>
+                     Put_Line ("Button" & Positive'Image (Joy.Number) & " release");
 
-               when Joystick_Axis_Change =>
-                  Put_Line ("Axis" & Positive'Image (Joy.Number) & " --> " & Integer'Image (Joy.Axis_Value));
-            end case;
-         end;
-      end loop;
+                  when Joystick_Axis_Change =>
+                     Put_Line ("Axis" & Positive'Image (Joy.Number) & " --> " & Integer'Image (Joy.Axis_Value));
+               end case;
+            end;
+         end loop;
+      end if;
 
       -- Do our drawing
       declare
