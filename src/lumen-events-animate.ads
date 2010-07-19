@@ -44,19 +44,17 @@ package Lumen.Events.Animate is
 
    -- Simple event loop with a single event callback, plus an animate-frame
    -- callback
-   procedure Receive_Events (Win       : in Window.Handle;
-                             Call      : in Event_Callback;
-                             FPS       : in Frame_Count;
-                             Frame     : in Animate_Callback;
-                             Translate : in Boolean := True);
+   procedure Receive_Events (Win   : in Window.Handle;
+                             Call  : in Event_Callback;
+                             FPS   : in Frame_Count;
+                             Frame : in Animate_Callback);
 
    -- Simple event loop with multiple event callbacks based on event type,
    -- plus an animate-frame callback
-   procedure Select_Events (Win       : in Window.Handle;
-                            Calls     : in Event_Callback_Table;
-                            FPS       : in Frame_Count;
-                            Frame     : in Animate_Callback;
-                            Translate : in Boolean := True);
+   procedure Select_Events (Win   : in Window.Handle;
+                            Calls : in Event_Callback_Table;
+                            FPS   : in Frame_Count;
+                            Frame : in Animate_Callback);
 
    -- Type of frames-per-second count to fetch.  "Overall" means since the app
    -- started; "Since_Prior" means since the last time you called FPS.
