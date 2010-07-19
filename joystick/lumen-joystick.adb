@@ -1,4 +1,4 @@
-with ada.text_io; use ada.text_io;
+
 -- Lumen.Joystick -- Support (Linux) joysticks under Lumen
 --
 -- Chip Richards, NiEstu, Phoenix AZ, Summer 2010
@@ -138,9 +138,6 @@ package body Lumen.Joystick is
          -- Only process recogized event types
          if Event_Rec.Which'Valid then
 
-            -- put_line ("JS event " & JS_Event_Type'image (event_rec.which) &
-            --              " val" & binary.s_short'image (event_rec.value) &
-            --              " num" & binary.byte'image (event_rec.number));
             Index := Positive (Event_Rec.Number + 1);  -- driver uses zero-based axis and button numbers
 
             case Event_Rec.Which is
