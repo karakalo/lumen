@@ -3,9 +3,6 @@
 --
 -- Chip Richards, NiEstu, Phoenix AZ, Spring 2010
 
--- Lumen would not be possible without the support and contributions of a cast
--- of thousands, including and primarily Rod Kay.
-
 -- This code is covered by the ISC License:
 --
 -- Copyright © 2010, NiEstu
