@@ -14,8 +14,8 @@ begin  -- Colors
 
    -- Create Lumen window, accepting most defaults; turn double buffering off
    -- for simplicity
-   Win := Lumen.Window.Create (Name => "Ooh, Colors!", Animated => False,
-                               Events => (Lumen.Window.Want_Key_Press => True, others => False));
+   Lumen.Window.Create (Win, Name => "Ooh, Colors!", Animated => False,
+                        Events => (Lumen.Window.Want_Key_Press => True, others => False));
 
    -- Loop until user hits a key or clicks the window's Close button
    Outer: Loop

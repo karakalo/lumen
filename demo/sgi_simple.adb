@@ -113,12 +113,12 @@ begin  -- SGI_Simple
 
    -- Create Lumen window, accepting most defaults; turn double buffering off
    -- for simplicity
-   Win := Lumen.Window.Create (Name   => "Simple Demo",
-                               Width  => Wide,
-                               Height => High,
-                               Events => (Lumen.Window.Want_Key_Press => True,
-                                          Lumen.Window.Want_Exposure  => True,
-                                          others => False));
+   Lumen.Window.Create (Win, Name   => "Simple Demo",
+                        Width  => Wide,
+                        Height => High,
+                        Events => (Lumen.Window.Want_Key_Press => True,
+                                   Lumen.Window.Want_Exposure  => True,
+                                   others => False));
 
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
