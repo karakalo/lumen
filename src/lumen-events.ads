@@ -24,6 +24,9 @@ with Lumen.Window;
 
 package Lumen.Events is
 
+   -- Exceptions defined by this package
+   Not_Character : exception;  -- key symbol is not a Latin-1 character
+
    -- The types of events that can be reported
    type Event_Type is (Unknown_Event,
                        Key_Press, Key_Release, Button_Press, Button_Release, Pointer_Motion,
@@ -39,6 +42,10 @@ package Lumen.Events is
    type Modifier_Set is array (Modifier) of Boolean;
    No_Modifiers : Modifier_Set := (others => False);
 
+   -- Translated keysym type and value
+   type Key_Category is (Key_Control, Key_Graphic, Key_Modifier, Key_Function, Key_Special, Key_Unknown, Key_Not_Translated);
+   subtype Key_Symbol is Long_Integer;
+
    -- Pointer buttons
    type Button is (Button_1, Button_2, Button_3, Button_4, Button_5);
    type Button_Set is array (Button) of Boolean;
@@ -51,6 +58,8 @@ package Lumen.Events is
       Abs_Y     : Natural;
       Modifiers : Modifier_Set;
       Key_Code  : Raw_Keycode;
+      Key_Type  : Key_Category;
+      Key       : Key_Symbol;
    end record;
 
    type Button_Event_Data is record
@@ -118,21 +127,42 @@ package Lumen.Events is
 
    ---------------------------------------------------------------------------
 
+   -- Key translation helpers
+
+   -- Convert a Key_Symbol into a Latin-1 character; raises Not_Character if
+   -- it's not possible.  Character'Val is simpler.
+   function To_Character (Symbol : in Key_Symbol) return Character;
+
+   -- Convert a Key_Symbol into a UTF-8 encoded string; raises Not_Character
+   -- if it's not possible.  Really only useful for Latin-1 hibit chars, but
+   -- works for all Latin-1 chars.
+   function To_UTF_8 (Symbol : in Key_Symbol) return String;
+
+   -- Convert a normal Latin-1 character to a Key_Symbol
+   function To_Symbol (Char : in Character) return Key_Symbol;
+
+   pragma Inline (To_Character, To_Symbol);
+
+   ---------------------------------------------------------------------------
+
    -- Returns the number of events that are waiting in the event queue.
    -- Useful for more complex event loops.
    function Pending (Win : Window.Handle) return Natural;
 
    -- Retrieve the next input event from the queue and return it.  Useful for
    -- constructing event loops.
-   function Next_Event (Win : Window.Handle) return Event_Data;
+   function Next_Event (Win       : in Window.Handle;
+                        Translate : in Boolean := True) return Event_Data;
 
    -- Simple event loop with a single callback
-   procedure Receive_Events (Win  : in Window.Handle;
-                             Call : in Event_Callback);
+   procedure Receive_Events (Win       : in Window.Handle;
+                             Call      : in Event_Callback;
+                             Translate : in Boolean := True);
 
    -- Simple event loop with multiple callbacks based on event type
-   procedure Select_Events (Win   : in Window.Handle;
-                            Calls : in Event_Callback_Table);
+   procedure Select_Events (Win       : in Window.Handle;
+                            Calls     : in Event_Callback_Table;
+                            Translate : in Boolean := True);
 
    ---------------------------------------------------------------------------
 

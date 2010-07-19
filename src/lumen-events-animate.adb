@@ -52,10 +52,11 @@ package body Lumen.Events.Animate is
 
    -- Simple event loop with a single event callback, plus an animate-frame
    -- callback
-   procedure Receive_Events (Win   : in Window.Handle;
-                             Call  : in Event_Callback;
-                             FPS   : in Frame_Count;
-                             Frame : in Animate_Callback) is
+   procedure Receive_Events (Win       : in Window.Handle;
+                             Call      : in Event_Callback;
+                             FPS       : in Frame_Count;
+                             Frame     : in Animate_Callback;
+                             Translate : in Boolean := True) is
 
       SPF : Duration;
 
@@ -73,7 +74,7 @@ package body Lumen.Events.Animate is
 
          -- Get events and pass them to the callback
          while Pending (Win) > 0 loop
-            Call (Next_Event (Win));
+            Call (Next_Event (Win, Translate));
          end loop;
 
          -- No more events pending; wait until next frame time if necessary
@@ -99,10 +100,11 @@ package body Lumen.Events.Animate is
 
    -- Simple event loop with multiple event callbacks based on event type,
    -- plus an animate-frame callback
-   procedure Select_Events (Win   : in Window.Handle;
-                            Calls : in Event_Callback_Table;
-                            FPS   : in Frame_Count;
-                            Frame : in Animate_Callback) is
+   procedure Select_Events (Win       : in Window.Handle;
+                            Calls     : in Event_Callback_Table;
+                            FPS       : in Frame_Count;
+                            Frame     : in Animate_Callback;
+                            Translate : in Boolean := True) is
 
       Event : Event_Data;
       SPF   : Duration;
@@ -121,7 +123,7 @@ package body Lumen.Events.Animate is
 
          -- Get events and pass them to the selected callback, if there is one
          while Pending (Win) > 0 loop
-            Event := Next_Event (Win);
+            Event := Next_Event (Win, Translate);
 
             if Calls (Event.Which) /= Events.No_Callback then
                Calls (Event.Which) (Event);
