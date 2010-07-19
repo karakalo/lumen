@@ -111,19 +111,19 @@ package body Lumen.Window is
    ---------------------------------------------------------------------------
 
    -- Create a native window
-   function Create (Parent        : Handle             := No_Window;
-                    Width         : Natural            := 400;
-                    Height        : Natural            := 400;
-                    Events        : Wanted_Event_Set   := Want_No_Events;
-                    Name          : String             := "";
-                    Icon_Name     : String             := "";
-                    Class_Name    : String             := "";
-                    Instance_Name : String             := "";
-                    Context       : Context_Handle     := No_Context;
-                    Depth         : Color_Depth        := True_Color;
-                    Animated      : Boolean            := True;
-                    Attributes    : Context_Attributes := Default_Context_Attributes)
-   return Handle is
+   procedure Create (Win           : in out Handle;
+                     Parent        : in     Handle             := No_Window;
+                     Width         : in     Natural            := 400;
+                     Height        : in     Natural            := 400;
+                     Events        : in     Wanted_Event_Set   := Want_No_Events;
+                     Name          : in     String             := "";
+                     Icon_Name     : in     String             := "";
+                     Class_Name    : in     String             := "";
+                     Instance_Name : in     String             := "";
+                     Context       : in     Context_Handle     := No_Context;
+                     Depth         : in     Color_Depth        := True_Color;
+                     Animated      : in     Boolean            := True;
+                     Attributes    : in     Context_Attributes := Default_Context_Attributes) is
 
       -- Xlib types needed only by Create
       type Alloc_Mode               is (Alloc_None, Alloc_All);
@@ -401,7 +401,7 @@ package body Lumen.Window is
       end if;
 
       -- Return the results
-      return new Window_Info'(Display     => Display,
+      Win := new Window_Info'(Display     => Display,
                               Window      => Window,
                               Visual      => Visual,
                               Width       => Width,
