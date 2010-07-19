@@ -76,7 +76,7 @@ package Lumen.Window is
    type Context_Attribute (Name  : Context_Attribute_Name := Attr_None) is record
       case Name is
          when Attr_None | Attr_Use_GL | Attr_RGBA | Attr_Doublebuffer | Attr_Stereo =>
-            null;  -- all present or not, no value
+            null;  -- present or not, no value
          when Attr_Level =>
             Level : Integer := 0;
          when Attr_Buffer_Size | Attr_Aux_Buffers | Attr_Depth_Size | Attr_Stencil_Size |
