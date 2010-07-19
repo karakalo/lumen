@@ -146,6 +146,7 @@ package Lumen.Window is
                      Instance_Name : in     String             := "";
                      Context       : in     Context_Handle     := No_Context;
                      Depth         : in     Color_Depth        := True_Color;
+                     Direct        : in     Boolean            := True;
                      Animated      : in     Boolean            := True;
                      Attributes    : in     Context_Attributes := Default_Context_Attributes);
 
@@ -163,7 +164,9 @@ package Lumen.Window is
    -- Create an OpenGL rendering context; needed only when you want a second
    -- or subsequent context for a window, since Create makes one to start
    -- with
-   function Create_Context (Win : Handle) return Context_Handle;
+   function Create_Context (Win    : in Handle;
+                            Direct : in Boolean := True)
+   return Context_Handle;
 
    -- Destroy a window's OpenGL rendering context; should be followed either
    -- by a Make_Current or a Destroy_Window
