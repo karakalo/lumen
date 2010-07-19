@@ -133,8 +133,8 @@ package Lumen.Window is
    -- Animated: Whether the GL rendering context will be double-buffered, thus
    -- allowing smooth animation.
    --
-   -- Attributes: The various GL context attributes which can be set.  The
-   -- defaults work for most modern systems.
+   -- Attributes: The various graphic display ("visual") attributes which can
+   -- be set.  The defaults work for most modern systems.
    procedure Create (Win           : in out Handle;
                      Parent        : in     Handle             := No_Window;
                      Width         : in     Natural            := 400;
