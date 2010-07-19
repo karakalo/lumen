@@ -59,10 +59,12 @@ package Lumen.Image is
    type Pixel_Matrix_Ptr is access Pixel_Matrix;
 
    -- Two types of image data info records
+   pragma Warnings (Off);  -- yes, we know it might be big if declared wrong
    type Data (Width, Height : Natural := 0) is record
       Complete : Boolean := False;
       Values   : Pixel_Matrix (1 .. Width, 1 .. Height);
    end record;
+   pragma Warnings (On);
 
    type Descriptor is record
       Complete : Boolean := False;
