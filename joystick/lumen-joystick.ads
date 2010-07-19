@@ -29,12 +29,29 @@ with Lumen.Window;
 
 package Lumen.Joystick is
 
+   ---------------------------------------------------------------------------
+
    -- Exceptions defined by this package
    Open_Failed  : exception;  -- cannot open given joystick device, or cannot fetch its info
-   Events_Bound : exception;  -- stick events are bound to a window, so no direct events available
 
    -- The default joystick device pathname
    Default_Pathname : String := "/dev/input/js0";
+
+   ---------------------------------------------------------------------------
+
+   -- Joystick event
+   type Joystick_Event_Type is (Joystick_Axis_Change, Joystick_Button_Press, Joystick_Button_Release);
+   type Joystick_Event_Data (Which : Joystick_Event_Type := Joystick_Axis_Change) is record
+      Number : Positive;  -- which axis or button
+      case Which is
+         when Joystick_Axis_Change =>
+            Axis_Value : Integer;
+         when Joystick_Button_Press | Joystick_Button_Release =>
+            null;
+      end case;
+   end record;
+
+   ---------------------------------------------------------------------------
 
    -- Our joystick handle, used to refer to joysticks within the library and app
    type Stick_Info_Pointer is private;
@@ -43,28 +60,29 @@ package Lumen.Joystick is
    end record;
    procedure Finalize (Stick : in out Handle);
 
-   -- Open a joystick device, and optionally bind it to a Lumen Window
+   ---------------------------------------------------------------------------
+
+   -- Open a joystick device
    procedure Open (Stick : in out Handle;
-                   Path  : in     String := Default_Pathname;
-                   Win   : in     Window.Handle := Window.No_Window);
+                   Path  : in     String := Default_Pathname);
 
    -- Close a joystick device
    procedure Close (Stick : in out Handle);
 
-   -- Bind a joystick's events to a (possibly different) window, or convert to
-   -- direct reading by passing No_Window
-   procedure Bind (Stick : in out Handle;
-                   Win   : in     Window.Handle);
-
    -- Various joystick information functions
    function Name    (Stick : in Handle) return String;    -- joystick's name
-   function Number  (Stick : in Handle) return Positive;  -- serial number assigned by Lumen
    function Axes    (Stick : in Handle) return Natural;   -- number of axes
    function Buttons (Stick : in Handle) return Natural;   -- number of buttons
 
-   -- If you don't bind a joystick to a window, then you need to read its
-   -- events directly
-   function Next_Event (Stick : in Handle) return Internal.Joystick_Event_Data;
+   -- Returns the number of events that are waiting in the joystick's event
+   -- queue.  Useful to avoid blocking while waiting for the next event to
+   -- show up.
+   function Pending (Stick : in Handle) return Natural;
+
+   -- Read a joystick event
+   function Next_Event (Stick : in Handle) return Joystick_Event_Data;
+
+   ---------------------------------------------------------------------------
 
 private
 
