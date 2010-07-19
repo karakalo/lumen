@@ -1,0 +1,33 @@
+with "../lumen.gpr";
+with "../joy.gpr";
+
+project Square is
+
+   for Source_Files use ("square.adb");
+   for Main use ("square.adb");
+   type Build_Type is
+      ("Debug", "Normal");
+   Build : Build_Type := external ("Build", "Debug");
+
+   package Builder is
+
+      case Build is
+
+         when "Debug" =>
+            for Default_Switches ("ada") use ("-s");
+
+         when "Normal" =>
+            for Default_Switches ("ada") use ("-s");
+      end case;
+   end Builder;
+
+   package Linker is
+      for Default_Switches ("ada") use ("-lGLU");
+   end Linker;
+
+--   package Binder is
+--      for Default_Switches ("ada") use ("-u0");
+--   end Binder;
+
+end Square;
+
