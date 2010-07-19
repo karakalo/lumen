@@ -30,7 +30,6 @@ package Lumen.Events is
    -- The types of events that can be reported
    type Event_Type is (Unknown_Event,
                        Key_Press, Key_Release, Button_Press, Button_Release, Pointer_Motion,
-                       Joystick_Button_Press, Joystick_Button_Release, Joystick_Axis_Change,
                        Enter_Window, Leave_Window, Focus_In, Focus_Out,
                        Exposed, Hidden, Resized, Close_Window);
 
@@ -100,29 +99,14 @@ package Lumen.Events is
       Height    : Natural;
    end record;
 
-   type Joystick_Button_Data is record
-      Stick     : Positive;
-      Button    : Positive;
-   end record;
-
-   type Joystick_Axis_Data is record
-      Stick     : Positive;
-      Axis      : Positive;
-      Value     : Integer;
-   end record;
-
    type Event_Data (Which : Event_Type := Unknown_Event) is record
       case Which is
          when Key_Press | Key_Release =>
             Key_Data      : Key_Event_Data;
          when Button_Press | Button_Release =>
             Button_Data   : Button_Event_Data;
-         when Joystick_Button_Press | Joystick_Button_Release =>
-            Trigger_Data  : Joystick_Button_Data;
          when Pointer_Motion =>
             Motion_Data   : Motion_Event_Data;
-         when Joystick_Axis_Change =>
-            Axis_Data     : Joystick_Axis_Data;
          when Enter_Window | Leave_Window =>
             Crossing_Data : Crossing_Event_Data;
          when Exposed =>
