@@ -1,12 +1,2 @@
 *~
-*.ali
-*.o
-*.html
-demo/colors
-demo/sgi_simple
-demo/spinner
-demo/texture
-demo/square
-lib
-obj
 test
