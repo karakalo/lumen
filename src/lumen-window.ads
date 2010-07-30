@@ -106,6 +106,8 @@ package Lumen.Window is
    -- Create a native window, with defaults for configuration intended to
    -- create a "usable" window.  Details about the parameters are:
    --
+   -- Win: Object into which the new window's handle will be stored.
+   --
    -- Parent: Handle of an existing window that will act as the new window's
    -- parent, or No_Window, meaning an independent top-level window.
    --
@@ -129,6 +131,8 @@ package Lumen.Window is
    --
    -- Depth: The color depth of the GL rendering context, either true-color or
    -- indexed/pseudo-color.
+   --
+   -- Direct: Whether you want direct rendering or server-based rendering.
    --
    -- Animated: Whether the GL rendering context will be double-buffered, thus
    -- allowing smooth animation.
