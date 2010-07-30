@@ -13,7 +13,8 @@ name followed by an image name, like `./texture ppm-test-8.ppm` if you're
 sitting in the `demo` directory, or `demo/texture demo/ppm-test-8.ppm` if
 you're in the `lumen` directory.  When run, `texture` creates a window the
 same size as your image, so for best results, use images that are smaller than
-your screen.
+your screen.  (The actual image is displayed on a rectangle that's smaller, so
+it has room to rotate.)
 
 The window should have a light grey background with a slowly rotating
 rectangle in it which has your image mapped on it.  It should complete one

@@ -14,6 +14,9 @@ NARRS = \
 	narrative-colors \
 	narrative-demos \
 	narrative-lumen \
+	narrative-lumen-events \
+	narrative-lumen-image \
+	narrative-lumen-misc \
 	narrative-sgi_simple \
 	narrative-spinner \
 	narrative-texture

@@ -28,19 +28,32 @@ using this [git][] command:
         git clone git://ftp.niestu.com/lumen
 
 That will create a subdirectory named `lumen` containing the library, its
-demos, and its docs.  To complete the fetch, do this:
+demos, and its docs.
 
-        cd lumen
-        mkdir lib obj
 
 ## Building Lumen
 
-Once you have those two empty directories, this command will build Lumen itself:
+Once you have downloaded the source, these commands will build Lumen itself:
 
+        cd lumen
         gnatmake -P lumen.gpr
 
 That should create `liblumen.a` and a clutter of `.ali` files in the `lib`
-directory.
+directory.  If you want to build the joystick support as well, this command
+should do it:
+
+        gprbuild -P joy.gpr
+
+The `gprbuild` command has some configuration it likes, and if that's not set
+up on your system yet, it may give you some static.  The program `gprconfig`
+lets you set that up, choosing which compilers and languages to use for
+builds.  Pick at least a C compiler and an Ada compiler from its menu, and
+save the config, after which the above command *should* work.
+
+The command should add `lumen-joystick.ali` and `liblumenjoy.a` to the `lib`
+directory, which will allow you to build the joystick demos.  And if you have
+a joystick or a game pad or something similar, you should be able to actually
+*run* them!
 
 ## Building the Demos
 
