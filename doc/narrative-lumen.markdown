@@ -22,7 +22,6 @@ familiar with some of the terms.
 * [Lumen.Internal][misc]
 * [Lumen.Window][misc]
 
-------------------------------------------------------------------------------
 
 [misc]:   narrative-lumen-misc.html
 [events]: narrative-lumen-events.html

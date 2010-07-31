@@ -39,8 +39,8 @@ Once you have downloaded the source, these commands will build Lumen itself:
         gnatmake -P lumen.gpr
 
 That should create `liblumen.a` and a clutter of `.ali` files in the `lib`
-directory.  If you want to build the joystick support as well, this command
-should do it:
+directory.  If you want to build the optional joystick support as well, this
+command should do it:
 
         gprbuild -P joy.gpr
 

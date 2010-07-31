@@ -171,6 +171,35 @@ callback table in their slots.
 
 The `Translate` parameter has the same function as it does for `Next_Event`.
 
+
+## Key translation routines
+
+These are a few simple routines to convert to and from the Lumen data type
+`Key_Symbol` and the standard Ada type `Character`.
+
+The `To_Character` routine is only useful for control and graphic characters,
+and does the same basic job as the standard `Character'Val` attribute
+function, except it will raise the `Not_Character` exception if the key symbol
+you give it is not in the range of `Character`.
+
+`To_UTF8` is a bit more worthwhile.  Since Unicode is becoming ever more
+widespread these days, more and more situations are just dropping support for
+Latin-1, at least for the "hi-bit" characters, those whose ordinal values are
+between 128 and 255.  These are things like the accented characters used by
+some Western European languages.  If you want to, say, write characters you
+get from Lumen keystroke events to a Unicode stream encoded using UTF-8, this
+function will give you the encoded characters as a two-character string.  It
+also works correctly for "lo-bit" characters 0 .. 127, by simply passing them
+through as a one-character string.  Key symbols that aren't in range of the
+Latin-1 character set will raise an exception.  Lumen events won't contain any
+actual characters that are not Latin-1 (because things like function keys and
+Home and so on are not considered "characters"), so `To_UTF8` doesn't handle
+those more extended Unicode values.  We're still thinking about the best way
+for Lumen to handle full Unicode input; suggestions are welcomed.
+
+`To_Symbol` is just a type-conversion function, for use in those odd
+situations where you might need it.
+
 ------------------------------------------------------------------------------
 
 # Lumen.Events.Animate {#lumen-events-animate}
@@ -209,15 +238,15 @@ rendering context, meaning you passed `Animated => True` to
 `Lumen.Window.Swap` once it's done drawing.  You don't *have* to do either of
 those things, but you probably won't like the result if you don't.
 
-And what do we mean by "if your drawing code doesn't take longer than the frame
-rate to execute"?  Well, let's say you set FPS to 60, meaning "I want my
-animation to run at 60 frames per second".  That means your `Frame` procedure
-had better do its business and return in less than 1/60th of a second, or just
-over 16 milliseconds.  With today's hardware, that shouldn't be a problem
-until your scene and/or its underlying calculations get pretty darned complex.
-And if it *does* take longer than that, then Lumen will call `Frame` as
-frequently as possible, with no delay in between calls.  Your code can tell if
-it's exceeding the frame rate by checking the `Frame_Delta` parameter's value.
+And what do we mean by "if your drawing code takes longer than the frame rate
+to execute"?  Well, let's say you set FPS to 60, meaning "I want my animation
+to run at 60 frames per second".  That means your `Frame` procedure had better
+do its business and return in less than 1/60th of a second, or just over 16
+milliseconds.  With today's hardware, that shouldn't be a problem until your
+scene and/or its underlying calculations get pretty darned complex.  And if it
+*does* take longer than that, then Lumen will call `Frame` as frequently as
+possible, with no delay in between calls.  Your code can tell if it's
+exceeding the frame rate by checking the `Frame_Delta` parameter's value.
 
 
 ## Information Routines

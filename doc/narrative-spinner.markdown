@@ -76,6 +76,6 @@ frame-based animation: Update your scene once per frame, and re-draw your
 scene when you need to, but don't mix the two processes.
 
 [sgi_simple]: narrative-sgi_simple.html
-[window]:     narrative-lumen.html#lumen-window
-[events]:     narrative-lumen.html#lumen-events
-[animate]:    narrative-lumen.html#lumen-events-animate
+[window]:     narrative-lumen-misc.html#lumen-window
+[events]:     narrative-lumen-events.html#lumen-events
+[animate]:    narrative-lumen-events.html#lumen-events-animate

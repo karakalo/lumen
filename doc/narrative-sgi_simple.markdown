@@ -58,7 +58,7 @@ short, or tall and narrow.
 Finally, the event handler routine re-draws the scene, because one of the
 other events it can get is `Exposed`, which means the window was covered up
 (partially or entirely) and is now visible again, so now must be re-drawn.
-Note that it also re-draws when it gets `Exposed` events, after the viewport
+Note that it also re-draws when it gets `Resized` events, after the viewport
 has been reset.
 
 One final note about this app: Note that in the call to
@@ -72,5 +72,5 @@ package just for the one lone callback, so just for simplicity's and
 expediency's sake.
 
 [colors]: narrative-colors.html
-[window]: narrative-lumen.html#lumen-window
-[events]: narrative-lumen.html#lumen-events
+[window]: narrative-lumen-misc.html#lumen-window
+[events]: narrative-lumen-events.html#lumen-events

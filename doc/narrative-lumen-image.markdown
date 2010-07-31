@@ -34,9 +34,9 @@ That is, in Lumen images are a rectangular matrix of pixels, and each pixel is
 4 bytes: one byte each for the red, green, and blue color values, and one byte
 of "alpha", or the pixel's level of transparency.  All four values are
 unsigned bytes, meaning they range from 0 to 255.  You can certainly also get
-an image from other sources besides a file, like generating it yourself;
-currently this package will only help you if you want to read it from a PPM or
-BMP file.
+an image from other sources besides a file, like generating it
+programmatically or reading it yourself; currently this package will only help
+you if you want to read it from a PPM or BMP file.
 
 There's also a `Complete` flag in the image descriptor as returned by the
 `From_File` function.  If that flag is false, the image file was truncated or

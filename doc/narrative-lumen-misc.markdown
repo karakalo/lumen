@@ -98,15 +98,16 @@ related to the X windows "visual" and the OpenGL context created for the new
 window, and control the kinds of colors you can use, how updates are sent to
 the server, and other useful but rather obscure stuff.  The defaults are fine
 for most current hardware, but in unusual situations you may need to tinker
-with these values to find a set you can use to create a window.  `Depth` in
-this case is the *color* depth, meaning either a reduced PseudoColor or
-DirectColor palette, or a 32-bit RGBA TrueColor palette.  The term "depth" is
-also used in the attributes below, with an entirely different meaning.  The
-`Depth` parameter allows you to use lesser hardware, or make less use of
-regular hardware, by using PseudoColor or IndexedColor rendering instead of
-TrueColor.  We've used those in the past, but it's been so long we've
-forgotten if they have any advantages besides being able to run on ancient
-graphics cards.
+with these values to find a set you can use to create a window.
+
+`Depth` in this case is the *color* depth, meaning either a reduced
+PseudoColor or DirectColor palette, or a 32-bit RGBA TrueColor palette.  The
+term "depth" is also used in the attributes below, with an entirely different
+meaning.  The `Depth` parameter allows you to use lesser hardware, or make
+less use of regular hardware, by using PseudoColor or IndexedColor rendering
+instead of TrueColor.  We've used those in the past, but it's been so long
+we've forgotten if they have any advantages besides being able to run on
+ancient graphics cards.
 
 `Direct` is an aspect of the OpenGL rendering context, and specifies whether
 you want direct rendering, or to go through the X server.  If you don't know
@@ -116,8 +117,8 @@ network, you usually have to set this to `False`.
 
 `Animated` says "I'll want to do smooth animation in this window", and allows
 that by selecting a double-buffered visual instead of one that's
-single-buffered.  If you set it True, or let it default to True, then you'll
-need to call `Swap` to see what you've just drawn.
+single-buffered.  If you set it `True`, or let it default to `True`, then
+you'll need to call `Swap` to see what you've just drawn.
 
 Finally, `Attributes` is a list of X visual settings that you can use to
 determine what sort of graphical "device" you're going to be drawing on.  In
@@ -222,7 +223,8 @@ without consequence.
 
 But if you *do* have a joystick and want to use it with a Lumen app, step
 right up!  The `Open` procedure opens the "first" joystick by default, and
-returns a handle to use for future reference to that stick in your code.  The
+returns a handle to use for future reference to that stick in your code.  You
+can provide it with a different device path to select a different stick.  The
 `Close` call reverses this action.
 
 Once you've opened a joystick, you can fetch various bits of information about
@@ -231,16 +233,17 @@ should be obvious from their names and data types.  Use these to determine
 whether the user's device has what your app wants.
 
 The `Pending` and `Next_Event` functions work much like their namesakes in the
-[`Lumen.Events`][events] package. `Pending` returns the number of events
-waiting for you to read, and incidentally tells you whether `Next_Event` will
-block if you call it.  `Next_Event` returns the next joystick event, either
-immediately handing back the first one waiting in the queue, or blocking until
-a new one shows up.
+[`Lumen.Events`][events] package. `Pending` returns the number of joystick
+events waiting for you to read from that stick, and incidentally tells you
+whether `Next_Event` will block (wait) if you call it.  (Hint: It will block
+if `Pending` returns zero.)  `Next_Event` returns the next joystick event from
+that device, either immediately handing back the first one waiting in the
+queue, or blocking until a new one shows up.
 
 During development, we tried a technique that would "bind" a joystick to a
 Lumen window, and return that joystick's events along with all the normal
 window events like mouse moves and button clicks and keypresses, but the
-implementation proved too slow and unweildy.  Such a mechanism might reappear
+implementation proved too slow and unwieldy.  Such a mechanism might reappear
 if a breakthrough, or a miracle, occurs.  For now, you have to handle joystick
 events separately from the rest of your input events, using the functions
 provided by this package.

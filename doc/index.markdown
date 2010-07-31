@@ -28,9 +28,10 @@ Look for more to be added to this page in the days and weeks ahead!
 <h2 class="centered">Bug Reports</h2>
 
 You may report bugs in Lumen, or ask about difficulties in using it, on the
-#Ada IRC channel on [the Freenode IRC network][freenode].  There's also a
+\#Ada IRC channel on [the Freenode IRC network][freenode].  There's also a
 [web-based bug tracker][jira] for Lumen on the AuroraUX site, thanks to those
-fine folks, especially Jerrid Kimball.
+fine folks, especially Jerrid Kimball.  Be sure to select "Lumen" under
+"Projects" if you use that page.
 
 <h2 class="centered">News About Lumen</h2>
 
