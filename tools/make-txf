@@ -1,0 +1,501 @@
+#!/usr/bin/perl -w
+
+# make-txf -- Create a Kilgard-style TXF (texture-mapped font) file using
+#             the FreeType2 library for glyph rendering
+#
+# Chip Richards, NiEstu, Phoenix AZ, Summer 2010
+
+# This code is covered by the ISC License:
+#
+# Copyright © 2010, NiEstu
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# The software is provided "as is" and the author disclaims all warranties
+# with regard to this software including all implied warranties of
+# merchantability and fitness. In no event shall the author be liable for any
+# special, direct, indirect, or consequential damages or any damages
+# whatsoever resulting from loss of use, data or profits, whether in an
+# action of contract, negligence or other tortious action, arising out of or
+# in connection with the use or performance of this software.
+
+# Environment
+use strict;
+use Getopt::Long;
+use Font::FreeType;
+
+
+
+##############################################################################
+#
+# Global constants
+#
+##############################################################################
+
+# Infrastructure
+my $false = 0;
+my $true  = 1;
+
+# Useful constants
+my $black = "\x00";
+my $signature = "\xFFtxf";
+my $endian_mark = 0x12345678;
+my $txf_format = 0;  # we always generate "byte" format
+
+# Configuration
+my $default_width    = 256;       # default width of texture image in pixels
+my $default_height   = 256;       # default height of texture image in pixels
+my $default_gap      =   1;       # default inter-glyph gap in pixels
+my $default_size     =  20;       # default point size for glyphs
+my $default_dpi      = 100;       # default resolution for gylph rendering
+
+# The list of options that the script recognizes, and their aliases and types
+my @option_descriptors =
+qw(
+   help|h
+   verbose|v
+   width=i
+   height=i
+   gap=i
+   glyphs=s
+   font|fn=s
+   size=i
+   dpi=i
+   output|out=s
+);
+
+# Constant names for the options; these must be the "primary" name of the
+# option
+my $opt_help        = 'help';
+my $opt_verbose     = 'verbose';
+my $opt_width       = 'width';
+my $opt_height      = 'height';
+my $opt_gap         = 'gap';
+my $opt_glyphs      = 'glyphs';
+my $opt_font        = 'font';
+my $opt_size        = 'size';
+my $opt_dpi         = 'dpi';
+my $opt_output      = 'output';
+
+# The call-name
+my $progname = qx{basename $0};
+chomp ($progname);
+
+
+
+##############################################################################
+#
+# Global variables
+#
+##############################################################################
+
+# The main option hash
+my %opt = ();
+
+# Command-line arguments
+my $inchars;
+my $out;
+my $font;
+my $width  = $default_width;
+my $height = $default_height;
+my $gap    = $default_gap;
+my $size   = $default_size;
+my $dpi    = $default_dpi;
+
+# Operating variables
+my $face;
+my $input;
+
+
+
+##############################################################################
+#
+# Main program
+#
+##############################################################################
+
+# Process command line
+&collect_options;
+
+# Find glyph stream and read it
+if (exists ($opt {$opt_glyphs}))
+{
+    open ($inchars, '<', $opt {$opt_glyphs}) ||
+        die "Cannot open glyph file " . $opt {$opt_glyphs} . " for reading; terminated\n";
+}
+else
+{
+    open ($inchars, '-');
+}
+binmode ($inchars, ":utf8");
+$input = <$inchars>;
+close ($inchars);
+
+# Open the font file
+$face = Font::FreeType -> new -> face ($font);
+
+# Scale the font to the given size.  If it's a bitmap font, then leave the
+# size to the default, which will be right.
+if ($face -> is_scalable)
+{
+    $face -> set_char_size ($size, $size, $dpi, $dpi);
+}
+if (exists ($opt {$opt_verbose}))
+{
+    printf "Face %s // %s:  asc, desc %d, %d  hz, vt %d, %d  height %d\n",
+    $face -> family_name, $face -> style_name,
+    $face -> ascender, $face -> descender, $face -> has_horizontal_metrics, $face -> has_vertical_metrics,
+    $face -> height;
+}
+
+# Split up the input characters and use them to create an array of unique
+# glyph structures
+my @from_chars = split (//, $input);
+
+my $c;
+my $g;
+my $s;
+my @glyphs = ();
+CHAR: foreach $c (@from_chars)
+{
+    # Skip dupes
+    foreach $s (@glyphs)
+    {
+        if ($s -> {c} eq $c)
+        {
+            printf "Skipping duplicate U+%06X\n", ord ($c);
+            next CHAR;
+        }
+    }
+
+    # Look up font glyph for this char
+    $g = $face -> glyph_from_char_code (ord ($c));
+    if (! defined ($g))
+    {
+        printf "No glyph for character U+%06X -- skipped\n", ord ($c);
+        next CHAR;
+    }
+
+    my ($xmin, $ymin, $xmax, $ymax) = $g -> outline_bbox;
+#    printf "%s: (%d, %d) - (%d, %d)\n", $c, $xmin, $ymin, $xmax, $ymax;
+    my ($bitmap, $left, $top) = $g -> bitmap;
+
+#    if ($g -> height > $top)
+#    {
+#        printf ("%s (%06X): %dx%d, left %d, top %0.1f, hadv %d, vadv %d, lb %d, rb %d\n",
+#                $c, ord ($c), $g -> width, $g -> height, $left, $top,
+#                $g -> horizontal_advance, $g -> vertical_advance, $g -> left_bearing, $g -> right_bearing);
+#    }
+
+    # Add new glyph structure
+    push (@glyphs, {c => $c, w => $g -> width, h => $g -> height,
+                    xo => $g -> left_bearing, yo => $top - $g -> height,
+                    a => $g -> horizontal_advance,
+                    b => $bitmap});
+}
+
+# Sort the glyphs by height, in reverse
+@glyphs = sort { $b -> {h} <=> $a -> {h} } @glyphs;
+#foreach $g (@glyphs)
+#{
+#    printf "%s:  %dw %dh  %dxo %dyo  %da\n", $g -> {c}, $g -> {w}, $g -> {h}, $g -> {xo}, $g -> {yo}, $g -> {a};
+#}
+
+# Fill the texture image with glyphs, if they'll fit
+my @image = ({ px => $gap, py => $gap, h => $glyphs [0] -> {h}, g => [] });
+my $py = $gap;
+my $row = 0;
+my $orig_num = scalar (@glyphs);
+while (scalar (@glyphs) > 0)
+{
+    my $next;
+    while ($true)
+    {
+        # Find a glyph that will fit on the current row
+        $next = &find_fit (\@glyphs, $image [$row]);
+        last if (defined ($next));
+
+        # No fit on current row, move to a new row, if we can
+        $py += $image [$row] -> {h} + $gap;
+        if ($py > $height)
+        {
+            printf STDERR ("%d of %d glyphs won't fit in a %dx%d texture image using %dpts at %d DPI.\n",
+                           scalar (@glyphs), $orig_num, $width, $height, $size, $dpi);
+            die "Please try again with different parameters.\n";
+        }
+        ++$row;
+        $image [$row] = { px => $gap, py => $py, h => $glyphs [0] -> {h}, g => [] };
+    }
+
+    # Have found a glyph that will fit on current row, so put it there
+    $next -> {px} = $image [$row] -> {px};
+    $next -> {py} = $image [$row] -> {py};
+    $image [$row] -> {px} += $next -> {w} + $gap;
+    push (@{$image [$row] -> {g}}, $next);
+}
+
+# Report our success so far, if asked
+if (exists ($opt {$opt_verbose}))
+{
+    printf "Built %d rows, total height %d of %d:\n",
+           scalar (@image), $image [$#image] -> {py} + $image [$#image] -> {h}, $height;
+    foreach $row (@image)
+    {
+        foreach my $g (@{$row -> {g}})
+        {
+            print $g -> {c};
+        }
+        print "\n";
+    }
+}
+
+# Now build the output image as a matrix of bytes
+my @matrix;
+my $p;
+my $pad   = $black x $gap;    # inter-glyph gap, horizontal
+my $blank = $black x $width;  # inter-glyph gap, vertical
+for $p (1 .. $gap)
+{
+    push (@matrix, $blank);
+}
+$py = $gap;
+
+foreach $row (@image)
+{
+    $py = &fill ($py, $row, \@matrix);
+}
+
+for $p (($py + 1) .. $height)
+{
+    push (@matrix, $blank);
+}
+
+# Dump the data
+# printf "%s:  %dx%d  %da, %dd  %dg\n",
+#     $face -> family_name, 
+#     $width, $height, 
+#     $face -> ascender, $face -> descender, $orig_num;
+
+# printf "   %3s %3s  %4s %4s  %4s  %6s %6s\n", "W", "H", "Xo", "Yo", "A", "X", "Y";
+# foreach $row (@image)
+# {
+#     foreach $g (@{$row -> {g}})
+#     {
+#         printf " %s %3d %3d  %4d %4d  %4d  %6d %6d\n", $g -> {c}, $g -> {w}, $g -> {h},
+#         $g -> {xo}, $g -> {yo}, $g -> {a}, $g -> {px}, $g -> {py};
+#     }
+# }
+
+# Create output file
+if (exists ($opt {$opt_output}))
+{
+    open ($out, '>', $opt {$opt_output}) ||
+        die "Cannot open output file " . $opt {$opt_output} . " for writing; terminated\n";
+}
+else
+{
+    open ($out, '>-');
+}
+binmode ($out, ":bytes");
+
+# Write the header
+print $out  $signature, pack ("Ll6", $endian_mark, $txf_format, $width, $height, 
+                              $face -> ascender, -($face -> descender), $orig_num);
+
+# Write the glyph info
+foreach $row (@image)
+{
+    foreach $g (@{$row -> {g}})
+    {
+        if ($g -> {w} <= 0 || $g -> {h} <= 0)
+        {
+            $g -> {px} = -1;
+            $g -> {py} = -1;
+        }
+        print $out  pack ("SCCcccCss", ord ($g -> {c}), $g -> {w}, $g -> {h},
+                          $g -> {xo}, $g -> {yo}, $g -> {a}, 0, $g -> {px}, $g -> {py});
+    }
+    
+}
+
+# Dump the texture image to the output file
+foreach my $m (@matrix)
+{
+    print $out  $m;
+}
+
+
+# Dump the texture image as a PGM file for debugging
+# open (PGM, '>', "mtdump.pgm") || die "Can't open PGM debug file\n";
+# printf PGM  "P5\n%d %d\n255\n", $width, $height;
+# foreach my $m (@matrix)
+# {
+#     print PGM  $m;
+# }
+# close (PGM);
+
+# Done
+close ($out);
+exit (0);
+
+
+
+##############################################################################
+#
+# Functions
+#
+##############################################################################
+
+# Find the next glyph that will fit on the given row
+sub find_fit
+{
+    my ($g, $r) = @_;
+    my ($i);
+
+    $i = 0;
+    while ($i < scalar (@{$g}))
+    {
+        if ($r -> {px} + $g -> [$i] -> {w} + $gap < $width)
+        {
+            return splice (@{$g}, $i, 1);
+        }
+        ++$i;
+    }
+    return undef;
+}
+
+#-----------------------------------------------------------------------------
+
+# Add a row of glyph images to the texture image, plus the inter-glyph gap
+sub fill
+{
+    my ($py, $row, $img) = @_;
+    my ($line, $p, $r);
+
+    for ($p = 0;   $p < $row -> {h};   ++$p)
+    {
+        $line = $pad;
+
+        foreach $g (@{$row -> {g}})
+        {
+            $r = $#{$g -> {b}};
+            if ($p <= $r)
+            {
+                $line .= $g -> {b} -> [$r - $p];
+            }
+            else
+            {
+                $line .= $black x $g -> {w};
+            }
+            $line .= $pad;
+        }
+
+        die "Line too long " . length ($line) if length ($line) > $width;
+        $line .= $black x ($width - length ($line));
+        push (@{$img}, $line);
+    }
+    
+    for $p (1 .. $gap)
+    {
+        push (@{$img}, $blank);
+    }
+    return $py + $row -> {h} + $gap;
+}
+
+#-----------------------------------------------------------------------------
+
+# Call the Getopt module to parse the command-line options that we recognize
+sub collect_options
+{
+   my ($dirmsg);
+
+   &Getopt::Long::config ('no_auto_abbrev');
+   &Getopt::Long::config ('ignore_case');
+   &Getopt::Long::GetOptions (\%opt, @option_descriptors);
+
+# See if it's time to quit already; first, check if the help option was given
+   if (exists ($opt {$opt_help}))
+   {
+      &syntax_message ();
+      exit (0);
+   }
+
+# Font file is required, all others have defaults
+   if (! exists ($opt {$opt_font}))
+   {
+      &syntax_message ();
+      exit (0);
+   }
+
+# Use options that were given
+   $font   = $opt {$opt_font};
+   $width  = $opt {$opt_width}  if (exists ($opt {$opt_width}));
+   $height = $opt {$opt_height} if (exists ($opt {$opt_height}));
+   $gap    = $opt {$opt_gap}    if (exists ($opt {$opt_gap}));
+   $size   = $opt {$opt_size}   if (exists ($opt {$opt_size}));
+   $dpi    = $opt {$opt_dpi}    if (exists ($opt {$opt_dpi}));
+}
+
+#-----------------------------------------------------------------------------
+
+# Print a summary of the program's usage
+sub syntax_message
+{
+   print STDERR qq{
+Syntax:
+
+   $progname  [ options ]  cd-name  top-dir
+
+Where "options" are any of the following:
+
+Information options:
+
+   --help, -h
+      Print this syntax message and quit.
+
+   --verbose | -v
+      Print extensive information.
+
+Operational options:
+
+   --width=width
+      Width of the texture image in pixels.  Default is $default_width.
+
+   --height=height
+      Height of the texture image in pixels.    Default is $default_height.
+
+   --gap=gap
+      Gap between glyphs in the texture image.  Default is $default_gap.
+      Kilgard notes that "Increasing the texel gap beyond $default_gap is worthwhile if
+      you plan on using mipmapping with your fonts."
+
+   --glyphs=file
+      Name of file where glyphs are found.  Default is standard input.  Data
+      is expected to be encoded in UTF-8.
+
+   --font=font-file, --fn=font-file
+      Pathname of font file to use for creating texture-map glyph images.
+      Must be in a format usable by FreeType2, such as TrueType, OpenType, or
+      Type 1.  (.ttf, .pfb, .pcf, etc.)  Required.
+
+   --size=render-size
+      Size at which font glyphs will be rendered, in "points" (1/72 of an
+      inch).  Default is $default_size.  Ignored if font is not scalable.
+
+   --dpi=render-dpi
+      Resolution of virtual device used to render font glyphs, in dots per
+      inch.  Default is $default_dpi.
+
+   --output=txf-file, --out=txf-file
+      Pathname where output will be written.  Default is standard output.
+
+Non-power-of-two sizes for the texture image are supported if the GL version
+is 2.0 or greater, or if the implementation exports the
+GL_ARB_texture_non_power_of_two extension.
+
+};
+}
+
+#-----------------------------------------------------------------------------
