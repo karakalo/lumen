@@ -139,11 +139,11 @@ package body Lumen.Events is
       Mod_3_Mask    : constant Modifier_Mask := 2#0000_0000_0010_0000#;
       Mod_4_Mask    : constant Modifier_Mask := 2#0000_0000_0100_0000#;
       Mod_5_Mask    : constant Modifier_Mask := 2#0000_0000_1000_0000#;
-      Button_1_Mask : constant Modifier_Mask := 2#0000_0000_0000_0000#;
-      Button_2_Mask : constant Modifier_Mask := 2#0000_0001_0000_0000#;
-      Button_3_Mask : constant Modifier_Mask := 2#0000_0010_0000_0000#;
-      Button_4_Mask : constant Modifier_Mask := 2#0000_0100_0000_0000#;
-      Button_5_Mask : constant Modifier_Mask := 2#0001_1000_0000_0000#;
+      Button_1_Mask : constant Modifier_Mask := 2#0000_0001_0000_0000#;
+      Button_2_Mask : constant Modifier_Mask := 2#0000_0010_0000_0000#;
+      Button_3_Mask : constant Modifier_Mask := 2#0000_0100_0000_0000#;
+      Button_4_Mask : constant Modifier_Mask := 2#0000_1000_0000_0000#;
+      Button_5_Mask : constant Modifier_Mask := 2#0001_0000_0000_0000#;
 
       type X_Event_Code is new Integer range X_First_Event .. X_Last_Event;
 
