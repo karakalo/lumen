@@ -1,7 +1,6 @@
-*.o
-*.ali
 colors
 sgi_simple
 spinner
 texture
 square
+text1
