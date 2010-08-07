@@ -1,7 +1,6 @@
 
 -- Simple Lumen demo/test program, using earliest incomplete library.
 
-with Ada.Characters.Handling;
 with Ada.Command_Line;
 with System.Address_To_Access_Conversions;
 
@@ -141,7 +140,7 @@ procedure Texture is
 
    begin  -- Draw
 
-      -- Set a black background
+      -- Set a light grey background
       glClearColor (0.8, 0.8, 0.8, 1.0);
       glClear (GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
 
