@@ -39,6 +39,7 @@ procedure Text2 is
    Img_Wide : Float;
    Img_High : Float;
    Rotation : Natural := 0;
+   Rotating : Boolean := True;
    Tx_Font  : Font.Txf.Handle;
    Object   : GL.UInt;
    Frame    : Natural := 0;
@@ -126,22 +127,21 @@ procedure Text2 is
       MA    : Natural;
       MD    : Natural;
       Scale : Float;
-      Pad   : Float := Img_Wide / 10.0;
+      Pad   : Float := Img_Wide / 10.0;  -- margin width
 
       FNum  : String := Img (Frame, 6);
       FRate : String (1 .. 6);
 
    begin  -- Draw
 
-      -- Set an off-white background
+      -- Set a light grey background
       GL.ClearColor (0.85, 0.85, 0.85, 0.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT);
 
-      -- Draw a black square
+      -- Draw a black rectangle, disabling texturing so we can do plain colors
       GL.Disable (GL.GL_TEXTURE_2D);
       GL.Disable (GL.GL_BLEND);
       GL.Disable (GL.GL_ALPHA_TEST);
-
       GL.Color (Float (0.0), 0.0, 0.0);
       GL.glBegin (GL.GL_POLYGON);
       begin
@@ -152,7 +152,7 @@ procedure Text2 is
       end;
       GL.glEnd;
 
-      -- Set up to draw the text messages
+      -- Turn texturing back on and set up to draw the text messages
       GL.PushMatrix;
       GL.Enable (GL.GL_TEXTURE_2D);
       GL.Enable (GL.GL_ALPHA_TEST);
@@ -172,8 +172,18 @@ procedure Text2 is
       Font.Txf.Render (Tx_Font, FNum);
       GL.PopMatrix;
 
-      -- Draw the frame rate, right-justified in lowe half of rectangle
+      -- Draw the frame number label, left-justified in upper half of
+      -- rectangle, and one-third the size of the number itself
       GL.PushMatrix;
+      Font.Txf.Get_String_Metrics (Tx_Font, "Frame", MW, MA, MD);
+      GL.Translate (-(Img_Wide - Pad), Float (MA) * Scale, 0.0);
+      GL.Scale (Scale / 3.0, Scale / 3.0, Scale / 3.0);
+      Font.Txf.Render (Tx_Font, "Frame");
+      GL.PopMatrix;
+
+      -- Draw the frame rate, right-justified in lower half of rectangle
+      GL.PushMatrix;
+      -- Guard against out-of-range values, and display all question marks if so
       begin
          Ada.Float_Text_IO.Put (FRate, Events.Animate.FPS (Win), Aft => 3, Exp => 0);
 
@@ -185,6 +195,15 @@ procedure Text2 is
       GL.Translate (Img_Wide - (Pad + Float (MW) * Scale), -Float (MA) * Scale, 0.0);
       GL.Scale (Scale, Scale, Scale);
       Font.Txf.Render (Tx_Font, FRate);
+      GL.PopMatrix;
+
+      -- Draw the frame rate label, left-justified in lower half of
+      -- rectangle, and one-third the size of the number itself
+      GL.PushMatrix;
+      Font.Txf.Get_String_Metrics (Tx_Font, "FPS", MW, MA, MD);
+      GL.Translate (-(Img_Wide - Pad), -Float (MA) * Scale, 0.0);
+      GL.Scale (Scale / 3.0, Scale / 3.0, Scale / 3.0);
+      Font.Txf.Render (Tx_Font, "FPS");
       GL.PopMatrix;
 
       GL.PopMatrix;
@@ -221,6 +240,8 @@ procedure Text2 is
       if Event.Key_Data.Key = Events.To_Symbol (Ada.Characters.Latin_1.ESC) or
          Event.Key_Data.Key = Events.To_Symbol ('q') then
          raise Program_Exit;
+      elsif Event.Key_Data.Key = Events.To_Symbol (Ada.Characters.Latin_1.Space) then
+         Rotating := not Rotating;
       end if;
    end Key_Handler;
 
@@ -248,10 +269,12 @@ procedure Text2 is
    -- Our draw-a-frame routine, should get called FPS times a second
    procedure New_Frame (Frame_Delta : in Duration) is
    begin  -- New_Frame
-      if Rotation >= Max_Rotation then
-         Rotation := 0;
-      else
-         Rotation := Rotation + 1;
+      if Rotating then
+         if Rotation >= Max_Rotation then
+            Rotation := 0;
+         else
+            Rotation := Rotation + 1;
+         end if;
       end if;
 
       Frame := Frame + 1;
