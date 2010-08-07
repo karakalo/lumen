@@ -76,8 +76,8 @@ package Lumen.Font.Txf is
    procedure Get_String_Metrics (Font        : in     Handle;
                                  Str         : in     String;
                                  Width       :    out Natural;
-                                 Max_Ascent  :    out Integer;
-                                 Max_Descent :    out Integer);
+                                 Max_Ascent  :    out Natural;
+                                 Max_Descent :    out Natural);
 
    -- Render a single character
    procedure Render (Font : in Handle;

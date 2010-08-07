@@ -42,6 +42,8 @@ package body Lumen.Font.Txf is
       Glyph   : Natural;
       T       : Texture_Coords;
       V       : Vertices;
+      Ascent  : Integer;
+      Descent : Integer;
       Advance : Float;
    end record;
    type Txf_Vertex_Table is array (Positive range <>) of Txf_Vertex_Info;
@@ -300,6 +302,8 @@ package body Lumen.Font.Txf is
             Verts.T (4) (2) := Float (T.Y + S_Short (T.Height)) / H + Y_Step;
             Verts.V (4) (1) := GL.Short (T.X_Offset);
             Verts.V (4) (2) := GL.Short (T.Y_Offset + S_Byte (T.Height));
+            Verts.Ascent  := Integer'Max (0, Integer (T.Y_Offset) + Integer (T.Height));
+            Verts.Descent := Integer'Min (0, Integer (T.Y_Offset));
             Verts.Advance := Float (T.Advance);
             Font.Info.Verts (I) := Verts;
         end loop;
@@ -380,25 +384,32 @@ package body Lumen.Font.Txf is
    procedure Get_String_Metrics (Font        : in     Handle;
                                  Str         : in     String;
                                  Width       :    out Natural;
-                                 Max_Ascent  :    out Integer;
-                                 Max_Descent :    out Integer) is
+                                 Max_Ascent  :    out Natural;
+                                 Max_Descent :    out Natural) is
 
-      W : Natural := 0;
-      V : Txf_Vertex_Info;
+      W  : Natural := 0;
+      V  : Txf_Vertex_Info;
+      MA : Natural;
+      MD : Natural;
 
    begin  -- Get_String_Metrics
 
       -- Scan the string a char at a time, accumulating glyph widths (well
       -- really, "advances")
+      V := Get_Vertex_Info (Font, Character'Pos (Str (Str'First)));
+      MA := abs V.Ascent;
+      MD := abs V.Descent;
       for C in Str'Range loop
          V := Get_Vertex_Info (Font, Character'Pos (Str (C)));
+         MA := Natural'Max (MA, abs V.Ascent);
+         MD := Natural'Max (MD, abs V.Descent);
          W := W + Natural (V.Advance);
       end loop;
 
       -- Return results
       Width       := W;
-      Max_Ascent  := Font.Info.Ascent;
-      Max_Descent := Font.Info.Descent;
+      Max_Ascent  := MA;
+      Max_Descent := MD;
    end Get_String_Metrics;
 
    ---------------------------------------------------------------------------
