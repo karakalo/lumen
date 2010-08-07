@@ -21,7 +21,6 @@
 
 
 -- Environment
-with Ada.Containers.Generic_Array_Sort;
 with Ada.Streams;
 with Ada.Unchecked_Deallocation;
 with System.Address_To_Access_Conversions;
@@ -48,16 +47,16 @@ package body Lumen.Font.Txf is
    type Txf_Vertex_Table is array (Positive range <>) of Txf_Vertex_Info;
 
    -- Internal view of a font
-   type Lookup_Table is array (Positive range <>) of Positive;
-   type Font_Info (Glyphs : Natural;   Size : Natural) is record
+   type Lookup_Table is array (Natural range <>) of Natural;
+   type Font_Info (Glyphs : Natural;   Size : Natural;  Lo, Hi : Natural) is record
       Object     : GL.UInt := 0;
       Width      : Natural;
       Height     : Natural;
       Ascent     : Integer;
       Descent    : Integer;
       Num_Glyphs : Natural;
-      Base       : Natural;
       Verts      : Txf_Vertex_Table (1 .. Glyphs);
+      Lookup     : Lookup_Table (Lo .. Hi);
       Image      : Binary.Byte_String (1 .. Size);
    end record;
 
@@ -95,29 +94,15 @@ package body Lumen.Font.Txf is
    -- Fetch vertex info record for given glyph
    function Get_Vertex_Info (Font  : in Handle;
                              Glyph : in Natural) return Txf_Vertex_Info is
-
-      Index : Positive := Glyph - Font.Info.Base;
-
    begin  -- Get_Vertex_Info
 
       -- Kilgard's code did automatic ASCII case folding here.  Should we?
-      if Index in Font.Info.Verts'Range then
-         return Font.Info.Verts (Index);
+      if Glyph in Font.Info.Lookup'Range and then Font.Info.Lookup (Glyph) /= 0 then
+         return Font.Info.Verts (Font.Info.Lookup (Glyph));
       else
          raise No_Glyph with "glyph" & Natural'Image (Glyph) & " is not in this font";
       end if;
    end Get_Vertex_Info;
-
-   -- Glyph vertex info record comparison function
-   function "<" (Left, Right : Txf_Vertex_Info) return Boolean is
-   begin  -- "<"
-      return Left.Glyph < Right.Glyph;
-   end "<";
-
-   procedure Sort is new Ada.Containers.Generic_Array_Sort (Index_Type   => Positive,
-                                                            Element_Type => Txf_Vertex_Info,
-                                                            Array_Type   => Txf_Vertex_Table,
-                                                            "<"          => "<");
 
    ---------------------------------------------------------------------------
    --
@@ -249,13 +234,15 @@ package body Lumen.Font.Txf is
          package USht is new Lumen.Binary.Endian.Shorts (Short);
          package SSht is new Lumen.Binary.Endian.Shorts (S_Short);
 
-         Info   : Txf_Info_Table;
-         W      : Float := Float (Header.Width);
-         H      : Float := Float (Header.Height);
-         X_Step : Float := 0.5 / W;
-         Y_Step : Float := 0.5 / H;
-         T      : Txf_Glyph_Info;
-         Verts  : Txf_Vertex_Info;
+         Info     : Txf_Info_Table;
+         Lo_Glyph : Natural;
+         Hi_Glyph : Natural;
+         W        : Float := Float (Header.Width);
+         H        : Float := Float (Header.Height);
+         X_Step   : Float := 0.5 / W;
+         Y_Step   : Float := 0.5 / H;
+         T        : Txf_Glyph_Info;
+         Verts    : Txf_Vertex_Info;
       begin
 
          -- Read the data from the file
@@ -270,9 +257,19 @@ package body Lumen.Font.Txf is
             end loop;
          end if;
 
+         -- Find glyph bounds
+         Lo_Glyph := Natural (Info (Info'First).Glyph);
+         Hi_Glyph := Natural (Info (Info'First).Glyph);
+         for I in Info'Range loop
+            Lo_Glyph := Natural'Min (Lo_Glyph, Natural (Info (I).Glyph));
+            Hi_Glyph := Natural'Max (Hi_Glyph, Natural (Info (I).Glyph));
+         end loop;
+
          -- Create our return value object
          Font.Info := new Font_Info (Glyphs => Header.Num_Glyphs,
-                                     Size   => Header.Width * Header.Height);
+                                     Size   => Header.Width * Header.Height,
+                                     Lo     => Lo_Glyph,
+                                     Hi     => Hi_Glyph);
          Font.Info.Width      := Header.Width;
          Font.Info.Height     := Header.Height;
          Font.Info.Ascent     := Header.Ascent;
@@ -307,11 +304,11 @@ package body Lumen.Font.Txf is
             Font.Info.Verts (I) := Verts;
         end loop;
 
-        -- Sort the vertex table and fetch (and adjust) the base-glyph value.
-        -- NOTE: Doesn't allow for a glpyh value of zero, but that's poorly
-        -- supported elsewhere too.
-        Sort (Font.Info.Verts);
-        Font.Info.Base := Font.Info.Verts (Font.Info.Verts'First).Glyph - 1;
+        -- Generate the glyph lookup table
+        Font.Info.Lookup := (others => 0);  -- none allocated yet
+        for I in Font.Info.Verts'Range loop
+           Font.Info.Lookup (Font.Info.Verts (I).Glyph) := I;
+        end loop;
       end;
    end Load;
 
