@@ -217,9 +217,11 @@ while (scalar (@glyphs) > 0)
         $next = &find_fit (\@glyphs, $image [$row]);
         last if (defined ($next));
 
-        # No fit on current row, move to a new row, if we can
+        # No fit on current row, move to a new row, if we can, meaning if
+        # there's room for the new row plus our inter-glyph gap on top of the
+        # current row
         $py += $image [$row] -> {h} + $gap;
-        if ($py > $height)
+        if ($py + $glyphs [0] -> {h} + $gap > $height)
         {
             printf STDERR ("%d of %d glyphs won't fit in a %dx%d texture image using %dpts at %d DPI.\n",
                            scalar (@glyphs), $orig_num, $width, $height, $size, $dpi);
