@@ -8,8 +8,8 @@ with Ada.Strings.Fixed;
 with Ada.Float_Text_IO;
 
 with Lumen.Events.Animate;
+with Lumen.Events.Keys;
 with Lumen.Window;
-
 with Lumen.Font.Txf;
 with Lumen.GL;
 with Lumen.GLU;
@@ -21,7 +21,7 @@ procedure Text2 is
    ---------------------------------------------------------------------------
 
    -- Rotation wraps around at this point, in degrees
-   Max_Rotation      : constant := 359;
+   Max_Rotation      : constant := 360.0;
 
    -- Nice peppy game-style framerate, in frames per second
    Framerate         : constant := 60;
@@ -29,22 +29,28 @@ procedure Text2 is
    -- A font to fall back on
    Default_Font_Path : constant String := "fsb.txf";
 
+   -- Keystrokes we care about
+   Escape   : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.ESC));
+   Space    : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.Space));
+   Letter_q : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.LC_Q));
+
    ---------------------------------------------------------------------------
 
-   Win      : Window.Handle;
-   Direct   : Boolean := True;  -- want direct rendering by default
-   Event    : Events.Event_Data;
-   Wide     : Natural := 400;
-   High     : Natural := 400;
-   Img_Wide : Float;
-   Img_High : Float;
-   Rotation : Natural := 0;
-   Rotating : Boolean := True;
-   Tx_Font  : Font.Txf.Handle;
-   Object   : GL.UInt;
-   Frame    : Natural := 0;
+   Win       : Window.Handle;
+   Direct    : Boolean := True;  -- want direct rendering by default
+   Event     : Events.Event_Data;
+   Wide      : Natural := 400;
+   High      : Natural := 400;
+   Img_Wide  : Float;
+   Img_High  : Float;
+   Rotation  : Float := 0.0;
+   Increment : Float := 1.0;
+   Rotating  : Boolean := True;
+   Tx_Font   : Font.Txf.Handle;
+   Object    : GL.UInt;
+   Frame     : Natural := 0;
 
-   Attrs    : Window.Context_Attributes :=
+   Attrs     : Window.Context_Attributes :=
       (
        (Window.Attr_Red_Size,    8),
        (Window.Attr_Green_Size,  8),
@@ -237,12 +243,22 @@ procedure Text2 is
       use type Events.Key_Symbol;
 
    begin  -- Key_Handler
-      if Event.Key_Data.Key = Events.To_Symbol (Ada.Characters.Latin_1.ESC) or
-         Event.Key_Data.Key = Events.To_Symbol ('q') then
-         raise Program_Exit;
-      elsif Event.Key_Data.Key = Events.To_Symbol (Ada.Characters.Latin_1.Space) then
-         Rotating := not Rotating;
-      end if;
+      case Event.Key_Data.Key is
+         when Escape | Letter_q =>
+            raise Program_Exit;
+         when Space =>
+            Rotating := not Rotating;
+         when Events.Keys.Up =>
+            if Increment * 2.0 < Float'Last then
+               Increment := Increment * 2.0;
+            end if;
+         when Events.Keys.Down =>
+            if Increment / 2.0 > 0.0 then
+               Increment := Increment / 2.0;
+            end if;
+         when others =>
+            null;
+      end case;
    end Key_Handler;
 
    ---------------------------------------------------------------------------
@@ -271,9 +287,9 @@ procedure Text2 is
    begin  -- New_Frame
       if Rotating then
          if Rotation >= Max_Rotation then
-            Rotation := 0;
+            Rotation := 0.0;
          else
-            Rotation := Rotation + 1;
+            Rotation := Rotation + Increment;
          end if;
       end if;
 
@@ -342,8 +358,7 @@ begin  -- Text2
 
    end loop;
 
-   -- Create Lumen window, accepting most defaults; turn double buffering off
-   -- for simplicity
+   -- Create Lumen window, accepting most defaults
    Window.Create (Win,
                   Name       => "Text Demo #2, Revenge of the Text",
                   Width      => Wide,
