@@ -423,6 +423,7 @@ package body Lumen.Window is
                               Last_Start  => Ada.Calendar.Clock,
                               App_Frames  => 0,
                               Last_Frames => 0,
+                              SPF         => 0.0,
                               Context     => Our_Context);
    end Create;
 

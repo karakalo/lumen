@@ -75,6 +75,7 @@ package Lumen.Internal is
       Last_Start  : Ada.Calendar.Time     := Never;
       App_Frames  : Long_Integer          := 0;
       Last_Frames : Long_Integer          := 0;
+      SPF         : Duration              := 0.0;
       Context     : GLX_Context           := Null_Context;
    end record;
 
