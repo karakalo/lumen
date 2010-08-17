@@ -58,6 +58,10 @@ package Lumen.Events.Animate is
                             Frame     : in Animate_Callback;
                             Translate : in Boolean := True);
 
+   -- Procedure to change FPS after window creation
+   procedure Set_FPS (Win : in Window.Handle;
+                      FPS : in Frame_Count);
+
    -- Type of frames-per-second count to fetch.  "Overall" means since the app
    -- started; "Since_Prior" means since the last time you called FPS.
    type FPS_Type is (FPS_Overall, FPS_Since_Prior);

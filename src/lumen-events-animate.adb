@@ -29,8 +29,7 @@ package body Lumen.Events.Animate is
    ---------------------------------------------------------------------------
 
    -- Module-local procedure to wait until next frame time, if necessary
-   procedure Wait_Frame (Win : in Window.Handle;
-                         SPF : in Duration) is
+   procedure Wait_Frame (Win : in Window.Handle) is
 
       use Ada.Calendar;
 
@@ -40,10 +39,10 @@ package body Lumen.Events.Animate is
 
       -- No special check needed for first frame, since the initial value
       -- (Never) is a long long time ago.
-      if Been > SPF then
+      if Been > Win.SPF then
          return;
       else
-         delay SPF - Been;
+         delay Win.SPF - Been;
       end if;
 
    end Wait_Frame;
@@ -57,16 +56,13 @@ package body Lumen.Events.Animate is
                              FPS       : in Frame_Count;
                              Frame     : in Animate_Callback;
                              Translate : in Boolean := True) is
-
-      SPF : Duration;
-
    begin  -- Receive_Events
 
       -- Check for special FPS value
       if FPS = Flat_Out then
-         SPF := 0.0;
+         Win.SPF := 0.0;
       else
-         SPF := Duration (1.0) / Duration (FPS);
+         Win.SPF := Duration (1.0) / Duration (FPS);
       end if;
 
       -- Main loop never returns
@@ -78,7 +74,7 @@ package body Lumen.Events.Animate is
          end loop;
 
          -- No more events pending; wait until next frame time if necessary
-         Wait_Frame (Win, SPF);
+         Wait_Frame (Win);
 
          -- Draw next frame
          declare
@@ -107,15 +103,14 @@ package body Lumen.Events.Animate is
                             Translate : in Boolean := True) is
 
       Event : Event_Data;
-      SPF   : Duration;
 
    begin  -- Select_Events
 
       -- Check for special FPS value
       if FPS = Flat_Out then
-         SPF := 0.0;
+         Win.SPF := 0.0;
       else
-         SPF := Duration (1.0) / Duration (FPS);
+         Win.SPF := Duration (1.0) / Duration (FPS);
       end if;
 
       -- Main loop never returns
@@ -131,7 +126,7 @@ package body Lumen.Events.Animate is
          end loop;
 
          -- No more events pending; wait until next frame time if necessary
-         Wait_Frame (Win, SPF);
+         Wait_Frame (Win);
 
          -- Draw next frame
          declare
@@ -148,6 +143,21 @@ package body Lumen.Events.Animate is
       end loop;
 
    end Select_Events;
+
+   ---------------------------------------------------------------------------
+
+   -- Change FPS after window creation
+   procedure Set_FPS (Win : in Window.Handle;
+                      FPS : in Frame_Count) is
+   begin  -- Set_FPS
+
+      -- Check for special FPS value
+      if FPS = Flat_Out then
+         Win.SPF := 0.0;
+      else
+         Win.SPF := Duration (1.0) / Duration (FPS);
+      end if;
+   end Set_FPS;
 
    ---------------------------------------------------------------------------
 
