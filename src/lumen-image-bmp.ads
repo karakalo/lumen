@@ -1,11 +1,9 @@
 
 -- Lumen.Image.BMP -- Load and save Microsoft BMP image data
---
--- Julian Leyh, Chip Richards, NiEstu, Phoenix AZ, Spring 2010
 
 -- This code is covered by the ISC License:
 --
--- Copyright © 2010, NiEstu
+-- Copyright © 2010, Julian Leyh <jleyh@auroraux.org>
 --
 -- Permission to use, copy, modify, and/or distribute this software for any
 -- purpose with or without fee is hereby granted, provided that the above
@@ -24,7 +22,7 @@
 with Lumen.Binary.IO;
 
 
-private package Lumen.Image.BMP is
+package Lumen.Image.BMP is
 
    function From_File (File : in Binary.IO.File_Type) return Descriptor;
 
