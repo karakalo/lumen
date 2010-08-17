@@ -108,6 +108,13 @@ package body Lumen.Window is
    return Character;
    pragma Import (C, GLX_Make_Current, "glXMakeCurrent");
 
+   function GLX_Make_Context_Current (Display  : Display_Pointer;
+                                      Draw     : Window_ID;
+                                      Read     : Window_ID;
+                                      Context  : GLX_Context)
+   return Character;
+   pragma Import (C, GLX_Make_Context_Current, "glXMakeContextCurrent");
+
    ---------------------------------------------------------------------------
 
    -- Create a native window
@@ -503,16 +510,26 @@ package body Lumen.Window is
 
    ---------------------------------------------------------------------------
 
-   -- Make a rendering context the current one for a window
-   procedure Make_Current (Win     : in out Handle;
-                           Context : in     Context_Handle) is
+   -- Select a window to use for subsequent OpenGL calls
+   procedure Make_Current (Win : in Handle) is
    begin  -- Make_Current
-      if GLX_Make_Current (Win.Display, Win.Window, Context) = GL_TRUE then
-         Win.Context := Context;
-      else
+      if GLX_Make_Current (Win.Display, Win.Window, Win.Context) /= GL_TRUE then
          raise Context_Failed with "Cannot make given OpenGL context current";
       end if;
    end Make_Current;
+
+   ---------------------------------------------------------------------------
+
+   -- Make a rendering context the current one for a window
+   procedure Set_Context (Win     : in out Handle;
+                          Context : in     Context_Handle) is
+   begin  -- Set_Context
+      if GLX_Make_Current (Win.Display, Win.Window, Context) = GL_TRUE then
+         Win.Context := Context;
+      else
+         raise Context_Failed with "Cannot select given OpenGL context";
+      end if;
+   end Set_Context;
 
    ---------------------------------------------------------------------------
 

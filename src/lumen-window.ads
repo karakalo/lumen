@@ -176,9 +176,12 @@ package Lumen.Window is
    -- by a Make_Current or a Destroy_Window
    procedure Destroy_Context (Win : in out Handle);
 
+   -- Select a window to use for subsequent OpenGL calls
+   procedure Make_Current (Win : in Handle);
+
    -- Make a rendering context the current one for a window
-   procedure Make_Current (Win     : in out Handle;
-                           Context : in     Context_Handle);
+   procedure Set_Context (Win     : in out Handle;
+                          Context : in     Context_Handle);
 
    -- Promotes the back buffer to front; only valid if the window is double
    -- buffered, meaning Animated was true when the window was created.  Useful
