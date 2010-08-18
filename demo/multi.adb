@@ -13,6 +13,7 @@ with Lumen.Window;
 with Lumen.Font.Txf;
 with Lumen.GL;
 with Lumen.GLU;
+with Lumen.Image;
 
 use Lumen;
 
@@ -29,15 +30,23 @@ procedure Multi is
    -- Rotation wraps around at this point, in degrees
    Max_Rotation      : constant := 360.0;
 
+   -- Default rotation per frame, in degrees
+   Default_Increment : constant := 1.0;
+
    -- Good-enough framerate for what we're doing
    Framerate         : constant := 30;
 
    -- A font to fall back on
    Default_Font_Path : constant String := "fsb.txf";
 
+   -- Colors used to construct our texture image
+   Red               : constant Image.Pixel := (255, 0, 0, 0);
+   White             : constant Image.Pixel := (0, 0, 255, 0);  -- actually blue right now
+
    -- Keystrokes we care about
    Escape   : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.ESC));
    Space    : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.Space));
+   Equals   : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.Equals_Sign));
    Letter_q : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.LC_Q));
 
    ---------------------------------------------------------------------------
@@ -49,11 +58,14 @@ procedure Multi is
    Scene_Wide : Float := Float (Scene_Win_Width);
    Scene_High : Float := Float (Scene_Win_Height);
    Rotation   : Float := 0.0;
-   Increment  : Float := 1.0;
+   Increment  : Float := Default_Increment;
    Rotating   : Boolean := True;
    Tx_Font    : Font.Txf.Handle;
    Object     : GL.UInt;
    Frame      : Natural := 0;
+   Quad       : GLU.Quadric := GLU.NewQuadric;
+   Checks     : Image.Pixel_Matrix (1 .. 32, 1 .. 32);
+   Check_Tx   : GL.UInt;
 
    Attrs     : Window.Context_Attributes :=
       (
@@ -192,20 +204,6 @@ procedure Multi is
       GL.ClearColor (0.0, 0.0, 0.0, 0.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT);
 
-      -- Draw a black rectangle, disabling texturing so we can do plain colors
-      -- GL.Disable (GL.GL_TEXTURE_2D);
-      -- GL.Disable (GL.GL_BLEND);
-      -- GL.Disable (GL.GL_ALPHA_TEST);
-      -- GL.Color (Float (0.0), 0.0, 0.0);
-      -- GL.glBegin (GL.GL_POLYGON);
-      -- begin
-      --    GL.Vertex (-Scene_Wide, -Scene_High, 0.0);
-      --    GL.Vertex (-Scene_Wide,  Scene_High, 0.0);
-      --    GL.Vertex ( Scene_Wide,  Scene_High, 0.0);
-      --    GL.Vertex ( Scene_Wide, -Scene_High, 0.0);
-      -- end;
-      -- GL.glEnd;
-
       -- Turn texturing back on and set up to draw the text messages
       GL.PushMatrix;
       GL.Enable (GL.GL_TEXTURE_2D);
@@ -216,6 +214,7 @@ procedure Multi is
       GL.Enable (GL.GL_POLYGON_OFFSET_FILL);
       GL.PolygonOffset (0.0, -3.0);
       GL.Color (Float (0.1), 0.8, 0.1);
+      Font.Txf.Bind_Font_Texture (Tx_Font);
 
       -- Draw the frame number, right-justified in upper half of rectangle
       GL.PushMatrix;
@@ -283,32 +282,35 @@ procedure Multi is
       GL.ClearColor (0.85, 0.85, 0.85, 0.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT);
 
-      -- Disable texturing so we can do plain colors
-      GL.Disable (GL.GL_TEXTURE_2D);
-      GL.Disable (GL.GL_BLEND);
-      GL.Disable (GL.GL_ALPHA_TEST);
+      -- Draw a textured sphere
+      GL.Color (Float (1.0), 1.0, 1.0);  -- white
+      GL.Enable (GL.GL_TEXTURE_2D);
+      GL.BindTexture (GL.GL_TEXTURE_2D, Check_Tx);
+      GLU.Sphere (Quad, 1.0, 32, 32);
+      -- GL.glBegin (GL.GL_POLYGON);
+      -- begin
+      --    GL.TexCoord (Float (0.0), 1.0);
+      --    GL.Vertex (Float (-1.0), -1.0);
 
-      -- Draw a smooth-blended (the default mode) square going from red to yellow
-      GL.glBegin (GL.GL_POLYGON);
-      begin
-         GL.Color (Float (0.0), 1.0, 0.0);  -- green
-         GL.Vertex (Float (-1.0), -1.0);
-         GL.Color (Float (0.0), 1.0, 0.0);  -- green
-         GL.Vertex (Float (-1.0),  1.0);
-         GL.Color (Float (0.0), 0.0, 1.0);  -- blue
-         GL.Vertex (Float ( 1.0),  1.0);
-         GL.Color (Float (0.0), 0.0, 1.0);  -- blue
-         GL.Vertex (Float ( 1.0), -1.0);
-      end;
-      GL.glEnd;
+      --    GL.TexCoord (Float (0.0), 0.0);
+      --    GL.Vertex (Float (-1.0),  1.0);
 
-      -- Rotate the square around the Z axis by the current amount
+      --    GL.TexCoord (Float (1.0), 0.0);
+      --    GL.Vertex ( Float (1.0),  1.0);
+
+      --    GL.TexCoord (Float (1.0), 1.0);
+      --    GL.Vertex ( Float (1.0), -1.0);
+      -- end;
+      -- GL.glEnd;
+
+      -- Rotate the sphere around the Z axis by the current amount
       GL.MatrixMode (GL.GL_MODELVIEW);
       GL.LoadIdentity;
-      GL.Rotate (Rotation, 0.0, 0.0, -1.0);
 
       -- Move the scene back a bit from the viewing plane so we can actually see it
       GL.Translate (GL.Double (0.0), 0.0, -4.0);
+      GL.Rotate (Rotation, 1.0,  0.0, 0.0);
+      GL.Rotate (Rotation, 0.0, -1.0, 0.0);
 
       -- Now show it
       Window.Swap (Scene);
@@ -336,6 +338,8 @@ procedure Multi is
             raise Program_Exit;
          when Space =>
             Rotating := not Rotating;
+         when Equals =>
+            Increment := Default_Increment;
          when Events.Keys.Up =>
             if Increment * 2.0 < Float'Last then
                Increment := Increment * 2.0;
@@ -490,6 +494,39 @@ begin  -- Multi
    -- Set up the viewport and scene parameters
    Window.Make_Current (Scene);
    Set_Scene_View (Scene_Win_Width, Scene_Win_Height);
+
+   -- Make our texture
+   for Row in Checks'Range (1) loop
+      for Col in Checks'Range (2) loop
+         if Row <= Checks'Last (2) / 2 then
+            if Col <= Checks'Last (1) / 2 then
+               Checks (Row, Col) := White;
+            else
+               Checks (Row, Col) := Red;
+            end if;
+         else
+            if Col <= Checks'Last (1) / 2 then
+               Checks (Row, Col) := Red;
+            else
+               Checks (Row, Col) := White;
+            end if;
+         end if;
+      end loop;
+   end loop;
+   GL.GenTextures (1, Check_Tx'Address);
+   GL.BindTexture (GL.GL_TEXTURE_2D, Check_Tx);
+   GL.TexEnv (GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+   GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+   GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+   GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+   GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+   GL.Enable (GL.GL_DEPTH_TEST);
+   GL.DepthFunc (GL.GL_LEQUAL);
+   GL.TexImage (GL.GL_TEXTURE_2D, 0, GL.GL_RGB, Checks'Last (1), Checks'Last (2), 0,
+                GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, Checks'Address);
+   GLU.QuadricTexture (Quad, GL.GL_TRUE);
+
+   -- Set up data window
    Window.Make_Current (Data);
    Set_Data_View (Data_Win_Width, Data_Win_Height);
    Object := Font.Txf.Establish_Texture (Tx_Font, 0, True);
