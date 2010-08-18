@@ -1,5 +1,5 @@
 
--- Lumen.Image.BMP -- Load and save netpbm's PPM image data
+-- Lumen.Image.BMP -- Load and save Microsoft BMP image data
 
 -- This code is covered by the ISC License:
 --
