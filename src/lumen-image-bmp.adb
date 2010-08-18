@@ -1,5 +1,5 @@
 
--- Lumen.Image.BMP -- Load and save Microsoft BMP image data
+-- Lumen.Image.BMP -- Load and save netpbm's PPM image data
 
 -- This code is covered by the ISC License:
 --
@@ -129,6 +129,9 @@ package body Lumen.Image.BMP is
       pragma Pack (V5_Info_Header_Extra);
       for V5_Info_Header_Extra'Size use 16 * Binary.Byte_Bits; -- 16 Bytes + Version + V3 + V4 => 124 Bytes long
 
+      subtype RGBQuad is Binary.Byte_String(1..4);
+      type Palette is array (Natural range <>) of RGBQuad;
+
       File_Header : Bitmap_File_Header; -- File Header
       The_Version : Bitmap_Version; -- Bitmap Version
       BPP         : Binary.Short; -- Bits Per Pixel (1, 4, 8, 16, 24, 32)
@@ -136,9 +139,64 @@ package body Lumen.Image.BMP is
       Compression : Compression_Method := BI_RGB; -- used compression method
 
       procedure Read_One_Bit_Format is
+         Colors : Palette (0..1);
+         Components : Natural := 4;
+
+         Row_Size : Natural := Natural(Result.Width) / Binary.Byte_Bits + 1; -- Row size in Bytes
+         Padding  : Natural := (-Row_Size) mod 4; -- padding
+         Row_Buf  : Binary.Byte_String (1 .. Row_Size + Padding);
+         Last     : Natural;
+         Row,The_Row,The_Col : Natural;
+
+         type Bit is mod 2;
+         type BitBytes is array (1..Binary.Byte_Bits) of Bit;
+         pragma Pack(BitBytes);
+         for BitBytes'Size use Binary.Byte_Bits;
+
+         Byte_Of_Row  : Natural;
+         Current_Byte : Binary.Byte;
+         Current_Bits : BitBytes;
+         for Current_Bits'Address use Current_Byte'Address;
       begin
-         -- read palette
-         raise Invalid_Format;
+         if The_Version = V1 then
+            Components := 3;
+         end if;
+         -- read palette (two entries)
+         for Color in Colors'Range loop
+            Colors(Color) := Binary.IO.Read(File, Components);
+         end loop;
+
+         Ada.Streams.Stream_IO.Set_Index (File, Ada.Streams.Stream_IO.Count((File_Header.Offset) + 1));
+
+         Ada.Text_IO.New_Line;
+         Ada.Text_IO.Put_Line("Reading 1bit Format:");
+         Ada.Text_IO.Put_Line("Row Size: " & Natural'Image(Row_Size));
+         Ada.Text_IO.Put_Line("Padding:  " & Natural'Image(Padding));
+
+         Row := Result.Values'Last(1);
+         while Row >= Result.Values'First(1) loop
+            Binary.IO.Read (File, Row_Buf, Last);
+            if Last /= Row_Size + Padding then
+               raise Invalid_Format;
+            end if;
+            if Reversed then -- invert the order
+               The_Row := Result.Values'Last(1) - Row + Result.Values'First(1);
+            else
+               The_Row := Row;
+            end if;
+            Byte_Of_Row := 0;
+            for Col in Result.Values'Range(2) loop
+               The_Col := Current_Bits'Last - (Col - 1) mod Binary.Byte_Bits;
+               if The_Col = Current_Bits'Last then
+                  Byte_Of_Row := Byte_Of_Row + 1;
+                  Current_Byte := Row_Buf (Byte_Of_Row);
+               end if;
+               Result.Values (The_Row, Col).B := Colors(Natural(Current_Bits(The_Col)))(1);
+               Result.Values (The_Row, Col).G := Colors(Natural(Current_Bits(The_Col)))(2);
+               Result.Values (The_Row, Col).R := Colors(Natural(Current_Bits(The_Col)))(3);
+            end loop;
+            Row := Row - 1;
+         end loop;
       end Read_One_Bit_Format;
 
       procedure Read_Four_Bit_Format is
@@ -158,7 +216,7 @@ package body Lumen.Image.BMP is
          Padding  : Natural := (-Row_Size) mod 4; -- padding
          Row_Buf  : Binary.Byte_String (1 .. Row_Size + Padding);
          Last     : Natural;
-         Row,The_Row : Integer;
+         Row,The_Row : Natural;
       begin
          Ada.Streams.Stream_IO.Set_Index (File, Ada.Streams.Stream_IO.Count((File_Header.Offset) + 1));
 
@@ -314,3 +372,4 @@ package body Lumen.Image.BMP is
    end From_File;
 
 end Lumen.Image.BMP;
+
