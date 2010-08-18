@@ -32,7 +32,7 @@ package Lumen.GL is
 
    -- New names for old types
    subtype Bitfield is Binary.Word;
-   subtype Boolean  is Binary.Byte;
+   subtype Bool     is Binary.Byte;
    subtype Byte     is Binary.S_Byte;
    subtype ClampD   is Long_Float range 0.0 .. 1.0;
    subtype ClampF   is Float range 0.0 .. 1.0;
@@ -85,12 +85,13 @@ package Lumen.GL is
    type Double_Matrix is array (1 .. 4, 1 .. 4) of Double;
 
    -- "Enumeration" constants
+   GL_FALSE                                    : constant Bool := 16#0#;
+   GL_TRUE                                     : constant Bool := 16#1#;
+
    GL_VERSION_1_1                              : constant Enum := 1;
    GL_VERSION_1_2                              : constant Enum := 1;
    GL_VERSION_1_3                              : constant Enum := 1;
    GL_ARB_imaging                              : constant Enum := 1;
-   GL_FALSE                                    : constant Enum := 16#0#;
-   GL_TRUE                                     : constant Enum := 16#1#;
    GL_BYTE                                     : constant Enum := 16#1400#;
    GL_UNSIGNED_BYTE                            : constant Enum := 16#1401#;
    GL_SHORT                                    : constant Enum := 16#1402#;
@@ -895,7 +896,7 @@ package Lumen.GL is
 
    procedure Disable (Cap : in Enum);
 
-   function IsEnabled (Cap : in Enum) return Boolean;
+   function IsEnabled (Cap : in Enum) return Bool;
 
    -- Projections
    procedure Ortho (Left     : in Double;
@@ -1013,7 +1014,7 @@ package Lumen.GL is
 
    procedure GetPolygonStipple (Mask : in Pointer);
 
-   procedure EdgeFlag (Flag : in Boolean);
+   procedure EdgeFlag (Flag : in Bool);
 
    procedure EdgeFlagv (Flag : in Pointer);
 
@@ -1119,6 +1120,26 @@ package Lumen.GL is
 
    procedure GenTextures (N        : in SizeI;
                           Textures : in Pointer);
+
+   procedure TexEnv (Coord : in Enum;
+                     PName : in Enum;
+                     Param : in Enum);
+
+   procedure TexGen (Coord : in Enum;
+                     PName : in Enum);
+
+   procedure TexParameter (Target : in Enum;
+                           PName  : in Enum;
+                           Param  : in Enum);
+
+   procedure TexParameter (Target : in Enum;
+                           PName  : in Enum;
+                           Param  : in Int);
+
+   procedure TexParameter (Target : in Enum;
+                           PName  : in Enum;
+                           Param  : in Float);
+   pragma Inline (TexParameter);
 
    -- Texture images
    procedure TexImage (Target          : in Enum;
@@ -1329,5 +1350,9 @@ private
    pragma Import (C, EdgeFlagv, "glEdgeFlagv");
    pragma Import (C, Scissor, "glScissor");
    pragma Import (C, BlendFunc, "glBlendFunc");
+   pragma Import (C, TexGen, "glTexGeni");
+   pragma Import (C, TexEnv, "glTexEnvi");
+
+   pragma Linker_Options ("-lGL");
 
 end Lumen.GL;

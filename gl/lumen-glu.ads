@@ -54,10 +54,69 @@ package Lumen.GLU is
                       Bottom : in Double;
                       Top    : in Double);
 
+   -- Quadrics
+   type Quadric is new Pointer;
+
+   function NewQuadric return Quadric;
+
+   procedure DeleteQuadric (Quad : in Quadric);
+
+   procedure QuadricDrawStyle (Quad : in Quadric;
+                               Draw : in Enum);
+
+   procedure QuadricNormals (Quad   : in Quadric;
+                             Normal : in Enum);
+
+   procedure QuadricOrientation (Quad        : in Quadric;
+                                 Orientation : in Enum);
+
+   procedure QuadricTexture (Quad    : in Quadric;
+                             Texture : in Bool);
+
+   -- Shapes
+   procedure Cylinder (Quad   : in Quadric;
+                       Base   : in Double;
+                       Top    : in Double;
+                       Height : in Double;
+                       Slices : in Int;
+                       Stacks : in Int);
+
+   procedure Disk (Quad   : in Quadric;
+                   Inner  : in Double;
+                   Outer  : in Double;
+                   Slices : in Int;
+                   Loops  : in Int);
+
+   procedure PartialDisk (Quad   : in Quadric;
+                          Inner  : in Double;
+                          Outer  : in Double;
+                          Slices : in Int;
+                          Loops  : in Int;
+                          Start  : in Double;
+                          Sweep  : in Double);
+
+   procedure Sphere (Quad   : in Quadric;
+                     Radius : in Double;
+                     Slices : in Int;
+                     Stacks : in Int);
+
+
 private
    -- These can be bound directly
    pragma Import (C, Build1DMipmaps, "gluBuild1DMipmaps");
    pragma Import (C, Build2DMipmaps, "gluBuild2DMipmaps");
    pragma Import (C, Ortho2D, "gluOrtho2D");
+   pragma Import (C, NewQuadric, "gluNewQuadric");
+   pragma Import (C, DeleteQuadric, "gluDeleteQuadric");
+   pragma Import (C, QuadricDrawStyle, "gluQuadricDrawStyle");
+   pragma Import (C, QuadricOrientation, "gluQuadricOrientation");
+   pragma Import (C, QuadricNormals, "gluQuadricNormals");
+   pragma Import (C, QuadricTexture, "gluQuadricTexture");
+   pragma Import (C, Cylinder, "gluCylinder");
+   pragma Import (C, Sphere, "gluSphere");
+   pragma Import (C, Disk, "gluDisk");
+   pragma Import (C, PartialDisk, "gluPartialDisk");
+
+   pragma Linker_Options ("-lGLU");
 
 end Lumen.GLU;

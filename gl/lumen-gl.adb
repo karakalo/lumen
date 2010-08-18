@@ -431,6 +431,40 @@ package body Lumen.GL is
       glColor4uiv (V);
    end Color;
 
+   -- Texturing
+   procedure TexParameter (Target : in Enum;
+                           PName  : in Enum;
+                           Param  : in Enum) is
+      procedure glTexParameteri (Target : in Enum;
+                                 PName  : in Enum;
+                                 Param  : in Enum);
+      pragma Import (C, glTexParameteri, "glTexParameteri");
+   begin  -- TexParameter
+      glTexParameteri (Target, PName, Param);
+   end TexParameter;
+
+   procedure TexParameter (Target : in Enum;
+                           PName  : in Enum;
+                           Param  : in Int) is
+      procedure glTexParameteri (Target : in Enum;
+                                 PName  : in Enum;
+                                 Param  : in Int);
+      pragma Import (C, glTexParameteri, "glTexParameteri");
+   begin  -- TexParameter
+      glTexParameteri (Target, PName, Param);
+   end TexParameter;
+
+   procedure TexParameter (Target : in Enum;
+                           PName  : in Enum;
+                           Param  : in Float) is
+      procedure glTexParameterf (Target : in Enum;
+                                 PName  : in Enum;
+                                 Param  : in Float);
+      pragma Import (C, glTexParameterf, "glTexParameterf");
+   begin  -- TexParameter
+      glTexParameterf (Target, PName, Param);
+   end TexParameter;
+
    -- Texture images
    procedure TexImage (Target          : in Enum;
                        Level           : in Int;
