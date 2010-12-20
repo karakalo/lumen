@@ -32,6 +32,7 @@ package body Lumen.Binary.IO is
 
    -- Useful constant for our short I/O routines
    Bytes_Per_Short : constant := Short'Size / Ada.Streams.Stream_Element'Size;
+   Bytes_Per_Word  : constant := Word'Size  / Ada.Streams.Stream_Element'Size;
 
    ---------------------------------------------------------------------------
 
@@ -178,6 +179,59 @@ package body Lumen.Binary.IO is
 
       -- Pointer-fumbling routines used to read data without copying it
       subtype SEA is Stream_Element_Array (1 .. Stream_Element_Offset (Item'Length * Bytes_Per_Short));
+      package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
+
+      Into : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);
+      Got  : Stream_Element_Offset;
+
+   begin  -- Read
+
+      Stream_IO.Read (File, Into.all, Got);
+      Last := Natural (Got);
+
+   exception
+     when others =>
+        raise Read_Error;
+   end Read;
+
+   ---------------------------------------------------------------------------
+
+   -- Read and return a stream of words up to the given length
+   function Read (File   : File_Type;
+                  Length : Positive)
+   return Word_String is
+
+      use Ada.Streams;
+
+      -- Pointer-fumbling routines used to read data without copying it
+      subtype SEA is Stream_Element_Array (1 .. Stream_Element_Offset (Length * Bytes_Per_Word));
+      package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
+
+      Into : Word_String (1 .. Length);
+      Item : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Into'Address);
+      Got  : Stream_Element_Offset;
+
+   begin  -- Read
+
+      Stream_IO.Read (File, Item.all, Got);
+      return Into (Into'First .. Natural (Got / Bytes_Per_Word));
+
+   exception
+      when others =>
+         raise Read_Error;
+   end Read;
+
+   ---------------------------------------------------------------------------
+
+   -- Read and return a stream of words up to the length of the given buffer
+   procedure Read (File : in     File_Type;
+                   Item :    out Word_String;
+                   Last :    out Natural) is
+
+      use Ada.Streams;
+
+      -- Pointer-fumbling routines used to read data without copying it
+      subtype SEA is Stream_Element_Array (1 .. Stream_Element_Offset (Item'Length * Bytes_Per_Word));
       package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
 
       Into : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);

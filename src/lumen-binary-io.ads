@@ -71,6 +71,16 @@ package Lumen.Binary.IO is
                    Item :    out Short_String;
                    Last :    out Natural);
 
+   -- Read and return a stream of words up to the given length
+   function Read (File     : File_Type;
+                  Length   : Positive)
+   return Word_String;
+
+   -- Read and return a stream of words up to the length of the given buffer
+   procedure Read (File : in     File_Type;
+                   Item :    out Word_String;
+                   Last :    out Natural);
+
    -- Write a stream of bytes
    procedure Write (File : in File_Type;
                     Item : in Byte_String);

@@ -20,7 +20,6 @@
 
 -- Environment
 with Ada.Streams.Stream_IO;
-with Ada.Text_IO;
 
 package body Lumen.Image.BMP is
 
@@ -31,11 +30,6 @@ package body Lumen.Image.BMP is
       use type Binary.Short;
       use type Binary.Word;
       use type Binary.S_Word;
-      package Byte_IO is new Ada.Text_IO.Modular_IO (Binary.Byte);
-      package Short_IO is new Ada.Text_IO.Modular_IO (Binary.Short);
-      package S_Short_IO is new Ada.Text_IO.Integer_IO (Binary.S_Short);
-      package Word_IO is new Ada.Text_IO.Modular_IO (Binary.Word);
-      package S_Word_IO is new Ada.Text_IO.Integer_IO (Binary.S_Word);
 
       -- File Header
       type Bitmap_File_Header is record
@@ -50,10 +44,8 @@ package body Lumen.Image.BMP is
       -- Bitmap Version
       type Bitmap_Version is (V1, V3, V2, V4, V5);
       pragma Convention(C, Bitmap_Version);
-      for Bitmap_Version use (V1 => 12, V3 => 40, V2 => 64, V4 => 108, V5 => 128);
+      for Bitmap_Version use (V1 => 12, V3 => 40, V2 => 64, V4 => 108, V5 => 124);
       for Bitmap_Version'Size use Binary.Word_Bits;
-
-      package Version_IO is new Ada.Text_IO.Enumeration_IO(Bitmap_Version);
 
       -- Compression Method
       type Compression_Method is (BI_RGB, BI_RLE8, BI_RLE4, BI_BITFIELDS, BI_JPEG, BI_PNG);
@@ -61,8 +53,6 @@ package body Lumen.Image.BMP is
       for Compression_Method use (BI_RGB => 0, BI_RLE8 => 1, BI_RLE4 => 2, BI_BITFIELDS =>3,
                                   BI_JPEG => 4, BI_PNG => 5);
       for Compression_Method'Size use Binary.Word_Bits;
-
-      package Compression_IO is new Ada.Text_IO.Enumeration_IO(Compression_Method);
 
       -- Version 1
       type V1_Info_Header is record
@@ -132,11 +122,37 @@ package body Lumen.Image.BMP is
       subtype RGBQuad is Binary.Byte_String(1..4);
       type Palette is array (Natural range <>) of RGBQuad;
 
+      type Color_Masks is record
+            Red, Green, Blue, Alpha : Binary.Word;
+            Red_Bits, Green_Bits, Blue_Bits, Alpha_Bits : Natural;
+         end record;
+
+      function Mask_Value (Value: Binary.Word; Mask: Binary.Word; Bits: Natural) return Binary.Byte is
+         Bit_Count    : Natural := 0;
+         Return_Value : Binary.Byte := 0;
+      begin
+         if Bits > 8 or Bits < 1 then
+            return Return_Value;
+         end if;
+         for Bit in 0 .. Binary.Word_Bits-1 loop
+            if (Mask and 2 ** Bit) /= 0 then
+               if (Value and 2 ** Bit) /= 0 then
+                  Return_Value := Return_Value or 2**Bit_Count;
+               end if;
+               Bit_Count := Bit_Count + 1;
+            end if;
+         end loop;
+         Return_Value := Return_Value * 2**(8-Bits);
+         return Return_Value;
+      end Mask_Value;
+
       File_Header : Bitmap_File_Header; -- File Header
       The_Version : Bitmap_Version; -- Bitmap Version
       BPP         : Binary.Short; -- Bits Per Pixel (1, 4, 8, 16, 24, 32)
+      Color_Count : Natural := 0;
       Reversed    : Boolean := False; -- Top/Bottom reversed
       Compression : Compression_Method := BI_RGB; -- used compression method
+      Masks       : Color_Masks;
 
       procedure Read_One_Bit_Format is
          Colors : Palette (0..1);
@@ -163,15 +179,10 @@ package body Lumen.Image.BMP is
          end if;
          -- read palette (two entries)
          for Color in Colors'Range loop
-            Colors(Color) := Binary.IO.Read(File, Components);
+            Colors(Color)(1..Components) := Binary.IO.Read(File, Components);
          end loop;
 
          Ada.Streams.Stream_IO.Set_Index (File, Ada.Streams.Stream_IO.Count((File_Header.Offset) + 1));
-
-         Ada.Text_IO.New_Line;
-         Ada.Text_IO.Put_Line("Reading 1bit Format:");
-         Ada.Text_IO.Put_Line("Row Size: " & Natural'Image(Row_Size));
-         Ada.Text_IO.Put_Line("Padding:  " & Natural'Image(Padding));
 
          Row := Result.Values'Last(1);
          while Row >= Result.Values'First(1) loop
@@ -200,15 +211,260 @@ package body Lumen.Image.BMP is
       end Read_One_Bit_Format;
 
       procedure Read_Four_Bit_Format is
+         Colors : Palette (0..Color_Count-1);
+         Components : Natural := 4;
+
+         type HalfByte is mod 2**4;
+         type Convert_Bytes is array (1..2) of HalfByte;
+         pragma Pack(Convert_Bytes);
+         for Convert_Bytes'Size use Binary.Byte_Bits;
+
+         Current_Byte   : Binary.Byte;
+         Current_Values : Convert_Bytes;
+         for Current_Values'Address use Current_Byte'Address;
       begin
+         if The_Version = V1 then
+            Components := 3;
+         end if;
          -- read palette
-         raise Invalid_Format;
+         for Color in Colors'Range loop
+            Colors(Color)(1..Components) := Binary.IO.Read(File, Components);
+         end loop;
+
+         Ada.Streams.Stream_IO.Set_Index (File, Ada.Streams.Stream_IO.Count((File_Header.Offset) + 1));
+
+         if Compression = BI_RGB then
+            declare
+               Row_Size : Natural := Natural(Result.Width) / 2 + 1; -- Row size in Bytes
+               Padding  : Natural := (-Row_Size) mod 4; -- padding
+               Row_Buf  : Binary.Byte_String (1 .. Row_Size + Padding);
+               Last     : Natural;
+               Row,The_Row,The_Col : Natural;
+               Byte_Of_Row    : Natural;
+            begin
+               Row := Result.Values'Last(1);
+               while Row >= Result.Values'First(1) loop
+                  Binary.IO.Read (File, Row_Buf, Last);
+                  if Last /= Row_Size + Padding then
+                     raise Invalid_Format;
+                  end if;
+                  if Reversed then -- invert the order
+                     The_Row := Result.Values'Last(1) - Row + Result.Values'First(1);
+                  else
+                     The_Row := Row;
+                  end if;
+                  Byte_Of_Row := 0;
+                  for Col in Result.Values'Range(2) loop
+                     The_Col := Current_Values'Last - (Col - 1) mod 2;
+                     if The_Col = Current_Values'Last then
+                        Byte_Of_Row := Byte_Of_Row + 1;
+                        Current_Byte := Row_Buf (Byte_Of_Row);
+                     end if;
+                     Result.Values (The_Row, Col).B := Colors(Natural(Current_Values(The_Col)))(1);
+                     Result.Values (The_Row, Col).G := Colors(Natural(Current_Values(The_Col)))(2);
+                     Result.Values (The_Row, Col).R := Colors(Natural(Current_Values(The_Col)))(3);
+                  end loop;
+                  Row := Row - 1;
+               end loop;
+            end;
+         elsif Compression = BI_RLE4 then
+            declare
+               Read_Buf : Binary.Byte_String(1..2);
+               Last     : Natural;
+               Done     : Boolean := False;
+               Row, Col : Natural;
+               function The_Row return Natural is
+               begin
+                  if Reversed then
+                     return Result.Values'Last(1) - Row + Result.Values'First(1);
+                  else
+                     return Row;
+                  end if;
+               end The_Row;
+            begin
+               Row := Result.Values'Last(1);
+               Col := Result.Values'First(2);
+               while not done loop
+                  Binary.IO.Read (File, Read_Buf, Last);
+                  if Last /= Read_Buf'Length then
+                     raise Invalid_Format;
+                  end if;
+                  if Read_Buf(1) = 0 then
+                     if Read_Buf(2) >= 3 then -- Absolute Mode
+                        declare
+                           Bytes  : Natural := Natural(Read_Buf(2)) / 2;
+                           Padding : Natural := (-Bytes) mod 2;
+                           Values  : Binary.Byte_String(1 .. Bytes + Padding);
+                        begin
+                           Binary.IO.Read (File, Values, Last);
+                           if Last /= Values'Length then
+                              raise Invalid_Format;
+                           end if;
+                           for Byte in 1 .. Bytes loop
+                              Current_Byte := Values(Byte);
+                              for Value in Current_Values'Range loop
+                                 Result.Values (The_Row, Col).B := Colors(Natural(Current_Values(3-Value)))(1);
+                                 Result.Values (The_Row, Col).G := Colors(Natural(Current_Values(3-Value)))(2);
+                                 Result.Values (The_Row, Col).R := Colors(Natural(Current_Values(3-Value)))(3);
+                                 Col := Col + 1;
+                              end loop;
+                           end loop;
+                        end;
+                     elsif Read_Buf(2) = 0 then -- End of Line
+                        Row := Row - 1;
+                        Col := Result.Values'First (2);
+                     elsif Read_Buf(2) = 1 then -- End of File
+                        Done := True;
+                     elsif Read_Buf(2) = 2 then -- Delta
+                        declare
+                           Offset : Binary.Byte_String(1 .. 2);
+                        begin
+                           Binary.IO.Read (File, Offset, Last);
+                           if Last /= Offset'Length then
+                              raise Invalid_Format;
+                           end if;
+                           Col := Col + Natural(Offset(1));
+                           Row := Row - Natural(Offset(2));
+                        end;
+                     end if;
+                  else -- Encoded Mode
+                     declare
+                        Times : Natural := Natural (Read_Buf (1));
+                     begin
+                        Current_Byte := Read_Buf (2);
+                        for Time in 1 .. Times loop
+                           if The_Row in Result.Values'Range (1) and Col in Result.Values'Range (2) then -- hack for BMP image test suite
+                              Result.Values (The_Row, Col).B := Colors(Natural(Current_Values(Time mod 2 + 1)))(1);
+                              Result.Values (The_Row, Col).G := Colors(Natural(Current_Values(Time mod 2 + 1)))(2);
+                              Result.Values (The_Row, Col).R := Colors(Natural(Current_Values(Time mod 2 + 1)))(3);
+                           end if;
+                           Col := Col + 1;
+                        end loop;
+                     end;
+                  end if;
+               end loop;
+            end;
+         else
+            raise Invalid_Format;
+         end if;
       end Read_Four_Bit_Format;
 
       procedure Read_Eight_Bit_Format is
+         Colors : Palette (0 .. Color_Count - 1);
+         Components : Natural := 4;
       begin
-         -- read palette
-         raise Invalid_Format;
+         if The_Version = V1 then
+            Components := 3;
+         end if;
+         -- read palette (max 2^8 entries)
+         for Color in Colors'Range loop
+            Colors(Color)(1..Components) := Binary.IO.Read(File, Components);
+         end loop;
+
+         Ada.Streams.Stream_IO.Set_Index (File, Ada.Streams.Stream_IO.Count((File_Header.Offset) + 1));
+
+         if Compression = BI_RGB then
+            declare
+               Row_Size : Natural := Natural(Result.Width); -- Row size in Bytes
+               Padding  : Natural := (-Row_Size) mod 4; -- padding
+               Row_Buf  : Binary.Byte_String (1 .. Row_Size + Padding);
+               Last     : Natural;
+               Row,The_Row : Natural;
+            begin
+               Row := Result.Values'Last(1);
+               while Row >= Result.Values'First(1) loop
+                  Binary.IO.Read (File, Row_Buf, Last);
+                  if Last /= Row_Size + Padding then
+                     raise Invalid_Format;
+                  end if;
+                  if Reversed then -- invert the order
+                     The_Row := Result.Values'Last(1) - Row + Result.Values'First(1);
+                  else
+                     The_Row := Row;
+                  end if;
+                  for Col in Result.Values'Range(2) loop
+                     Result.Values (The_Row, Col).B := Colors(Integer(Row_Buf(Col)))(1);
+                     Result.Values (The_Row, Col).G := Colors(Integer(Row_Buf(Col)))(2);
+                     Result.Values (The_Row, Col).R := Colors(Integer(Row_Buf(Col)))(3);
+                  end loop;
+                  Row := Row - 1;
+               end loop;
+            end;
+         elsif Compression = BI_RLE8 then
+            declare
+               Read_Buf : Binary.Byte_String(1..2);
+               Last     : Natural;
+               Done     : Boolean := False;
+               Row, Col : Natural;
+               function The_Row return Natural is
+               begin
+                  if Reversed then
+                     return Result.Values'Last(1) - Row + Result.Values'First(1);
+                  else
+                     return Row;
+                  end if;
+               end The_Row;
+            begin
+               Row := Result.Values'Last(1);
+               Col := Result.Values'First(2);
+               while not done loop
+                  Binary.IO.Read (File, Read_Buf, Last);
+                  if Last /= Read_Buf'Length then
+                     raise Invalid_Format;
+                  end if;
+                  if Read_Buf(1) = 0 then
+                     if Read_Buf(2) >= 3 then -- Absolute Mode
+                        declare
+                           Bytes  : Natural := Natural(Read_Buf(2));
+                           Padding : Natural := (-Bytes) mod 2;
+                           Values  : Binary.Byte_String(1 .. Bytes + Padding);
+                        begin
+                           Binary.IO.Read (File, Values, Last);
+                           if Last /= Values'Length then
+                              raise Invalid_Format;
+                           end if;
+                           for Byte in 1 .. Bytes loop
+                              Result.Values (The_Row, Col).B := Colors(Natural(Values(Byte)))(1);
+                              Result.Values (The_Row, Col).G := Colors(Natural(Values(Byte)))(2);
+                              Result.Values (The_Row, Col).R := Colors(Natural(Values(Byte)))(3);
+                              Col := Col + 1;
+                           end loop;
+                        end;
+                     elsif Read_Buf(2) = 0 then -- End of Line
+                        Row := Row - 1;
+                        Col := Result.Values'First (2);
+                     elsif Read_Buf(2) = 1 then -- End of File
+                        Done := True;
+                     elsif Read_Buf(2) = 2 then -- Delta
+                        declare
+                           Offset : Binary.Byte_String(1 .. 2);
+                        begin
+                           Binary.IO.Read (File, Offset, Last);
+                           if Last /= Offset'Length then
+                              raise Invalid_Format;
+                           end if;
+                           Col := Col + Natural(Offset(1));
+                           Row := Row - Natural(Offset(2));
+                        end;
+                     end if;
+                  else -- Encoded Mode
+                     declare
+                        Times : Natural := Natural (Read_Buf (1));
+                        Value : Natural := Natural (Read_Buf (2));
+                     begin
+                        for I in 1 .. Times loop
+                           Result.Values (The_Row, Col).B := Colors(Value)(1);
+                           Result.Values (The_Row, Col).G := Colors(Value)(2);
+                           Result.Values (The_Row, Col).R := Colors(Value)(3);
+                           Col := Col + 1;
+                        end loop;
+                     end;
+                  end if;
+               end loop;
+            end;
+         else
+            raise Invalid_Format;
+         end if;
       end Read_Eight_Bit_Format;
 
       procedure Read_RGB_Format is
@@ -219,11 +475,6 @@ package body Lumen.Image.BMP is
          Row,The_Row : Natural;
       begin
          Ada.Streams.Stream_IO.Set_Index (File, Ada.Streams.Stream_IO.Count((File_Header.Offset) + 1));
-
-         Ada.Text_IO.New_Line;
-         Ada.Text_IO.Put_Line("Reading RGB Format:");
-         Ada.Text_IO.Put_Line("Row Size: " & Natural'Image(Row_Size));
-         Ada.Text_IO.Put_Line("Padding:  " & Natural'Image(Padding));
 
          Row := Result.Values'Last(1);
          while Row >= Result.Values'First(1) loop
@@ -245,6 +496,101 @@ package body Lumen.Image.BMP is
          end loop;
       end Read_RGB_Format;
 
+      procedure Read_Sixteen_Bit_Format is
+         Row_Size : Natural := Natural(Result.Width); -- Size (in Shorts)
+         Padding  : Natural := (-Row_Size) mod (4 / Binary.Short_Bytes); -- padding
+         Row_Buf  : Binary.Short_String (1 .. Row_Size + Padding);
+         Last     : Natural;
+         Row,The_Row : Natural;
+
+         type Color_Part is mod 2**5; -- 5 bit for each R/G/B part
+         type Padding_Bit is mod 2;
+         type RGB is record
+               B, G, R : Color_Part;
+               Padding : Padding_Bit;
+            end record;
+         pragma Pack(RGB);
+         for RGB'Size use Binary.Short_Bits;
+
+         Current_Short : Binary.Short;
+         Current_Value : RGB;
+         for Current_Value'Address use Current_Short'Address;
+      begin
+         Ada.Streams.Stream_IO.Set_Index (File, Ada.Streams.Stream_IO.Count((File_Header.Offset) + 1));
+
+         Row := Result.Values'Last(1);
+         while Row >= Result.Values'First(1) loop
+            Binary.IO.Read (File, Row_Buf, Last);
+            if Last /= (Row_Size + Padding) * Binary.Short_Bytes then
+               raise Invalid_Format;
+            end if;
+            if Reversed then -- invert the order
+               The_Row := Result.Values'Last(1) - Row + Result.Values'First(1);
+            else
+               The_Row := Row;
+            end if;
+            for Col in Result.Values'Range(2) loop
+               if Compression = BI_RGB then
+                  Current_Short := Row_Buf (Col);
+                  Result.Values (The_Row, Col).B := Binary.Byte(Current_Value.B) * 2**(8-5); -- convert 5 bit to 8 bit values
+                  Result.Values (The_Row, Col).G := Binary.Byte(Current_Value.G) * 2**(8-5);
+                  Result.Values (The_Row, Col).R := Binary.Byte(Current_Value.R) * 2**(8-5);
+               elsif Compression = BI_BITFIELDS then
+                  Result.Values (The_Row, Col).B := Mask_Value (Binary.Word(Row_Buf(Col)), Masks.Blue, Masks.Blue_Bits);
+                  Result.Values (The_Row, Col).G := Mask_Value (Binary.Word(Row_Buf(Col)), Masks.Green, Masks.Green_Bits);
+                  Result.Values (The_Row, Col).R := Mask_Value (Binary.Word(Row_Buf(Col)), Masks.Red, Masks.Red_Bits);
+                  Result.Values (The_Row, Col).A := Mask_Value (Binary.Word(Row_Buf(Col)), Masks.Alpha, Masks.Alpha_Bits);
+               else
+                  raise Invalid_Format;
+               end if;
+            end loop;
+            Row := Row - 1;
+         end loop;
+      end Read_Sixteen_Bit_Format;
+
+      procedure Read_Thirtytwo_Bit_Format is
+         Row_Size : Natural := Natural(Result.Width); -- Size in Words
+         Row_Buf  : Binary.Word_String (1 .. Row_Size);
+         Last     : Natural;
+         Row,The_Row : Natural;
+
+         Current_Word   : Binary.Word;
+         Current_Values : Binary.Byte_String(1..4);
+         for Current_Values'Address use Current_Word'Address;
+
+      begin
+         Ada.Streams.Stream_IO.Set_Index (File, Ada.Streams.Stream_IO.Count((File_Header.Offset) + 1));
+
+         Row := Result.Values'Last(1);
+         while Row >= Result.Values'First(1) loop
+            Binary.IO.Read (File, Row_Buf, Last);
+            if Last /= Row_Size * Binary.Word_Bytes then
+               raise Invalid_Format;
+            end if;
+            if Reversed then -- invert the order
+               The_Row := Result.Values'Last(1) - Row + Result.Values'First(1);
+            else
+               The_Row := Row;
+            end if;
+            for Col in Result.Values'Range(2) loop
+               if Compression = BI_RGB then
+                  Current_Word := Row_Buf (Col);
+                  Result.Values (The_Row, Col).B := Current_Values (1);
+                  Result.Values (The_Row, Col).G := Current_Values (2);
+                  Result.Values (The_Row, Col).R := Current_Values (3);
+               elsif Compression = BI_BITFIELDS then
+                  Result.Values (The_Row, Col).B := Mask_Value (Row_Buf(Col), Masks.Blue, Masks.Blue_Bits);
+                  Result.Values (The_Row, Col).G := Mask_Value (Row_Buf(Col), Masks.Green, Masks.Green_Bits);
+                  Result.Values (The_Row, Col).R := Mask_Value (Row_Buf(Col), Masks.Red, Masks.Red_Bits);
+                  Result.Values (The_Row, Col).A := Mask_Value (Row_Buf(Col), Masks.Alpha, Masks.Alpha_Bits);
+               else
+                  raise Invalid_Format;
+               end if;
+            end loop;
+            Row := Row - 1;
+         end loop;
+      end Read_Thirtytwo_Bit_Format;
+
       procedure Read_Old_Header is
          The_Header : V1_Info_Header;
       begin
@@ -252,13 +598,10 @@ package body Lumen.Image.BMP is
          Result.Width := Integer(The_Header.Width);
          Result.Height := Integer(The_Header.Height);
          BPP := The_Header.Bit_Count;
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line("V1 Info Header:");
-      Ada.Text_IO.Put_Line("===============");
-      Ada.Text_IO.Put("Width:     "); Short_IO.Put(The_Header.Width,0); Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put("Height:    "); S_Short_IO.Put(The_Header.Height,0); Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put("Bit_Count: "); Short_IO.Put(The_Header.Bit_Count,0); Ada.Text_IO.New_Line;
-
+         if BPP = 16 or BPP = 32 then
+            raise Invalid_Format;
+         end if;
+         Color_Count := 2**Integer(BPP); -- Always maximum Colors
       end Read_Old_Header;
 
       procedure Read_Header is
@@ -268,16 +611,11 @@ package body Lumen.Image.BMP is
          Result.Width := Integer(The_Header.Width);
          Result.Height := Integer(The_Header.Height);
          BPP := The_Header.Bit_Count;
+         Color_Count := Integer(The_Header.Colors_Used);
+         if Color_Count = 0 then
+            Color_Count := 2**Integer(BPP); -- 0 = maximum Colors
+         end if;
          Compression := The_Header.Compression;
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line("V3 Info Header:");
-      Ada.Text_IO.Put_Line("===============");
-      Ada.Text_IO.Put("Width:       "); S_Word_IO.Put(The_Header.Width,0); Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put("Height:      "); S_Word_IO.Put(The_Header.Height,0); Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put("Bit_Count:   "); Short_IO.Put(The_Header.Bit_Count,0); Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put("Compression: "); Compression_IO.Put(The_Header.Compression,0); Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put("Colors_Used: "); Word_IO.Put(The_Header.Colors_Used,0); Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put("Imp_Colors:  "); Word_IO.Put(The_Header.Important_Colors,0); Ada.Text_IO.New_Line;
 
          if The_Version = V2 then
             declare
@@ -285,28 +623,22 @@ package body Lumen.Image.BMP is
             begin
                V2_Info_Header_Extra'Read (Ada.Streams.Stream_IO.Stream(File), V2_Header);
                -- TODO: process extra information provided by V2-Header
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line("V2 Info Header:");
-      Ada.Text_IO.Put_Line("===============");
             end;
          elsif The_Version >= V4 then
             declare
                V4_Header : V4_Info_Header_Extra;
             begin
                V4_Info_Header_Extra'Read (Ada.Streams.Stream_IO.Stream(File), V4_Header);
-               -- TODO: process extra information provided by V4-Header
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line("V4 Info Header:");
-      Ada.Text_IO.Put_Line("===============");
+               Masks.Red   := V4_Header.Red_Mask;
+               Masks.Green := V4_Header.Green_Mask;
+               Masks.Blue  := V4_Header.Blue_Mask;
+               Masks.Alpha := V4_Header.Alpha_Mask;
                if The_Version = V5 then
                   declare
                      V5_Header : V5_Info_Header_Extra;
                   begin
                      V5_Info_Header_Extra'Read (Ada.Streams.Stream_IO.Stream(File), V5_Header);
                      -- TODO: process extra information provided by V5-Header
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line("V5 Info Header:");
-      Ada.Text_IO.Put_Line("===============");
                   end;
                end if;
             end;
@@ -320,23 +652,19 @@ package body Lumen.Image.BMP is
       -- Read the Bitmap File Header
       Bitmap_File_Header'Read (Ada.Streams.Stream_IO.Stream(File), File_Header);
 
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line("BMP File Header:");
-      Ada.Text_IO.Put_Line("================");
-      Ada.Text_IO.Put("Magic:     "); Byte_IO.Put(File_Header.Magic(1),0,16); Ada.Text_IO.Put(" "); Byte_IO.Put(File_Header.Magic(2),0,16); Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put("File_Size: "); Word_IO.Put(File_Header.File_Size,0); Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put("Reserved:  "); Short_IO.Put(File_Header.Reserved(1),0); Ada.Text_IO.Put(" "); Short_IO.Put(File_Header.Reserved(2),0); Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put("Offset:    "); Word_IO.Put(File_Header.Offset,0,16); Ada.Text_IO.New_Line;
-
       if File_Header.Magic(1) /= 16#42# or File_Header.Magic(2) /= 16#4D# then
          raise Invalid_Format;
       end if;
 
-      if Binary.Word(Ada.Streams.Stream_IO.Size(File)) /= File_Header.File_Size then
-         Ada.Text_IO.Put_Line("WARNING: File Size mismatch");
-      end if;
+--      if Binary.Word(Ada.Streams.Stream_IO.Size(File)) /= File_Header.File_Size then
+--         Ada.Text_IO.Put_Line("WARNING: File Size mismatch");
+--      end if;
 
       Bitmap_Version'Read (Ada.Streams.Stream_IO.Stream(File), The_Version);
+
+      if not The_Version'Valid then
+         raise Invalid_Format;
+      end if;
 
       case The_Version is
          when V1 => -- Version 1 has different datatypes for width/height
@@ -344,6 +672,39 @@ package body Lumen.Image.BMP is
          when V2|V3|V4|V5 =>
             Read_Header;
       end case;
+
+      if Compression = BI_BITFIELDS then
+         if The_Version = V3 then -- V3 has Bitmasks directly after header
+            declare
+               Mask_Values : Binary.Word_String(1..3);
+               Last        : Natural;
+            begin
+               Binary.IO.Read(File, Mask_Values, Last);
+               Masks.Red   := Mask_Values (1);
+               Masks.Green := Mask_Values (2);
+               Masks.Blue  := Mask_Values (3);
+               Masks.Alpha := 0;
+            end;
+         end if;
+         Masks.Red_Bits := 0;
+         Masks.Green_Bits := 0;
+         Masks.Blue_Bits := 0;
+         Masks.Alpha_Bits := 0;
+         for Bit in 0 .. Binary.Word_Bits-1 loop
+            if (Masks.Red and 2 ** Bit) /= 0 then
+               Masks.Red_Bits := Masks.Red_Bits + 1;
+            end if;
+            if (Masks.Green and 2 ** Bit) /= 0 then
+               Masks.Green_Bits := Masks.Green_Bits + 1;
+            end if;
+            if (Masks.Blue and 2 ** Bit) /= 0 then
+               Masks.Blue_Bits := Masks.Blue_Bits + 1;
+            end if;
+            if (Masks.Alpha and 2 ** Bit) /= 0 then
+               Masks.Alpha_Bits := Masks.Alpha_Bits + 1;
+            end if;
+         end loop;
+      end if;
 
       -- Are the lines of the image in reversed order?
       if Result.Height < 0 then
@@ -360,9 +721,9 @@ package body Lumen.Image.BMP is
          when 1  => Read_One_Bit_Format;
          when 4  => Read_Four_Bit_Format;
          when 8  => Read_Eight_Bit_Format;
---         when 16 => Read_Sixteen_Bit_Format;
          when 24 => Read_RGB_Format;
---         when 32 => Read_Thirtytwo_Bit_Format;
+         when 16 => Read_Sixteen_Bit_Format;
+         when 32 => Read_Thirtytwo_Bit_Format;
          when others => raise Invalid_Format;
       end case;
       -- read bitmap data
