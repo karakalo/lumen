@@ -91,17 +91,19 @@ package Lumen.Window is
    -- These are what we normally use, but other values are also possible
    Default_Context_Attributes : constant Context_Attributes :=
       (
-       (Attr_Red_Size,    8),
-       (Attr_Green_Size,  8),
-       (Attr_Blue_Size,   8),
-       (Attr_Alpha_Size,  8),
-       (Attr_Depth_Size, 24)
+       (Attr_Red_Size,     8),
+       (Attr_Green_Size,   8),
+       (Attr_Blue_Size,    8),
+       (Attr_Alpha_Size,   8),
+       (Attr_Depth_Size,  24),
+       (Attr_Stencil_Size, 8)
       );
 
    -- Local exceptions raised by these procedures
    Connection_Failed : exception;  -- can't connect to X server
    Context_Failed    : exception;  -- can't create or attach OpenGL context
    Not_Available     : exception;  -- can't find a visual with given attributes
+   Invalid_ID        : exception;  -- format of explicit visual ID (LUMEN_VISUAL_ID) is invalid
 
    -- Create a native window, with defaults for configuration intended to
    -- create a "usable" window.  Details about the parameters are:
