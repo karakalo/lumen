@@ -32,10 +32,13 @@
 with Ada.Calendar;
 with Ada.Command_Line;
 with Ada.Directories;
+with Ada.Environment_Variables;
 with Ada.Unchecked_Deallocation;
 with System;
 
 with GNAT.Case_Util;
+
+with Lumen.Binary;
 
 -- This is really "part of" this package, just packaged separately so it can
 -- be used in Events
@@ -270,6 +273,109 @@ package body Lumen.Window is
 
       ------------------------------------------------------------------------
 
+      -- Choose an X visual, either from an explicit ID given in the
+      -- LUMEN_VISUAL_ID environment variable, or by asking GLX to pick one.
+      procedure Choose_Visual is
+
+         ---------------------------------------------------------------------
+
+         use type System.Address;
+
+         ---------------------------------------------------------------------
+
+         Visual_ID_EV     : constant String := "LUMEN_VISUAL_ID";
+         GLX_FB_Config_ID : constant := 16#8013#;  -- from glx.h
+
+         ---------------------------------------------------------------------
+
+         type Int_Ptr is access all Integer;  -- used to simulate "out" param for C function
+         type FB_Config_Ptr is access all System.Address;  -- actually an array, but only ever one element
+
+         ---------------------------------------------------------------------
+
+         -- GLX functions needed only by Choose_Visual, and then only when an
+         -- explicit visual ID is given in an environment variable
+         function GLX_Choose_FB_Config (Display        : Display_Pointer;
+                                        Screen         : Screen_Number;
+                                        Attribute_List : GLX_Attribute_List_Ptr;
+                                        Num_Found      : Int_Ptr)
+         return FB_Config_Ptr;
+         pragma Import (C, GLX_Choose_FB_Config, "glXChooseFBConfig");
+
+         function GLX_Get_Visual_From_FB_Config (Display : Display_Pointer;
+                                                 Config  : System.Address)
+         return X_Visual_Info_Pointer;
+         pragma Import (C, GLX_Get_Visual_From_FB_Config, "glXGetVisualFromFBConfig");
+
+         ---------------------------------------------------------------------
+
+         ID    : Visual_ID;
+         Found : aliased Integer;
+         FB    : FB_Config_Ptr;
+
+         ---------------------------------------------------------------------
+
+      begin  -- Choose_Visual
+
+         -- See if an explicit ID was given
+         if Ada.Environment_Variables.Exists (Visual_ID_EV) then
+            begin
+               -- Ugly hack to convert hex value
+               ID := Visual_ID'Value ("16#" & Ada.Environment_Variables.Value (Visual_ID_EV) & "#");
+            exception
+               when others =>
+                  raise Invalid_ID;
+            end;
+
+            -- ID was given; try to use that ID to get the visual
+            Con_Attributes (Con_Attr_Index) := GLX_FB_Config_ID;
+            Con_Attr_Index := Con_Attr_Index + 1;
+            Con_Attributes (Con_Attr_Index) := Integer (ID);
+            Con_Attr_Index := Con_Attr_Index + 1;
+
+            Found := 9;
+            FB := GLX_Choose_FB_Config (Display, X_Default_Screen (Display), GLX_Attribute_List_Ptr (Con_Attributes'Address),
+                                        Found'Access);
+            if FB = null then
+               raise Not_Available;
+            end if;
+
+            Visual := GLX_Get_Visual_From_FB_Config (Display, FB.all);
+         else
+
+            -- No explicit ID given, so ask GLX to pick one.  Set up the
+            -- attributes array (first putting in our separately-specified
+            -- ones if given) and use it to get an appropriate visual.
+            if Depth = True_Color then
+               Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attr_RGBA);
+               Con_Attr_Index := Con_Attr_Index + 1;
+            end if;
+            if Animated then
+               Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attr_Doublebuffer);
+               Con_Attr_Index := Con_Attr_Index + 1;
+            end if;
+            for Attr in Attributes'Range loop
+               Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attributes (Attr).Name);
+               Con_Attr_Index := Con_Attr_Index + 1;
+               case Attributes (Attr).Name is
+                  when Attr_None | Attr_Use_GL | Attr_RGBA | Attr_Doublebuffer | Attr_Stereo =>
+                     null;  -- present or not, no value
+                  when Attr_Level =>
+                     Con_Attributes (Con_Attr_Index) := Attributes (Attr).Level;
+                     Con_Attr_Index := Con_Attr_Index + 1;
+                  when Attr_Buffer_Size | Attr_Aux_Buffers | Attr_Depth_Size | Attr_Stencil_Size |
+                     Attr_Red_Size | Attr_Green_Size | Attr_Blue_Size | Attr_Alpha_Size |
+                     Attr_Accum_Red_Size | Attr_Accum_Green_Size | Attr_Accum_Blue_Size | Attr_Accum_Alpha_Size =>
+                     Con_Attributes (Con_Attr_Index) := Attributes (Attr).Size;
+                     Con_Attr_Index := Con_Attr_Index + 1;
+               end case;
+            end loop;
+            Visual := GLX_Choose_Visual (Display, X_Default_Screen (Display), GLX_Attribute_List_Ptr (Con_Attributes'Address));
+         end if;
+      end Choose_Visual;
+
+      ------------------------------------------------------------------------
+
    begin  -- Create
 
       -- Connect to the X server
@@ -278,33 +384,8 @@ package body Lumen.Window is
          raise Connection_Failed;
       end if;
 
-      -- Set up the attributes array (first putting in our separately-specified
-      -- ones if given) and use it to get an appropriate visual
-      if Depth = True_Color then
-         Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attr_RGBA);
-         Con_Attr_Index := Con_Attr_Index + 1;
-      end if;
-      if Animated then
-         Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attr_Doublebuffer);
-         Con_Attr_Index := Con_Attr_Index + 1;
-      end if;
-      for Attr in Attributes'Range loop
-         Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attributes (Attr).Name);
-         Con_Attr_Index := Con_Attr_Index + 1;
-         case Attributes (Attr).Name is
-            when Attr_None | Attr_Use_GL | Attr_RGBA | Attr_Doublebuffer | Attr_Stereo =>
-               null;  -- present or not, no value
-            when Attr_Level =>
-               Con_Attributes (Con_Attr_Index) := Attributes (Attr).Level;
-               Con_Attr_Index := Con_Attr_Index + 1;
-            when Attr_Buffer_Size | Attr_Aux_Buffers | Attr_Depth_Size | Attr_Stencil_Size |
-                 Attr_Red_Size | Attr_Green_Size | Attr_Blue_Size | Attr_Alpha_Size |
-                 Attr_Accum_Red_Size | Attr_Accum_Green_Size | Attr_Accum_Blue_Size | Attr_Accum_Alpha_Size =>
-               Con_Attributes (Con_Attr_Index) := Attributes (Attr).Size;
-               Con_Attr_Index := Con_Attr_Index + 1;
-         end case;
-      end loop;
-      Visual := GLX_Choose_Visual (Display, X_Default_Screen (Display), GLX_Attribute_List_Ptr (Con_Attributes'Address));
+      -- Choose a visual to use
+      Choose_Visual;
 
       -- Make sure we actually found a visual to use
       if Visual = null then
@@ -327,7 +408,7 @@ package body Lumen.Window is
       end loop;
 
       -- Create the window and map it
-      Win_Attributes.Colormap   := X_Create_Colormap (Display, Our_Parent, Visual.Visual, Alloc_None);
+      Win_Attributes.Colormap := X_Create_Colormap (Display, Our_Parent, Visual.Visual, Alloc_None);
       Window := X_Create_Window (Display, Our_Parent, 0, 0, Dimension (Width), Dimension (Height), 0,
                                  Visual.Depth, Input_Output, Visual.Visual,
                                  Configure_Colormap or Configure_Event_Mask, Win_Attributes'Address);
