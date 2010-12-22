@@ -52,11 +52,12 @@ procedure Text2 is
 
    Attrs     : Window.Context_Attributes :=
       (
-       (Window.Attr_Red_Size,    8),
-       (Window.Attr_Green_Size,  8),
-       (Window.Attr_Blue_Size,   8),
-       (Window.Attr_Alpha_Size,  8),
-       (Window.Attr_Depth_Size, 24)
+       (Window.Attr_Red_Size,     8),
+       (Window.Attr_Green_Size,   8),
+       (Window.Attr_Blue_Size,    8),
+       (Window.Attr_Alpha_Size,   8),
+       (Window.Attr_Depth_Size,  24),
+       (Window.Attr_Stencil_Size, 8)
       );
 
    ---------------------------------------------------------------------------

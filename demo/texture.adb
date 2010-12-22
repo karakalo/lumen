@@ -36,11 +36,12 @@ procedure Texture is
 
    Attrs    : Lumen.Window.Context_Attributes :=
       (
-       (Lumen.Window.Attr_Red_Size,    8),
-       (Lumen.Window.Attr_Green_Size,  8),
-       (Lumen.Window.Attr_Blue_Size,   8),
-       (Lumen.Window.Attr_Alpha_Size,  8),
-       (Lumen.Window.Attr_Depth_Size, 24)
+       (Lumen.Window.Attr_Red_Size,     8),
+       (Lumen.Window.Attr_Green_Size,   8),
+       (Lumen.Window.Attr_Blue_Size,    8),
+       (Lumen.Window.Attr_Alpha_Size,   8),
+       (Lumen.Window.Attr_Depth_Size,  24),
+       (Lumen.Window.Attr_Stencil_Size, 8)
       );
 
    ---------------------------------------------------------------------------
