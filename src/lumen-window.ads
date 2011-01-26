@@ -190,6 +190,12 @@ package Lumen.Window is
    -- for smooth animation.
    procedure Swap (Win : in Handle);
 
+   -- Return current window width
+   function Width (Win : in Handle) return Natural;
+
+   -- Return current window width
+   function Height (Win : in Handle) return Natural;
+
 private
 
    pragma Linker_Options ("-lX11");

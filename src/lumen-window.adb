@@ -630,4 +630,20 @@ package body Lumen.Window is
 
    ---------------------------------------------------------------------------
 
+   -- Return current window width
+   function Width (Win : in Handle) return Natural is
+   begin  -- Width
+      return Win.Width;
+   end Width;
+
+   ---------------------------------------------------------------------------
+
+   -- Return current window width
+   function Height (Win : in Handle) return Natural is
+   begin  -- Height
+      return Win.Height;
+   end Height;
+
+   ---------------------------------------------------------------------------
+
 end Lumen.Window;
