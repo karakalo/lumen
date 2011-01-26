@@ -77,6 +77,7 @@ package Lumen.Internal is
       Last_Frames : Long_Integer          := 0;
       SPF         : Duration              := 0.0;
       Context     : GLX_Context           := Null_Context;
+      Looping     : Boolean               := True;
    end record;
 
    ---------------------------------------------------------------------------

@@ -65,8 +65,9 @@ package body Lumen.Events.Animate is
          Win.SPF := Duration (1.0) / Duration (FPS);
       end if;
 
-      -- Main loop never returns
-      loop
+      -- Main loop returns if/when End_Events is called
+      Win.Looping := True;
+      while Win.Looping loop
 
          -- Get events and pass them to the callback
          while Pending (Win) > 0 loop
@@ -113,8 +114,9 @@ package body Lumen.Events.Animate is
          Win.SPF := Duration (1.0) / Duration (FPS);
       end if;
 
-      -- Main loop never returns
-      loop
+      -- Main loop returns if/when End_Events is called
+      Win.Looping := True;
+      while Win.Looping loop
 
          -- Get events and pass them to the selected callback, if there is one
          while Pending (Win) > 0 loop

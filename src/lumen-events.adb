@@ -456,7 +456,8 @@ package body Lumen.Events is
    begin  -- Receive_Events
 
       -- Get events and pass them to the callback
-      loop
+      Win.Looping := True;
+      while Win.Looping loop
          Call (Next_Event (Win, Translate));
       end loop;
    end Receive_Events;
@@ -473,7 +474,8 @@ package body Lumen.Events is
    begin  -- Select_Events
 
       -- Get events and pass them to the selected callback, if there is one
-      loop
+      Win.Looping := True;
+      while Win.Looping loop
          Event := Next_Event (Win, Translate);
 
          if Calls (Event.Which) /= No_Callback then
@@ -481,6 +483,14 @@ package body Lumen.Events is
          end if;
       end loop;
    end Select_Events;
+
+   ---------------------------------------------------------------------------
+
+   -- Terminate internal event loops, causes Receive_Events and Select_Events to return
+   procedure End_Events (Win : in Window.Handle) is
+   begin  -- End_Events
+      Win.Looping := False;  -- terminates internal event loop
+   end End_Events;
 
    ---------------------------------------------------------------------------
 

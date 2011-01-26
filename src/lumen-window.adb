@@ -505,7 +505,8 @@ package body Lumen.Window is
                               App_Frames  => 0,
                               Last_Frames => 0,
                               SPF         => 0.0,
-                              Context     => Our_Context);
+                              Context     => Our_Context,
+                              Looping     => True);
    end Create;
 
    ---------------------------------------------------------------------------

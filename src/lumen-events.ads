@@ -164,6 +164,9 @@ package Lumen.Events is
                             Calls     : in Event_Callback_Table;
                             Translate : in Boolean := True);
 
+   -- Terminate internal event loops, causes Receive_Events and Select_Events to return
+   procedure End_Events (Win : in Window.Handle);
+
    ---------------------------------------------------------------------------
 
 end Lumen.Events;
