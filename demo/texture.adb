@@ -47,7 +47,6 @@ procedure Texture is
    ---------------------------------------------------------------------------
 
    Program_Error : exception;
-   Program_Exit  : exception;
 
    ---------------------------------------------------------------------------
 
@@ -183,7 +182,7 @@ procedure Texture is
    -- Simple event handler routine for keypresses and close-window events
    procedure Quit_Handler (Event : in Lumen.Events.Event_Data) is
    begin  -- Quit_Handler
-      raise Program_Exit;
+      Lumen.Events.End_Events (Win);
    end Quit_Handler;
 
    ---------------------------------------------------------------------------
@@ -285,7 +284,7 @@ begin  -- Texture
    GL.glEnable (GL.GL_TEXTURE_2D);
    GL.glBindTexture (GL.GL_TEXTURE_2D, Tx_Name);
 
-   -- Enter the event loop
+   -- Enter the event loop, which will terminate when the Quit_Handler calls End_Events
    declare
       use Lumen.Events;
    begin
@@ -299,8 +298,8 @@ begin  -- Texture
                              Frame => New_Frame'Unrestricted_Access);
    end;
 
-exception
-   when Program_Exit =>
-      null;  -- just exit this block, which terminates the app
+   -- Try these just to make sure they work
+   Lumen.Window.Destroy_Context (Win);
+   Lumen.Window.Destroy (Win);
 
 end Texture;
