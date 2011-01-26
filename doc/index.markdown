@@ -9,7 +9,7 @@ As of the spring of 2010, development on Lumen has started to accelerate.
 Here are the current documents available:
 
 * How to [get and install][install] the current Lumen code.
-    
+
 Some informal documents related to the current code:
 
 * An informal narrative description of [the Lumen library][nlumen].
@@ -28,15 +28,16 @@ Look for more to be added to this page in the days and weeks ahead!
 <h2 class="centered">Bug Reports</h2>
 
 You may report bugs in Lumen, or ask about difficulties in using it, on the
-\#Ada IRC channel on [the Freenode IRC network][freenode].  There's also a
-[web-based bug tracker][jira] for Lumen on the AuroraUX site, thanks to those
-fine folks, especially Jerrid Kimball.  Be sure to select "Lumen" under
-"Projects" if you use that page.
+\#Ada IRC channel on [the Freenode IRC network][freenode].
 
 <h2 class="centered">News About Lumen</h2>
 
 I'm going to start adding notable events here, so you can check quickly
 whether there's something new since you last visited the site.
+
+* **Wednesday, 22 Dec 2010**: New visual-choosing code, should allow operation
+    on more systems.  Also integrated Julian's latest BMP image loading
+    changes, supporting a wider variety of BMP formats.
 
 * **Monday, 19 Jul 2010**: Added support for joysticks; probably
     Linux-specific for now.
@@ -46,9 +47,6 @@ whether there's something new since you last visited the site.
 
 * **Tuesday, 13 Jul 2010**: Raw keycodes can now be translated to Latin-1
     characters, and extended character codes for non-Latin-1 keystrokes.
-
-* **Monday, 12 Jul 2010**: Created a project on [Jira][] for Lumen bug
-    tracking.
 
 * **Thursday, 1 Jul 2010**: Added the Lumen.Image package and the `texture`
     demo to show it in action.
@@ -68,5 +66,4 @@ whether there's something new since you last visited the site.
 [ndemos]:    narrative-demos.html
 [nlumen]:    narrative-lumen.html
 [rat]:       rationale.html
-[jira]:      http://jira.auroraux.org/
 [freenode]:  http://freenode.net/
