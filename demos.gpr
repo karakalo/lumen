@@ -1,11 +1,16 @@
+
+-- Chip Richards, NiEstu, Phoenix AZ, Spring 2010
+-- Updated May 2011 for new dir structure
+
 with "lumen.gpr";
 
 project Demos is
 
    for Source_Dirs use ("demo");
-   for Object_Dir use "demo";
+   for Object_Dir use "demo/obj";
    for Main use ("colors.adb", "sgi_simple.adb", "spinner.adb", "texture.adb",
                  "text1.adb", "text2.adb", "multi.adb");
+   for Exec_Dir use "bin";
 
    package Ide is
       for Vcs_Kind use "Git";
