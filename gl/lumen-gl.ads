@@ -1139,17 +1139,7 @@ package Lumen.GL is
    procedure FrontFace (Mode : in Enum);
 
    procedure ShadeModel (Mode : in Enum);
-
-   -- Lighting
-   procedure Light (Light : Enum; P_Name : Enum; Param : Float);
-   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_1);
-   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_3);
-   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_4);
-   procedure Light (Light : Enum; P_Name : Enum; Param : Int);
-   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_1);
-   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_3);
-   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_4);
-   pragma Inline (Light);
+   pragma Inline (Light, Material);
 
    -- Normal Vector
    procedure Normal (X, Y, Z : Byte);
@@ -1163,9 +1153,6 @@ package Lumen.GL is
    procedure Normal (V : Ints_3);
    procedure Normal (V : Shorts_3);
    pragma Inline (Normal);
-
-   -- Shading Model
-   procedure ShadeModel (Mode : Enum);
 
    -- Texturing
    procedure BindTexture (Target  : in Enum;
