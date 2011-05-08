@@ -898,6 +898,8 @@ package Lumen.GL is
 
    function IsEnabled (Cap : in Enum) return Bool;
 
+   procedure Hint (Target : Enum; Hint : Enum);
+
    -- Projections
    procedure Ortho (Left     : in Double;
                     Right    : in Double;
@@ -1138,6 +1140,33 @@ package Lumen.GL is
 
    procedure ShadeModel (Mode : in Enum);
 
+   -- Lighting
+   procedure Light (Light : Enum; P_Name : Enum; Param : Float);
+   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_1);
+   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_3);
+   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_4);
+   procedure Light (Light : Enum; P_Name : Enum; Param : Int);
+   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_1);
+   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_3);
+   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_4);
+   pragma Inline (Light);
+
+   -- Normal Vector
+   procedure Normal (X, Y, Z : Byte);
+   procedure Normal (X, Y, Z : Double);
+   procedure Normal (X, Y, Z : Float);
+   procedure Normal (X, Y, Z : Int);
+   procedure Normal (X, Y, Z : Short);
+   procedure Normal (V : Bytes_3);
+   procedure Normal (V : Doubles_3);
+   procedure Normal (V : Floats_3);
+   procedure Normal (V : Ints_3);
+   procedure Normal (V : Shorts_3);
+   pragma Inline (Normal);
+
+   -- Shading Model
+   procedure ShadeModel (Mode : Enum);
+
    -- Texturing
    procedure BindTexture (Target  : in Enum;
                           Texture : in UInt);
@@ -1360,6 +1389,7 @@ private
    pragma Import (C, Frustum, "glFrustum");
    pragma Import (C, GenTextures, "glGenTextures");
    pragma Import (C, GetPolygonStipple, "glGetPolygonStipple");
+   pragma Import (C, Hint, "glHint");
    pragma Import (C, IsEnabled, "glIsEnabled");
    pragma Import (C, LineStipple, "glLineStipple");
    pragma Import (C, LineWidth, "glLineWidth");

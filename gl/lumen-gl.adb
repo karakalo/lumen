@@ -482,6 +482,150 @@ package body Lumen.GL is
 
    ---------------------------------------------------------------------------
 
+   -- Lighting
+   procedure Light (Light : in Enum; P_Name : in Enum; Param : in Float) is
+      procedure glLightf (Light : in Enum;
+                          P_Name : in Enum;
+                          Param  : in Float);
+      pragma Import (C, glLightf, "glLightf");
+   begin  -- Light
+      glLightf (Light, P_Name, Param);
+   end Light;
+
+   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_1) is
+      procedure glLightfv (Light : in Enum;
+                          P_Name : in Enum;
+                          Params : in Floats_1);
+      pragma Import (C, glLightfv, "glLightfv");
+   begin  -- Light
+      glLightfv (Light, P_Name, Params);
+   end Light;
+
+   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_3) is
+      procedure glLightfv (Light : in Enum;
+                          P_Name : in Enum;
+                          Params : in Floats_3);
+      pragma Import (C, glLightfv, "glLightfv");
+   begin  -- Light
+      glLightfv (Light, P_Name, Params);
+   end Light;
+
+   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_4) is
+      procedure glLightfv (Light : in Enum;
+                          P_Name : in Enum;
+                          Params : in Floats_4);
+      pragma Import (C, glLightfv, "glLightfv");
+   begin  -- Light
+      glLightfv (Light, P_Name, Params);
+   end Light;
+
+   procedure Light (Light : Enum; P_Name : Enum; Param : Int) is
+      procedure glLighti (Light : in Enum;
+                          P_Name : in Enum;
+                          Param  : in Int);
+      pragma Import (C, glLighti, "glLighti");
+   begin  -- Light
+      glLighti (Light, P_Name, Param);
+   end Light;
+
+   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_1) is
+      procedure glLightiv (Light  : in Enum;
+                           P_Name : in Enum;
+                           Params : in Ints_1);
+      pragma Import (C, glLightiv, "glLightiv");
+   begin  -- Light
+      glLightiv (Light, P_Name, Params);
+   end Light;
+
+   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_3) is
+      procedure glLightiv (Light : in Enum;
+                          P_Name : in Enum;
+                          Params : in Ints_3);
+      pragma Import (C, glLightiv, "glLightiv");
+   begin  -- Light
+      glLightiv (Light, P_Name, Params);
+   end Light;
+
+   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_4) is
+      procedure glLightiv (Light : in Enum;
+                          P_Name : in Enum;
+                          Params : in Ints_4);
+      pragma Import (C, glLightiv, "glLightiv");
+   begin  -- Light
+      glLightiv (Light, P_Name, Params);
+   end Light;
+
+   -- Normal Vector
+   procedure Normal (X, Y, Z : Byte) is
+      procedure glNormal3b (X, Y, Z : Byte);
+      pragma Import (C, glNormal3b, "glNormal3b");
+   begin  -- Normal
+      glNormal3b (X, Y, Z);
+   end Normal;
+
+   procedure Normal (X, Y, Z : Double) is
+      procedure glNormal3d (X, Y, Z : Double);
+      pragma Import (C, glNormal3d, "glNormal3d");
+   begin  -- Normal
+      glNormal3d (X, Y, Z);
+   end Normal;
+
+   procedure Normal (X, Y, Z : Float) is
+      procedure glNormal3f (X, Y, Z : Float);
+      pragma Import (C, glNormal3f, "glNormal3f");
+   begin  -- Normal
+      glNormal3f (X, Y, Z);
+   end Normal;
+
+   procedure Normal (X, Y, Z : Int) is
+      procedure glNormal3i (X, Y, Z : Int);
+      pragma Import (C, glNormal3i, "glNormal3i");
+   begin  -- Normal
+      glNormal3i (X, Y, Z);
+   end Normal;
+
+   procedure Normal (X, Y, Z : Short) is
+      procedure glNormal3s (X, Y, Z : Short);
+      pragma Import (C, glNormal3s, "glNormal3s");
+   begin  -- Normal
+      glNormal3s (X, Y, Z);
+   end Normal;
+
+   procedure Normal (V : Bytes_3) is
+      procedure glNormal3bv (V : Bytes_3);
+      pragma Import (C, glNormal3bv, "glNormal3bv");
+   begin  -- Normal
+      glNormal3bv (V);
+   end Normal;
+
+   procedure Normal (V : Doubles_3) is
+      procedure glNormal3dv (V : Doubles_3);
+      pragma Import (C, glNormal3dv, "glNormal3dv");
+   begin  -- Normal
+      glNormal3dv (V);
+   end Normal;
+
+   procedure Normal (V : Floats_3) is
+      procedure glNormal3fv (V : Floats_3);
+      pragma Import (C, glNormal3fv, "glNormal3fv");
+   begin  -- Normal
+      glNormal3fv (V);
+   end Normal;
+
+   procedure Normal (V : Ints_3) is
+      procedure glNormal3iv (V : Ints_3);
+      pragma Import (C, glNormal3iv, "glNormal3iv");
+   begin  -- Normal
+      glNormal3iv (V);
+   end Normal;
+
+   procedure Normal (V : Shorts_3) is
+      procedure glNormal3sv (V : Shorts_3);
+      pragma Import (C, glNormal3sv, "glNormal3sv");
+   begin  -- Normal
+      glNormal3sv (V);
+   end Normal;
+
    -- Texturing
    procedure TexParameter (Target : in Enum;
                            PName  : in Enum;

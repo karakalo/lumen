@@ -54,6 +54,8 @@ package Lumen.GLU is
                       Bottom : in Double;
                       Top    : in Double);
 
+   procedure Perspective (FOV_Y_Angle, Aspect, Z_Near, Z_Far : in Double);
+
    -- Quadrics
    type Quadric is new Pointer;
 
@@ -106,6 +108,7 @@ private
    pragma Import (C, Build1DMipmaps, "gluBuild1DMipmaps");
    pragma Import (C, Build2DMipmaps, "gluBuild2DMipmaps");
    pragma Import (C, Ortho2D, "gluOrtho2D");
+   pragma Import (C, Perspective, "gluPerspective");
    pragma Import (C, NewQuadric, "gluNewQuadric");
    pragma Import (C, DeleteQuadric, "gluDeleteQuadric");
    pragma Import (C, QuadricDrawStyle, "gluQuadricDrawStyle");
