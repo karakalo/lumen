@@ -320,7 +320,7 @@ begin  -- Text2
       exception
          when others =>
             begin
-               Font.Txf.Load (Tx_Font, "demo/" & Default_Font_Path);
+               Font.Txf.Load (Tx_Font, "data/" & Default_Font_Path);
             exception
                when others =>
                   raise Program_Error with "cannot find default font file """ & Default_Font_Path & """";
