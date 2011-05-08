@@ -1114,6 +1114,30 @@ package Lumen.GL is
    procedure Color (V : in UInts_4);
    pragma Inline (Color);
 
+   -- Lighting and materials
+   type Int_Params   is array (1 .. 4) of Int;
+   type Float_Params is array (1 .. 4) of Float;
+
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Int_Params);
+
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Float_Params);
+
+   procedure Material (Face   : in Enum;
+                       PName  : in Enum;
+                       Params : in Int_Params);
+
+   procedure Material (Face   : in Enum;
+                       PName  : in Enum;
+                       Params : in Float_Params);
+
+   procedure FrontFace (Mode : in Enum);
+
+   procedure ShadeModel (Mode : in Enum);
+
    -- Texturing
    procedure BindTexture (Target  : in Enum;
                           Texture : in UInt);
@@ -1317,41 +1341,43 @@ private
    -- These can be bound directly
    pragma Import (C, glBegin, "glBegin");
    pragma Import (C, glEnd, "glEnd");
-   pragma Import (C, GenTextures, "glGenTextures");
+   pragma Import (C, AlphaFunc, "glAlphaFunc");
    pragma Import (C, BindTexture, "glBindTexture");
-   pragma Import (C, Enable, "glEnable");
-   pragma Import (C, Disable, "glDisable");
-   pragma Import (C, IsEnabled, "glIsEnabled");
-   pragma Import (C, Ortho, "glOrtho");
-   pragma Import (C, Frustum, "glFrustum");
-   pragma Import (C, Viewport, "glViewport");
-   pragma Import (C, MatrixMode, "glMatrixMode");
-   pragma Import (C, PushMatrix, "glPushMatrix");
-   pragma Import (C, PopMatrix, "glPopMatrix");
-   pragma Import (C, LoadIdentity, "glLoadIdentity");
-   pragma Import (C, ClearIndex, "glClearIndex");
-   pragma Import (C, ClearColor, "glClearColor");
+   pragma Import (C, BlendFunc, "glBlendFunc");
    pragma Import (C, Clear, "glClear");
-   pragma Import (C, ClearDepth, "glClearDepth");
    pragma Import (C, ClearAccum, "glClearAccum");
+   pragma Import (C, ClearColor, "glClearColor");
+   pragma Import (C, ClearDepth, "glClearDepth");
+   pragma Import (C, ClearIndex, "glClearIndex");
+   pragma Import (C, DepthFunc, "glDepthFunc");
+   pragma Import (C, Disable, "glDisable");
+   pragma Import (C, EdgeFlag, "glEdgeFlag");
+   pragma Import (C, EdgeFlagv, "glEdgeFlagv");
+   pragma Import (C, Enable, "glEnable");
    pragma Import (C, Finish, "glFinish");
    pragma Import (C, Flush, "glFlush");
-   pragma Import (C, AlphaFunc, "glAlphaFunc");
-   pragma Import (C, DepthFunc, "glDepthFunc");
-   pragma Import (C, StencilFunc, "glStencilFunc");
-   pragma Import (C, PointSize, "glPointSize");
-   pragma Import (C, LineWidth, "glLineWidth");
+   pragma Import (C, FrontFace, "glFrontFace");
+   pragma Import (C, Frustum, "glFrustum");
+   pragma Import (C, GenTextures, "glGenTextures");
+   pragma Import (C, GetPolygonStipple, "glGetPolygonStipple");
+   pragma Import (C, IsEnabled, "glIsEnabled");
    pragma Import (C, LineStipple, "glLineStipple");
+   pragma Import (C, LineWidth, "glLineWidth");
+   pragma Import (C, LoadIdentity, "glLoadIdentity");
+   pragma Import (C, MatrixMode, "glMatrixMode");
+   pragma Import (C, Ortho, "glOrtho");
+   pragma Import (C, PointSize, "glPointSize");
    pragma Import (C, PolygonMode, "glPolygonMode");
    pragma Import (C, PolygonOffset, "glPolygonOffset");
    pragma Import (C, PolygonStipple, "glPolygonStipple");
-   pragma Import (C, GetPolygonStipple, "glGetPolygonStipple");
-   pragma Import (C, EdgeFlag, "glEdgeFlag");
-   pragma Import (C, EdgeFlagv, "glEdgeFlagv");
+   pragma Import (C, PopMatrix, "glPopMatrix");
+   pragma Import (C, PushMatrix, "glPushMatrix");
    pragma Import (C, Scissor, "glScissor");
-   pragma Import (C, BlendFunc, "glBlendFunc");
-   pragma Import (C, TexGen, "glTexGeni");
+   pragma Import (C, ShadeModel, "glShadeModel");
+   pragma Import (C, StencilFunc, "glStencilFunc");
    pragma Import (C, TexEnv, "glTexEnvi");
+   pragma Import (C, TexGen, "glTexGeni");
+   pragma Import (C, Viewport, "glViewport");
 
    pragma Linker_Options ("-lGL");
 

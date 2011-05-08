@@ -95,6 +95,8 @@ package body Lumen.GL is
       glTranslatef (X, Y, Z);
    end Translate;
 
+   ---------------------------------------------------------------------------
+
    -- Matrix operations
    procedure LoadMatrix (M : in Float_Matrix) is
       procedure glLoadMatrixf (M : in System.Address);
@@ -430,6 +432,55 @@ package body Lumen.GL is
    begin  -- Color
       glColor4uiv (V);
    end Color;
+
+   ---------------------------------------------------------------------------
+
+   -- Lighting and materials
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Int_Params) is
+      procedure glLightiv (Light  : in Enum;
+                           PName  : in Enum;
+                           Params : in System.Address);
+      pragma Import (C, glLightiv, "glLightiv");
+   begin  -- Light
+      glLightiv (Light, PName, Params (Params'First)'Address);
+   end Light;
+
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Float_Params) is
+      procedure glLightfv (Light  : in Enum;
+                           PName  : in Enum;
+                           Params : in System.Address);
+      pragma Import (C, glLightfv, "glLightfv");
+   begin  -- Light
+      glLightfv (Light, PName, Params (Params'First)'Address);
+   end Light;
+
+   procedure Material (Face   : in Enum;
+                       PName  : in Enum;
+                       Params : in Int_Params) is
+      procedure glMaterialiv (Face   : in Enum;
+                              PName  : in Enum;
+                              Params : in System.Address);
+      pragma Import (C, glMaterialiv, "glMaterialiv");
+   begin  -- Material
+      glMaterialiv (Face, PName, Params (Params'First)'Address);
+   end Material;
+
+   procedure Material (Face   : in Enum;
+                       PName  : in Enum;
+                       Params : in Float_Params) is
+      procedure glMaterialfv (Face   : in Enum;
+                              PName  : in Enum;
+                              Params : in System.Address);
+      pragma Import (C, glMaterialfv, "glMaterialfv");
+   begin  -- Material
+      glMaterialfv (Face, PName, Params (Params'First)'Address);
+   end Material;
+
+   ---------------------------------------------------------------------------
 
    -- Texturing
    procedure TexParameter (Target : in Enum;
