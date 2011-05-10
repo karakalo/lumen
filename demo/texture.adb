@@ -2,14 +2,15 @@
 -- Simple Lumen demo/test program, using earliest incomplete library.
 
 with Ada.Command_Line;
-with System.Address_To_Access_Conversions;
 
 with Lumen.Events.Animate;
 with Lumen.Image;
 with Lumen.Window;
+with Lumen.GL;
+with Lumen.GLU;
 
-with GL;
-with GLU;
+use Lumen;  -- so we can say "GL.Whatever" anyplace we want
+
 
 procedure Texture is
 
@@ -30,9 +31,9 @@ procedure Texture is
    High     : Natural;
    Rotation : Natural := 0;
    Image    : Lumen.Image.Descriptor;
-   Img_Wide : GL.glFloat;
-   Img_High : GL.glFloat;
-   Tx_Name  : aliased GL.GLuint;
+   Img_Wide : Float;
+   Img_High : Float;
+   Tx_Name  : aliased GL.UInt;
 
    Attrs    : Lumen.Window.Context_Attributes :=
       (
@@ -52,40 +53,28 @@ procedure Texture is
 
    -- Create a texture and bind a 2D image to it
    procedure Create_Texture is
-
-      use GL;
-      use GLU;
-
-      package GLB is new System.Address_To_Access_Conversions (GLubyte);
-
-      IP : GLpointer;
-
    begin  -- Create_Texture
 
       -- Allocate a texture name
-      glGenTextures (1, Tx_Name'Unchecked_Access);
+      GL.GenTextures (1, Tx_Name'Address);
 
       -- Bind texture operations to the newly-created texture name
-      glBindTexture (GL_TEXTURE_2D, Tx_Name);
+      Gl.BindTexture (GL.GL_TEXTURE_2D, Tx_Name);
 
       -- Select modulate to mix texture with color for shading
-      glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+      GL.TexEnv (GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
 
       -- Wrap textures at both edges
-      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
 
       -- How the texture behaves when minified and magnified
-      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-      -- Create a pointer to the image.  This sort of horror show is going to
-      -- be disappearing once Lumen includes its own OpenGL bindings.
-      IP := GLB.To_Pointer (Image.Values.all'Address).all'Unchecked_Access;
+      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
 
       -- Build our texture from the image we loaded earlier
-      glTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA, GLsizei (Image.Width), GLsizei (Image.Height), 0,
-                    GL_RGBA, GL_UNSIGNED_BYTE, IP);
+      GL.TexImage (GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, GL.SizeI (Image.Width), GL.SizeI (Image.Height), 0,
+                   GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, Image.Values.all'Address);
 
    end Create_Texture;
 
@@ -94,39 +83,36 @@ procedure Texture is
    -- Set or reset the window view parameters
    procedure Set_View (W, H : in Natural) is
 
-      use GL;
-      use GLU;
-
-      Aspect : GLdouble;
+      Aspect : GL.Double;
 
    begin  -- Set_View
 
       -- Viewport dimensions
-      glViewport (0, 0, GLsizei (W), GLsizei (H));
+      GL.Viewport (0, 0, GL.SizeI (W), GL.SizeI (H));
 
       -- Size of rectangle upon which image is mapped
       if Wide > High then
-         Img_Wide := glFloat (1.5);
-         Img_High := glFloat (1.5) * glFloat (Float (High) / Float (Wide));
+         Img_Wide := 1.5;
+         Img_High := 1.5 * (Float (High) / Float (Wide));
       else
-         Img_Wide := glFloat (1.5) * glFloat (Float (Wide) / Float (High));
-         Img_High := glFloat (1.5);
+         Img_Wide := 1.5 * (Float (Wide) / Float (High));
+         Img_High := 1.5;
       end if;
 
       -- Set up the projection matrix based on the window's shape--wider than
       -- high, or higher than wide
-      glMatrixMode (GL_PROJECTION);
-      glLoadIdentity;
+      GL.MatrixMode (GL.GL_PROJECTION);
+      GL.LoadIdentity;
 
       -- Set up a 3D viewing frustum, which is basically a truncated pyramid
       -- in which the scene takes place.  Roughly, the narrow end is your
       -- screen, and the wide end is 10 units away from the camera.
       if W <= H then
-         Aspect := GLdouble (H) / GLdouble (W);
-         glFrustum (-1.0, 1.0, -Aspect, Aspect, 2.0, 10.0);
+         Aspect := GL.Double (H) / GL.Double (W);
+         GL.Frustum (-1.0, 1.0, -Aspect, Aspect, 2.0, 10.0);
       else
-         Aspect := GLdouble (W) / GLdouble (H);
-         glFrustum (-Aspect, Aspect, -1.0, 1.0, 2.0, 10.0);
+         Aspect := GL.Double (W) / GL.Double (H);
+         GL.Frustum (-Aspect, Aspect, -1.0, 1.0, 2.0, 10.0);
       end if;
 
    end Set_View;
@@ -136,41 +122,41 @@ procedure Texture is
    -- Draw our scene
    procedure Draw is
 
-      use GL;
+      use type GL.Bitfield;
 
    begin  -- Draw
 
       -- Set a light grey background
-      glClearColor (0.8, 0.8, 0.8, 1.0);
-      glClear (GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+      GL.ClearColor (0.8, 0.8, 0.8, 1.0);
+      GL.Clear (GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT);
 
       -- Draw a texture-mapped rectangle with the same aspect ratio as the
       -- original image
-      glBegin (GL_POLYGON);
+      GL.glBegin (GL.GL_POLYGON);
       begin
-         glTexCoord3f (0.0, 1.0, 0.0);
-         glVertex3f (-Img_Wide, -Img_High, 0.0);
+         GL.TexCoord (Float (0.0), 1.0, 0.0);
+         GL.Vertex (-Img_Wide, -Img_High, 0.0);
 
-         glTexCoord3f (0.0, 0.0, 0.0);
-         glVertex3f (-Img_Wide,  Img_High, 0.0);
+         GL.TexCoord (Float (0.0), 0.0, 0.0);
+         GL.Vertex (-Img_Wide,  Img_High, 0.0);
 
-         glTexCoord3f (1.0, 0.0, 0.0);
-         glVertex3f ( Img_Wide,  Img_High, 0.0);
+         GL.TexCoord (Float (1.0), 0.0, 0.0);
+         GL.Vertex ( Img_Wide,  Img_High, 0.0);
 
-         glTexCoord3f (1.0, 1.0, 0.0);
-         glVertex3f ( Img_Wide, -Img_High, 0.0);
+         GL.TexCoord (Float (1.0), 1.0, 0.0);
+         GL.Vertex ( Img_Wide, -Img_High, 0.0);
       end;
-      glEnd;
+      GL.glEnd;
 
       -- Rotate the object around the Y and Z axes by the current amount, to
       -- give a "tumbling" effect.
-      glMatrixMode (GL_MODELVIEW);
-      glLoadIdentity;
-      glTranslated (0.0, 0.0, -4.0);
-      glRotated (GLdouble (Rotation), 0.0, 1.0, 0.0);
-      glRotated (GLdouble (Rotation), 0.0, 0.0, 1.0);
+      GL.MatrixMode (GL.GL_MODELVIEW);
+      GL.LoadIdentity;
+      GL.Translate (Float (0.0), 0.0, -4.0);
+      GL.Rotate (GL.Double (Rotation), 0.0, 1.0, 0.0);
+      GL.Rotate (GL.Double (Rotation), 0.0, 0.0, 1.0);
 
-      glFlush;
+      GL.Flush;
 
       -- Now show it
       Lumen.Window.Swap (Win);
@@ -281,8 +267,8 @@ begin  -- Texture
 
    -- Now create the texture and set up to use it
    Create_Texture;
-   GL.glEnable (GL.GL_TEXTURE_2D);
-   GL.glBindTexture (GL.GL_TEXTURE_2D, Tx_Name);
+   GL.Enable (GL.GL_TEXTURE_2D);
+   GL.BindTexture (GL.GL_TEXTURE_2D, Tx_Name);
 
    -- Enter the event loop, which will terminate when the Quit_Handler calls End_Events
    declare

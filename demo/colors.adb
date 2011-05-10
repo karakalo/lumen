@@ -3,7 +3,7 @@
 
 with Lumen.Window;
 with Lumen.Events;
-with GL;
+with Lumen.GL;
 
 procedure Colors is
 
@@ -34,22 +34,22 @@ begin  -- Colors
 
       -- Do our drawing
       declare
-         use GL;
+         use Lumen.GL;
       begin
          -- Red
-         glClearColor (1.0, 0.0, 0.0, 1.0);
-         glClear (GL_COLOR_BUFFER_BIT);
-         glFlush;
+         ClearColor (1.0, 0.0, 0.0, 1.0);
+         Clear (GL_COLOR_BUFFER_BIT);
+         Flush;
          delay 1.0;
           -- Green
-         glClearColor (0.0, 1.0, 0.0, 1.0);
-         glClear (GL_COLOR_BUFFER_BIT);
-         glFlush;
+         ClearColor (0.0, 1.0, 0.0, 1.0);
+         Clear (GL_COLOR_BUFFER_BIT);
+         Flush;
          delay 1.0;
           -- Blue
-         glClearColor (0.0, 0.0, 1.0, 1.0);
-         glClear (GL_COLOR_BUFFER_BIT);
-         glFlush;
+         ClearColor (0.0, 0.0, 1.0, 1.0);
+         Clear (GL_COLOR_BUFFER_BIT);
+         Flush;
          delay 1.0;
       end;
    end loop Outer;

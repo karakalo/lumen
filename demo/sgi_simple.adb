@@ -8,8 +8,8 @@
 
 with Lumen.Window;
 with Lumen.Events;
-with GL;
-with GLU;
+with Lumen.GL;
+with Lumen.GLU;
 
 procedure SGI_Simple is
 
@@ -29,27 +29,26 @@ procedure SGI_Simple is
    -- Set or reset the window view parameters
    procedure Set_View (W, H : in Natural) is
 
-      use GL;
-      use GLU;
+      use Lumen;
 
-      Aspect : GLdouble;
+      Aspect : GL.Double;
 
    begin  -- Set_View
 
       -- Viewport dimensions
-      glViewport (0, 0, GLsizei (W), GLsizei (H));
+      GL.Viewport (0, 0, GL.SizeI (W), GL.SizeI (H));
 
       -- Set up the projection matrix based on the window's shape--wider than
       -- high, or higher than wide
-      glMatrixMode (GL_PROJECTION);
-      glLoadIdentity;
+      GL.MatrixMode (GL.GL_PROJECTION);
+      GL.LoadIdentity;
 
       if W <= H then
-         Aspect := GLdouble (H) / GLdouble (W);
-         gluOrtho2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
+         Aspect := GL.Double (H) / GL.Double (W);
+         GLU.Ortho2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
       else
-         Aspect := GLdouble (W) / GLdouble (H);
-         gluOrtho2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
+         Aspect := GL.Double (W) / GL.Double (H);
+         GLU.Ortho2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
       end if;
    end Set_View;
 
@@ -58,24 +57,24 @@ procedure SGI_Simple is
    -- Draw our scene
    procedure Draw is
 
-      use GL;
+      use Lumen;
 
    begin  -- Draw
 
-      glClearColor (0.0, 0.0, 0.0, 0.0);
-      glClear (GL_COLOR_BUFFER_BIT);
+      GL.ClearColor (0.0, 0.0, 0.0, 0.0);
+      GL.Clear (GL.GL_COLOR_BUFFER_BIT);
 
-      glColor3f (1.0, 1.0, 1.0);
+      GL.Color (Float (1.0), 1.0, 1.0);
 
-      glBegin (GL_POLYGON);
+      GL.glBegin (GL.GL_POLYGON);
       begin
-         glVertex2f (-1.0, -1.0);
-         glVertex2f (-1.0,  1.0);
-         glVertex2f ( 1.0,  1.0);
-         glVertex2f ( 1.0, -1.0);
+         GL.Vertex (Float (-1.0), -1.0);
+         GL.Vertex (Float (-1.0),  1.0);
+         GL.Vertex (Float ( 1.0),  1.0);
+         GL.Vertex (Float ( 1.0), -1.0);
       end;
-      glEnd;
-      glFlush;
+      GL.glEnd;
+      GL.Flush;
 
       -- Now show it
       Lumen.Window.Swap (Win);

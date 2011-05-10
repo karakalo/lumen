@@ -3,8 +3,8 @@
 
 with Lumen.Window;
 with Lumen.Events.Animate;
-with GL;
-with GLU;
+with Lumen.GL;
+with Lumen.GLU;
 
 procedure Spinner is
 
@@ -33,27 +33,26 @@ procedure Spinner is
    -- Set or reset the window view parameters
    procedure Set_View (W, H : in Natural) is
 
-      use GL;
-      use GLU;
+      use Lumen;
 
-      Aspect : GLdouble;
+      Aspect : GL.Double;
 
    begin  -- Set_View
 
       -- Viewport dimensions
-      glViewport (0, 0, GLsizei (W), GLsizei (H));
+      GL.Viewport (0, 0, GL.SizeI (W), GL.SizeI (H));
 
       -- Set up the projection matrix based on the window's shape--wider than
       -- high, or higher than wide
-      glMatrixMode (GL_PROJECTION);
-      glLoadIdentity;
+      GL.MatrixMode (GL.GL_PROJECTION);
+      GL.LoadIdentity;
 
       if W <= H then
-         Aspect := GLdouble (H) / GLdouble (W);
-         gluOrtho2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
+         Aspect := GL.Double (H) / GL.Double (W);
+         GLU.Ortho2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
       else
-         Aspect := GLdouble (W) / GLdouble (H);
-         gluOrtho2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
+         Aspect := GL.Double (W) / GL.Double (H);
+         GLU.Ortho2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
       end if;
    end Set_View;
 
@@ -62,34 +61,34 @@ procedure Spinner is
    -- Draw our scene
    procedure Draw is
 
-      use GL;
+      use Lumen;
 
    begin  -- Draw
 
       -- Set a black background
-      glClearColor (0.0, 0.0, 0.0, 0.0);
-      glClear (GL_COLOR_BUFFER_BIT);
+      gl.ClearColor (0.0, 0.0, 0.0, 0.0);
+      gl.Clear (GL.GL_COLOR_BUFFER_BIT);
 
       -- Draw a smooth-blended (the default mode) square going from red to yellow
-      glBegin (GL_POLYGON);
+      GL.glBegin (GL.GL_POLYGON);
       begin
-         glColor3f (1.0, 0.0, 0.0);  -- red
-         glVertex2f (-1.0, -1.0);
-         glColor3f (1.0, 0.0, 0.0);  -- red
-         glVertex2f (-1.0,  1.0);
-         glColor3f (1.0, 1.0, 0.0);  -- yellow
-         glVertex2f ( 1.0,  1.0);
-         glColor3f (1.0, 1.0, 0.0);  -- yellow
-         glVertex2f ( 1.0, -1.0);
+         GL.Color (Float (1.0), 0.0, 0.0);  -- red
+         GL.Vertex (Float (-1.0), -1.0);
+         GL.Color (Float (1.0), 0.0, 0.0);  -- red
+         GL.Vertex (Float (-1.0),  1.0);
+         GL.Color (Float (1.0), 1.0, 0.0);  -- yellow
+         GL.Vertex (Float ( 1.0),  1.0);
+         GL.Color (Float (1.0), 1.0, 0.0);  -- yellow
+         GL.Vertex (Float ( 1.0), -1.0);
       end;
-      glEnd;
+      GL.glEnd;
 
       -- Rotate the square around the Z axis by the current amount
-      glMatrixMode (GL_MODELVIEW);
-      glLoadIdentity;
-      glRotated (GLdouble (Rotation), 0.0, 0.0, -1.0);
+      GL.MatrixMode (GL.GL_MODELVIEW);
+      GL.LoadIdentity;
+      GL.Rotate (GL.Double (Rotation), 0.0, 0.0, -1.0);
 
-      glFlush;
+      GL.Flush;
 
       -- Now show it
       Lumen.Window.Swap (Win);
