@@ -1,12 +1,29 @@
+--
+-- Copyright (c) 2011 Julian Leyh <julian@vgai.de>
+--
+-- Permission to use, copy, modify, and distribute this software for any
+-- purpose with or without fee is hereby granted, provided that the above
+-- copyright notice and this permission notice appear in all copies.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+-- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+-- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+-- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+-- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+-- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+-- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+--
+
+with Ada.Characters.Latin_1;
 with Lumen.Window;
-with Lumen.Events;
 with Lumen.Events.Animate;
-with GL;
-with GLU;
+with Lumen.GL;
+with Lumen.GLU;
 
 procedure Lesson02 is
 
    The_Window : Lumen.Window.Handle;
+   Framerate : constant := 24;
 
    Program_Exit : Exception;
 
@@ -18,49 +35,49 @@ procedure Lesson02 is
 
    -- Resize the scene
    procedure Resize_Scene (Width, Height : in Natural) is
-      use GL;
-      use GLU;
+      use Lumen.GL;
+      use Lumen.GLU;
    begin
 
       -- reset current viewport
-      glViewport (0, 0, GLsizei(Width), GLsizei(Height));
+      Viewport (0, 0, Width, Height);
 
       -- select projection matrix and reset it
-      glMatrixMode (GL_PROJECTION);
-      glLoadIdentity;
+      MatrixMode (GL_PROJECTION);
+      LoadIdentity;
 
       -- calculate aspect ratio
-      gluPerspective(45.0, GLdouble(Width)/GLdouble(Height), 0.1, 100.0);
+      Perspective(45.0, Long_Float(Width)/Long_Float(Height), 0.1, 100.0);
 
       -- select modelview matrix and reset it
-      glMatrixMode (GL_MODELVIEW);
-      glLoadIdentity;
+      MatrixMode (GL_MODELVIEW);
+      LoadIdentity;
    end Resize_Scene;
 
    procedure Init_GL is
-      use GL;
-      use GLU;
+      use Lumen.GL;
+      use Lumen.GLU;
    begin
       -- smooth shading
-      glShadeModel (GL_SMOOTH);
+      ShadeModel (GL_SMOOTH);
 
       -- black background
-      glClearColor (0.0, 0.0, 0.0, 0.0);
+      ClearColor (0.0, 0.0, 0.0, 0.0);
 
       -- depth buffer setup
-      glClearDepth (1.0);
+      ClearDepth (1.0);
       -- enable depth testing
-      glEnable (GL_DEPTH_TEST);
+      Enable (GL_DEPTH_TEST);
       -- type of depth test
-      glDepthFunc (GL_LEQUAL);
+      DepthFunc (GL_LEQUAL);
 
-      glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+      Hint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   end Init_GL;
 
    -- Resize and Initialize the GL window
    procedure Resize_Handler (Event : in Lumen.Events.Event_Data) is
       Height : Natural := Event.Resize_Data.Height;
-      Width  : Natural := Event.Resize_Data.Width;
+      Width  : constant Natural := Event.Resize_Data.Width;
    begin
       -- prevent div by zero
       if Height = 0 then
@@ -71,61 +88,80 @@ procedure Lesson02 is
    end;
 
    procedure Draw is
-      use GL;
+      use Lumen.GL;
+      use type Bitfield;
    begin
       -- clear screen and depth buffer
-      glClear (GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+      Clear (GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
       -- reset current modelview matrix
-      glLoadIdentity;
+      LoadIdentity;
 
       -- move to the left half of the screen
-      glTranslatef (-1.5, 0.0, -6.0);
+      Translate (Float (-1.5), 0.0, -6.0);
 
       -- draw triangle
       glBegin (GL_TRIANGLES);
-         glVertex3f ( 0.0,  1.0, 0.0);
-         glVertex3f (-1.0, -1.0, 0.0);
-         glVertex3f ( 1.0, -1.0, 0.0);
+      begin
+         Vertex (Float (0.0),  1.0, 0.0);
+         Vertex (Float (-1.0), -1.0, 0.0);
+         Vertex (Float (1.0), -1.0, 0.0);
+      end;
       glEnd;
 
       -- move to the right half of the screen
-      glTranslatef (3.0, 0.0, 0.0);
+      Translate (Float (3.0), 0.0, 0.0);
 
       -- draw square
       glBegin (GL_QUADS);
-         glVertex3f (-1.0,  1.0, 0.0);
-         glVertex3f ( 1.0,  1.0, 0.0);
-         glVertex3f ( 1.0, -1.0, 0.0);
-         glVertex3f (-1.0, -1.0, 0.0);
+      begin
+         Vertex (Float (-1.0),  1.0, 0.0);
+         Vertex (Float (1.0),  1.0, 0.0);
+         Vertex (Float (1.0), -1.0, 0.0);
+         Vertex (Float (-1.0), -1.0, 0.0);
+      end;
       glEnd;
    end Draw;
 
    procedure Frame_Handler (Frame_Delta : in Duration) is
+      pragma Unreferenced (Frame_Delta);
    begin
       Draw;
       Lumen.Window.Swap (The_Window);
    end Frame_Handler;
 
-begin
+   procedure Key_Handler (Event : in Lumen.Events.Event_Data) is
+      use Lumen.Events;
+      Key_Data : Key_Event_Data renames Event.Key_Data;
+   begin
+      if Key_Data.Key = To_Symbol (Ada.Characters.Latin_1.ESC) then
+               -- Escape: quit
+         End_Events (The_Window);
+      end if;
+   end Key_Handler;
 
-   Lumen.Window.Create (Win => The_Window, Name   => "NeHe Lesson 2",
-                                      Width  => 640,
-                                      Height => 480,
-                                      Events => (Lumen.Window.Want_Key_Press => True,
-                                                 Lumen.Window.Want_Exposure  => True,
-                                                 others => False));
+begin
+   Lumen.Window.Create
+     (Win    => The_Window,
+      Name   => "NeHe Lesson 2",
+      Width  => 640,
+      Height => 480,
+      Events => (Lumen.Window.Want_Key_Press => True,
+                 Lumen.Window.Want_Exposure  => True,
+                 others                      => False));
 
    Resize_Scene (640, 480);
    Init_GL;
 
-   Lumen.Events.Animate.Select_Events (Win   => The_Window,
-                                       FPS   => Lumen.Events.Animate.Flat_Out,
-                                       Frame => Frame_Handler'Unrestricted_Access,
-                                       Calls => (Lumen.Events.Resized       => Resize_Handler'Unrestricted_Access,
-                                                 Lumen.Events.Close_Window  => Quit_Handler'Unrestricted_Access,
-                                                 others => Lumen.Events.No_Callback));
+   Lumen.Events.Animate.Select_Events
+     (Win   => The_Window,
+      FPS   => Framerate,
+      Frame => Frame_Handler'Unrestricted_Access,
+      Calls =>
+        (Lumen.Events.Resized      => Resize_Handler'Unrestricted_Access,
+         Lumen.Events.Close_Window => Quit_Handler'Unrestricted_Access,
+         Lumen.Events.Key_Press    => Key_Handler'Unrestricted_Access,
+         others                    => Lumen.Events.No_Callback));
 
-exception
-   when Program_Exit =>
-      null; -- normal termination
+   Lumen.Window.Destroy_Context (The_Window);
+   Lumen.Window.Destroy (The_Window);
 end Lesson02;

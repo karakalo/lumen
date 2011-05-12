@@ -1,101 +1,115 @@
+--
+-- Copyright (c) 2011 Julian Leyh <julian@vgai.de>
+--
+-- Permission to use, copy, modify, and distribute this software for any
+-- purpose with or without fee is hereby granted, provided that the above
+-- copyright notice and this permission notice appear in all copies.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+-- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+-- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+-- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+-- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+-- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+-- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+--
+
+with Ada.Characters.Latin_1;
 with Lumen.Window;
-with Lumen.Events;
 with Lumen.Events.Animate;
+with Lumen.GL;
+with Lumen.GLU;
 with Lumen.Image;
-with GL;
-with GLU;
-with System.Address_To_Access_Conversions;
+with System;
 
 procedure Lesson06 is
 
    The_Window : Lumen.Window.Handle;
+   Framerate : constant := 24;
 
-   X_Rotation, Y_Rotation, Z_Rotation : GL.GLfloat := 0.0;
-   The_Texture : aliased GL.GLuint;
-
-   Program_Exit : Exception;
+   X_Rotation, Y_Rotation, Z_Rotation : Float := 0.0;
+   Z_Position : constant Float := -5.0;
+   The_Texture : Lumen.GL.UInt;
 
    -- simply exit this program
    procedure Quit_Handler (Event : in Lumen.Events.Event_Data) is
+      pragma Unreferenced (Event);
    begin
-      raise Program_Exit;
+      Lumen.Events.End_Events (The_Window);
    end;
 
    -- Resize the scene
    procedure Resize_Scene (Width, Height : in Natural) is
-      use GL;
-      use GLU;
+      use Lumen.GL;
+      use Lumen.GLU;
    begin
 
       -- reset current viewport
-      glViewport (0, 0, GLsizei(Width), GLsizei(Height));
+      Viewport (0, 0, Width, Height);
 
       -- select projection matrix and reset it
-      glMatrixMode (GL_PROJECTION);
-      glLoadIdentity;
+      MatrixMode (GL_PROJECTION);
+      LoadIdentity;
 
-      -- calculate aspect ratio
-      gluPerspective(45.0, GLdouble(Width)/GLdouble(Height), 0.1, 100.0);
+      Perspective (45.0, Long_Float (Width) / Long_Float (Height), 0.1, 100.0);
 
       -- select modelview matrix and reset it
-      glMatrixMode (GL_MODELVIEW);
+      MatrixMode (GL_MODELVIEW);
    end Resize_Scene;
 
    procedure Load_GL_Textures is
-      use GL;
-      use GLU;
-      package GLB is new System.Address_To_Access_Conversions (GLubyte);
-      IP : GLpointer;
-      Image : constant Lumen.Image.Descriptor := Lumen.Image.From_File ("data/NeHe.bmp");
+      use Lumen.GL;
+      IP              : Pointer;
+      Image           : constant Lumen.Image.Descriptor := Lumen.Image.From_File ("data/NeHe.bmp");
+      Texture_Pointer : constant System.Address := The_Texture'Address;
    begin
       -- Allocate a texture name
-      glGenTextures (1, The_Texture'Unchecked_Access);
+      GenTextures (1, Texture_Pointer);
 
       -- Bind texture operations to the newly-created texture name
-      glBindTexture (GL_TEXTURE_2D, The_Texture);
+      BindTexture (GL_TEXTURE_2D, The_Texture);
 
       -- Select modulate to mix texture with color for shading
-      glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+      TexEnv (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
       -- Wrap textures at both edges
-      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
       -- How the texture behaves when minified and magnified
-      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
       -- Create a pointer to the image.  This sort of horror show is going to
       -- be disappearing once Lumen includes its own OpenGL bindings.
-      IP := GLB.To_Pointer (Image.Values.all'Address).all'Unchecked_Access;
+      IP := Image.Values.all'Address;
 
       -- Build our texture from the image we loaded earlier
-      glTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA, GLsizei (Image.Width), GLsizei (Image.Height), 0,
-                    GL_RGBA, GL_UNSIGNED_BYTE, IP);
+      TexImage (GL_TEXTURE_2D, 0, GL_RGBA, Image.Width, Image.Height, 0,
+                GL_RGBA, GL_UNSIGNED_BYTE, IP);
    end Load_GL_Textures;
 
    procedure Init_GL is
-      use GL;
-      use GLU;
+      use Lumen.GL;
    begin
       -- load textures (new)
       Load_GL_Textures;
       -- enable texture mapping (new)
-      glEnable (GL_TEXTURE_2D);
+      Enable (GL_TEXTURE_2D);
       -- smooth shading
-      glShadeModel (GL_SMOOTH);
+      ShadeModel (GL_SMOOTH);
 
       -- black background
-      glClearColor (0.0, 0.0, 0.0, 0.5);
+      ClearColor (0.0, 0.0, 0.0, 0.5);
 
       -- depth buffer setup
-      glClearDepth (1.0);
+      ClearDepth (1.0);
       -- enable depth testing
-      glEnable (GL_DEPTH_TEST);
+      Enable (GL_DEPTH_TEST);
       -- type of depth test
-      glDepthFunc (GL_LEQUAL);
+      DepthFunc (GL_LEQUAL);
 
-      glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+      Hint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
    end Init_GL;
 
    -- Resize and Initialize the GL window
@@ -112,62 +126,63 @@ procedure Lesson06 is
    end;
 
    procedure Draw is
-      use GL;
+      use Lumen.GL;
+      use type Bitfield;
    begin
       -- clear screen and depth buffer
-      glClear (GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+      Clear (GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
       -- reset current modelview matrix
-      glLoadIdentity;
+      LoadIdentity;
       -- move into the screen 5 units
-      glTranslatef (0.0, 0.0, -5.0);
+      Translate (0.0, 0.0, Z_Position);
 
       -- rotate on the X axis
-      glRotatef (X_Rotation, 1.0, 0.0, 0.0);
+      Rotate (X_Rotation, 1.0, 0.0, 0.0);
       -- rotate on the Y axis
-      glRotatef (Y_Rotation, 0.0, 1.0, 0.0);
+      Rotate (Y_Rotation, 0.0, 1.0, 0.0);
       -- rotate on the Z axis
-      glRotatef (Z_Rotation, 0.0, 0.0, 1.0);
+      Rotate (Z_Rotation, 0.0, 0.0, 1.0);
 
       -- select the texture
-      glBindTexture (GL_TEXTURE_2D, The_Texture);
+      BindTexture (GL_TEXTURE_2D, The_Texture);
 
       -- draw square
       glBegin (GL_QUADS);
          -- front
-         glTexCoord2f (0.0, 0.0); glVertex3f (-1.0, -1.0,  1.0);
-         glTexCoord2f (0.0, 1.0); glVertex3f ( 1.0, -1.0,  1.0);
-         glTexCoord2f (1.0, 1.0); glVertex3f ( 1.0,  1.0,  1.0);
-         glTexCoord2f (1.0, 0.0); glVertex3f (-1.0,  1.0,  1.0);
+      TexCoord (Float (0.0), 0.0); Vertex (Float (-1.0), -1.0,  1.0);
+      TexCoord (Float (0.0), 1.0); Vertex (Float (1.0), -1.0,  1.0);
+      TexCoord (Float (1.0), 1.0); Vertex (Float (1.0),  1.0,  1.0);
+      TexCoord (Float (1.0), 0.0); Vertex (Float (-1.0),  1.0,  1.0);
          -- back
-         glTexCoord2f (0.0, 0.0); glVertex3f ( 1.0, -1.0, -1.0);
-         glTexCoord2f (0.0, 1.0); glVertex3f (-1.0, -1.0, -1.0);
-         glTexCoord2f (1.0, 1.0); glVertex3f (-1.0,  1.0, -1.0);
-         glTexCoord2f (1.0, 0.0); glVertex3f ( 1.0,  1.0, -1.0);
+      TexCoord (Float (0.0), 0.0); Vertex (Float (1.0), -1.0, -1.0);
+      TexCoord (Float (0.0), 1.0); Vertex (Float (-1.0), -1.0, -1.0);
+      TexCoord (Float (1.0), 1.0); Vertex (Float (-1.0),  1.0, -1.0);
+      TexCoord (Float (1.0), 0.0); Vertex (Float (1.0),  1.0, -1.0);
          -- top
-         glTexCoord2f (0.0, 0.0); glVertex3f (-1.0,  1.0,  1.0);
-         glTexCoord2f (0.0, 1.0); glVertex3f ( 1.0,  1.0,  1.0);
-         glTexCoord2f (1.0, 1.0); glVertex3f ( 1.0,  1.0, -1.0);
-         glTexCoord2f (1.0, 0.0); glVertex3f (-1.0,  1.0, -1.0);
+      TexCoord (Float (0.0), 0.0); Vertex (Float (-1.0),  1.0,  1.0);
+      TexCoord (Float (0.0), 1.0); Vertex (Float (1.0),  1.0,  1.0);
+      TexCoord (Float (1.0), 1.0); Vertex (Float (1.0),  1.0, -1.0);
+      TexCoord (Float (1.0), 0.0); Vertex (Float (-1.0),  1.0, -1.0);
          -- bottom
-         glTexCoord2f (0.0, 0.0); glVertex3f ( 1.0, -1.0,  1.0);
-         glTexCoord2f (0.0, 1.0); glVertex3f (-1.0, -1.0,  1.0);
-         glTexCoord2f (1.0, 1.0); glVertex3f (-1.0, -1.0, -1.0);
-         glTexCoord2f (1.0, 0.0); glVertex3f ( 1.0, -1.0, -1.0);
+      TexCoord (Float (0.0), 0.0); Vertex (Float (1.0), -1.0,  1.0);
+      TexCoord (Float (0.0), 1.0); Vertex (Float (-1.0), -1.0,  1.0);
+      TexCoord (Float (1.0), 1.0); Vertex (Float (-1.0), -1.0, -1.0);
+      TexCoord (Float (1.0), 0.0); Vertex (Float (1.0), -1.0, -1.0);
          -- right
-         glTexCoord2f (0.0, 0.0); glVertex3f ( 1.0, -1.0,  1.0);
-         glTexCoord2f (0.0, 1.0); glVertex3f ( 1.0, -1.0, -1.0);
-         glTexCoord2f (1.0, 1.0); glVertex3f ( 1.0,  1.0, -1.0);
-         glTexCoord2f (1.0, 0.0); glVertex3f ( 1.0,  1.0,  1.0);
+      TexCoord (Float (0.0), 0.0); Vertex (Float (1.0), -1.0,  1.0);
+      TexCoord (Float (0.0), 1.0); Vertex (Float (1.0), -1.0, -1.0);
+      TexCoord (Float (1.0), 1.0); Vertex (Float (1.0),  1.0, -1.0);
+      TexCoord (Float (1.0), 0.0); Vertex (Float (1.0),  1.0,  1.0);
          -- left
-         glTexCoord2f (0.0, 0.0); glVertex3f (-1.0, -1.0, -1.0);
-         glTexCoord2f (0.0, 1.0); glVertex3f (-1.0, -1.0,  1.0);
-         glTexCoord2f (1.0, 1.0); glVertex3f (-1.0,  1.0,  1.0);
-         glTexCoord2f (1.0, 0.0); glVertex3f (-1.0,  1.0, -1.0);
+      TexCoord (Float (0.0), 0.0); Vertex (Float (-1.0), -1.0, -1.0);
+      TexCoord (Float (0.0), 1.0); Vertex (Float (-1.0), -1.0,  1.0);
+      TexCoord (Float (1.0), 1.0); Vertex (Float (-1.0),  1.0,  1.0);
+      TexCoord (Float (1.0), 0.0); Vertex (Float (-1.0),  1.0, -1.0);
       glEnd;
 
-      X_Rotation := X_Rotation + 0.3;
-      Y_Rotation := Y_Rotation + 0.2;
-      Z_Rotation := Z_Rotation + 0.4;
+      X_Rotation := X_Rotation + 1.5;
+      Y_Rotation := Y_Rotation + 1.0;
+      Z_Rotation := Z_Rotation + 2.0;
    end Draw;
 
    procedure Frame_Handler (Frame_Delta : in Duration) is
@@ -177,25 +192,39 @@ procedure Lesson06 is
       Lumen.Window.Swap (The_Window);
    end Frame_Handler;
 
+   procedure Key_Handler (Event : in Lumen.Events.Event_Data) is
+      use Lumen.Events;
+      Key_Data : Key_Event_Data renames Event.Key_Data;
+   begin
+      if Key_Data.Key = To_Symbol (Ada.Characters.Latin_1.ESC) then
+               -- Escape: quit
+         End_Events (The_Window);
+      end if;
+   end Key_Handler;
+
 begin
-   Lumen.Window.Create (Win    => The_Window,
-                        Name   => "NeHe Lesson 6",
-                        Width  => 640,
-                        Height => 480,
-                        Events => (Lumen.Window.Want_Key_Press => True,
-                                   Lumen.Window.Want_Exposure  => True,
-                                   others => False));
+   Lumen.Window.Create
+     (Win    => The_Window,
+      Name   => "NeHe Lesson 6",
+      Width  => 640,
+      Height => 480,
+      Events => (Lumen.Window.Want_Key_Press => True,
+                 Lumen.Window.Want_Exposure  => True,
+                 others                      => False));
 
    Resize_Scene (640, 480);
    Init_GL;
 
-   Lumen.Events.Animate.Select_Events (Win   => The_Window,
-                                       FPS   => Lumen.Events.Animate.Flat_Out,
-                                       Frame => Frame_Handler'Unrestricted_Access,
-                                       Calls => (Lumen.Events.Resized       => Resize_Handler'Unrestricted_Access,
-                                                 Lumen.Events.Close_Window  => Quit_Handler'Unrestricted_Access,
-                                                 others => Lumen.Events.No_Callback));
-exception
-   when Program_Exit =>
-      null; -- normal termination
+   Lumen.Events.Animate.Select_Events
+     (Win   => The_Window,
+      FPS   => Framerate,
+      Frame => Frame_Handler'Unrestricted_Access,
+      Calls =>
+        (Lumen.Events.Resized      => Resize_Handler'Unrestricted_Access,
+         Lumen.Events.Close_Window => Quit_Handler'Unrestricted_Access,
+         Lumen.Events.Key_Press    => Key_Handler'Unrestricted_Access,
+         others                    => Lumen.Events.No_Callback));
+
+   Lumen.Window.Destroy_Context (The_Window);
+   Lumen.Window.Destroy (The_Window);
 end Lesson06;
