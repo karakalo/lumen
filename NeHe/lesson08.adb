@@ -70,35 +70,44 @@ procedure Lesson08 is
 
    procedure Load_GL_Textures is
       use Lumen.GL;
+      use Lumen.GLU;
       IP              : Pointer;
       Image           : constant Lumen.Image.Descriptor :=
          Lumen.Image.From_File ("data/Glass.bmp");
       Texture_Pointer : constant System.Address := Textures'Address;
    begin
-      -- Allocate a texture name
-      GenTextures (1, Texture_Pointer);
+      -- create three textures
+      GenTextures (3, Texture_Pointer);
 
       -- Bind texture operations to the newly-created texture name
-      BindTexture (GL_TEXTURE_2D, Textures (Selected_Texture));
-
-      -- Select modulate to mix texture with color for shading
-      TexEnv (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-      -- Wrap textures at both edges
-      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-      -- How the texture behaves when minified and magnified
+      BindTexture (GL_TEXTURE_2D, Textures (Textures'First));
       TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
       TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-      -- Create a pointer to the image.  This sort of horror show is going to
-      -- be disappearing once Lumen includes its own OpenGL bindings.
       IP := Image.Values.all'Address;
-
-      -- Build our texture from the image we loaded earlier
-      TexImage (GL_TEXTURE_2D, 0, GL_RGBA, Image.Width, Image.Height,
+      TexImage (GL_TEXTURE_2D, 0, GL_RGB, Image.Width, Image.Height,
                 0, GL_RGBA, GL_UNSIGNED_BYTE, IP);
+
+      -- Bind texture operations to the newly-created texture name
+      BindTexture (GL_TEXTURE_2D, Textures (Textures'First + 1));
+      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      IP := Image.Values.all'Address;
+      TexImage (GL_TEXTURE_2D, 0, GL_RGB, Image.Width, Image.Height,
+                0, GL_RGBA, GL_UNSIGNED_BYTE, IP);
+
+      -- Bind texture operations to the newly-created texture name
+      BindTexture (GL_TEXTURE_2D, Textures (Textures'First + 2));
+      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+      IP := Image.Values.all'Address;
+      declare
+         X : constant Int :=
+               Build2DMipmaps (GL_TEXTURE_2D, Int (GL_RGB), Image.Width, Image.Height,
+                               GL_RGBA, GL_UNSIGNED_BYTE, IP);
+         pragma Unreferenced (X);
+      begin
+         null;
+      end;
    end Load_GL_Textures;
 
    procedure Init_GL is
