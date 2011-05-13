@@ -27,13 +27,25 @@ Look for more to be added to this page in the days and weeks ahead!
 
 <h2 class="centered">Bug Reports</h2>
 
-You may report bugs in Lumen, or ask about difficulties in using it, on the
-\#Ada IRC channel on [the Freenode IRC network][freenode].
+You may report bugs in Lumen, or ask about difficulties in using it,
+on the \#Ada IRC channel on [the Freenode IRC network][freenode].  And
+though we haven't tested it yet, presumably you can also use
+[the Github issues page][issues] for the Lumen project.
 
 <h2 class="centered">News About Lumen</h2>
 
 I'm going to start adding notable events here, so you can check quickly
 whether there's something new since you last visited the site.
+
+* **Thursday, 12 May 2011**: Several changes in the past few days:
+    - Some additions to Lumen.GL and Lumen.GLU contributed by Julian.
+    - New directory structure, including `bin` and `data` dirs, and
+      a `demo/obj` subdir to keep things tidy.
+    - Added NeHe "lesson" demos, contributed by Julian.
+    - Added thin OpenGL bindings contributed by Rod Kay.
+    - Converted all demos to use Lumen.GL and Lumen.GLU instead of the
+      raw thin bindings.
+    - Replicated git repository to [github][].
 
 * **Wednesday, 22 Dec 2010**: New visual-choosing code, should allow operation
     on more systems.  Also integrated Julian's latest BMP image loading
@@ -61,9 +73,11 @@ whether there's something new since you last visited the site.
     documentation.  Yay!
 
 
+[freenode]:  http://freenode.net/
+[github]:    https://github.com/karakalo/Lumen
 [install]:   install.html
 [intro]:     old-intro.html
+[issues]:    https://github.com/karakalo/Lumen/issues
 [ndemos]:    narrative-demos.html
 [nlumen]:    narrative-lumen.html
 [rat]:       rationale.html
-[freenode]:  http://freenode.net/
