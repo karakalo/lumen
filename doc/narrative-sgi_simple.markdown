@@ -4,8 +4,8 @@ This is a simple narrative description of the `sgi_simple` application
 included with the Lumen library as a demo.
 
 The `sgi_simple` demo has no command-line parameters, so you invoke it by
-typing its name, like `./sgi_simple` if you're sitting in the `demo`
-directory, or `demo/sgi_simple` if you're in the `lumen` directory.  When run,
+typing its name, like `./sgi_simple` if you're sitting in the `bin`
+directory, or `bin/sgi_simple` if you're in the `lumen` directory.  When run,
 `sgi_simple` creates a black window with a white square in the middle, which
 should be about half the width of the window itself.  Terminate it by pressing
 any key, or closing the window.
@@ -67,7 +67,7 @@ One final note about this app: Note that in the call to
 This is a non-standard attribute specific to the GNAT compiler, and is not to
 be used in polite society.  Normal Lumen apps would use the standard `Access`
 attribute, and would declare their callbacks at the library level, meaning in
-a package.  I used the non-standard attribute here to avoid having a separate
+a package.  We used the non-standard attribute here to avoid having a separate
 package just for the one lone callback, so just for simplicity's and
 expediency's sake.
 

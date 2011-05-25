@@ -6,12 +6,12 @@ with the Lumen library as a demo.
 The `texture` demo accepts one command-line parameter, which is the name of an
 image in BMP format, or netpbm's portable bitmap, portable greymap, or
 portable pixmap format (PBM, PGM, or PPM).  Yes yes, we'll be adding more
-formats shortly.  One BMP and one PPM image are included in the `demo`
+formats shortly.  One BMP and one PPM image are included in the `data`
 directory for you to use with this demo.  You can convert other images to BMP
 or PPM format using any of a number of free tools, like the netpbm toolkit,
 GIMP, or ImageMagick.  You invoke `texture` by typing its name followed by an
-image name, like `./texture ppm-test-8.ppm` if you're sitting in the `demo`
-directory, or `demo/texture demo/bmp-test-1.bmp` if you're in the `lumen`
+image name, like `./texture ../data/ppm-test-8.ppm` if you're sitting in the
+`bin` directory, or `bin/texture data/bmp-test-1.bmp` if you're in the `lumen`
 directory.  When run, `texture` creates a window the same size as your image,
 so for best results, use images that are smaller than your screen.  (The
 actual image is displayed on a rectangle that's smaller, so it has room to
@@ -32,9 +32,6 @@ image is a public-domain raytraced image from Wikimedia Commons.
 The `texture` demo is an enhancement of the [`spinner`][spinner] demo, mainly
 intended to show how to use the `Lumen.Image` package.  It's getting closer to
 what a real Lumen app might typically look like, though it's still very basic.
-Particularly bad is the part where it creates a pointer to pass to the OpenGL
-glTexImage2D procedure.  *That* sort of thing will *not* be necessary in real
-Lumen programs!
 
 Like in `spinner`, creating a double-buffered rendering context (by allowing
 the default `Animated => True` in [`Lumen.Window.Create`][window]) is actually
