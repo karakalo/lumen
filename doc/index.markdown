@@ -74,10 +74,10 @@ whether there's something new since you last visited the site.
 
 
 [freenode]:  http://freenode.net/
-[github]:    https://github.com/karakalo/Lumen
+[github]:    https://github.com/karakalo/lumen
 [install]:   install.html
 [intro]:     old-intro.html
-[issues]:    https://github.com/karakalo/Lumen/issues
+[issues]:    https://github.com/karakalo/lumen/issues
 [ndemos]:    narrative-demos.html
 [nlumen]:    narrative-lumen.html
 [rat]:       rationale.html
