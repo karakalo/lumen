@@ -29,39 +29,32 @@ there ever are any, may not be familiar with some of the terms.
 
 And these are the [NeHe demos][nehe] that we currently have:
 
-* **[`lesson01`][lesson01]**: Simplest possible app, just opens a
+* **[`lesson01`][nehedemo]**: Simplest possible app, just opens a
     window and clears it to black, then waits for it to be closed,
     either via the window manager, or with a keystroke.  Sort of a
     "hello world" for OpenGL.
 
-* **[`lesson02`][lesson02]**: Draws a triangle and a square using default color.
+* **[`lesson02`][nehedemo]**: Draws a triangle and a square using default color.
 
-* **[`lesson03`][lesson03]**: Getting fancy now!  Draws the triangle
+* **[`lesson03`][nehedemo]**: Getting fancy now!  Draws the triangle
     and square with non-default colors.
 
-* **[`lesson04`][lesson04]**: Spins the triangle and square from lesson03.
+* **[`lesson04`][nehedemo]**: Spins the triangle and square from lesson03.
 
-* **[`lesson05`][lesson05]**: Going full 3D now: the triangle and
+* **[`lesson05`][nehedemo]**: Going full 3D now: the triangle and
     square from lesson04 become a pyramid and a cube, respectively.
     The cube also spins in two axes.
 
-* **[`lesson06`][lesson06]**: Textured spinning cube.
+* **[`lesson06`][nehedemo]**: Textured spinning cube.
 
-* **[`lesson07`][lesson07]**: Another textured spinning cube, this
+* **[`lesson07`][nehedemo]**: Another textured spinning cube, this
     time with keyboard controls.
 
-* **[`lesson08`][lesson08]**: Spinning cube with a different texture
+* **[`lesson08`][nehedemo]**: Spinning cube with a different texture
     and even more keyboard controls.
 
 [colors]:     narrative-colors.html
-[lesson01]:   narrative-lesson01.html
-[lesson02]:   narrative-lesson02.html
-[lesson03]:   narrative-lesson03.html
-[lesson04]:   narrative-lesson04.html
-[lesson05]:   narrative-lesson05.html
-[lesson06]:   narrative-lesson06.html
-[lesson07]:   narrative-lesson07.html
-[lesson08]:   narrative-lesson08.html
+[nehedemo]:   narrative-nehe.html
 [multi]:      narrative-multi.html
 [nehe]:       http://nehe.gamedev.net/
 [sgi_simple]: narrative-sgi_simple.html
