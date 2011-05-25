@@ -6,6 +6,7 @@
 # List of doc files
 PAGES = \
 	index \
+	demo-manual \
 	install \
 	old-intro \
 	rationale
@@ -19,7 +20,11 @@ NARRS = \
 	narrative-lumen-misc \
 	narrative-sgi_simple \
 	narrative-spinner \
-	narrative-texture
+	narrative-texture \
+	narrative-text1 \
+	narrative-text2 \
+	narrative-multi \
+	narrative-nehe
 
 FILES = ${PAGES} ${NARRS}
 
