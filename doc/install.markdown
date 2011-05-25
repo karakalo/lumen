@@ -27,10 +27,10 @@ using this [git][] command:
 The repository is now [replicated on github][github], so as an
 alternative to the above you can use this:
 
-        git clone https://github.com/karakalo/Lumen.git
+        git clone https://github.com/karakalo/lumen.git
 
-That will create a subdirectory named `lumen` (or `Lumen` if you use
-the github repo) containing the library, its demos, and its docs.
+That will create a subdirectory named `lumen` containing the library,
+its demos, and its docs.
 
 
 ## Building Lumen
@@ -84,7 +84,7 @@ That's all for now, but more is coming soon!
 
 [demos]:   narrative-demos.html
 [git]:     http://git-scm.com/
-[github]:  https://github.com/karakalo/Lumen
+[github]:  https://github.com/karakalo/lumen
 [gnat]:    http://libre.adacore.com/libre/
 [holm]:    http://adaopengl.sourceforge.net/
 [mesa]:    http://www.mesa3d.org/
