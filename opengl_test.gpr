@@ -1,0 +1,40 @@
+--  this project is just for testing if OpenGL functions are correctly
+--  imported (primarily on Windows, where StdCall does things to the
+--  symbol names)
+
+with "opengl.gpr";
+
+project OpenGL_Test is
+
+   type Os_Type is
+      ("Windows", "Linux", "MacOSX");
+   for Object_Dir use "obj";
+   for Exec_Dir use "bin";
+   OS : Os_Type := external ("OS");
+
+   package Ide is
+      for Vcs_Kind use "Git";
+   end Ide;
+
+   package Builder is
+      for Default_Switches ("ada") use ("-s");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnat05", "-gnatn", "-fstack-check");
+   end Compiler;
+
+   case OS is
+      when "Windows" =>
+         for Source_Dirs use ("gl\tests");
+         for Main use ("gl_test1.adb");
+
+      when "Linux" =>
+         null;
+
+      when "MacOSX" =>
+         null;
+   end case;
+
+end OpenGL_Test;
+

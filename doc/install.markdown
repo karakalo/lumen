@@ -35,16 +35,54 @@ its demos, and its docs.
 
 ## Building Lumen
 
-Once you have downloaded the source, these commands will build Lumen itself:
+### Windows Prerequisites
 
-        cd lumen
-        gnatmake -P lumen.gpr
+In order to link the Lumen OpenGL binding on Windows, you need to have
+OpenGL32.lib and Gdi32.lib in your path. You can acquire these files as part of the 
+[Microsoft Windows SDK](http://msdn.microsoft.com/en-us/windows/bb980924).
+Another option is to build them yourself from OpenGL32.dll and Gdi32.dll
+following the
+[GNAT Users's Guide](http://gcc.gnu.org/onlinedocs/gcc-4.1.2/gnat_ugn_unw/Creating-an-Import-Library.html).
+
+As soon as you have the file in your path, you can move on to the next step.
+
+### Compiling
+
+You need to tell Lumen which operating system you're on. This is done by
+setting the scenario variable **OS**. It currently supports three values:
+
+ * `Linux`: Compiles Lumen for a Linux / X-Server based system
+ * `MacOSX`: Compiles Lumen for MacOSX
+ * `Windows`: Compiles Lumen for Windows
+ 
+Please substitute **$OS** with the value representing your operating system
+in the following commands.
+ 
+For compiling Lumen itself, do:
+
+		cd lumen
+		gnatmake -P lumen.gpr -XOS=$OS
 
 That should create `liblumen.a` and a clutter of `.ali` files in the
-`lib` directory.  If you want to build the optional joystick support
+`lib` directory.
+
+---
+NOTE: If you're using the
+[MinGW GNAT compiler from GnuAda](http://gnuada.sourceforge.net/pmwiki.php/Install/MinGW),
+you might get an error message
+
+		opengl.gpr:1:01: "project" expected
+
+(Because the gnatmake version is not new enough to support the
+`library project` feature.) In this case, substitute gnatmake with gprbuild,
+which does support it.
+
+---
+
+If you want to build the optional joystick support
 as well (note that it is Linux-specific), this command should do it:
 
-        gprbuild -P joy.gpr
+        gprbuild -P joy.gpr -XOS=Linux
 
 The `gprbuild` command has some configuration it likes, and if that's not set
 up on your system yet, it may give you some static.  The program `gprconfig`
@@ -57,13 +95,12 @@ directory, which will allow you to build the joystick demos.  And if you have
 a joystick or a game pad or something similar, you should be able to actually
 *run* them!
 
-
 ## Building the Demos
 
 Once you have built the library, you should be able to build
 [the demo programs][demos] with this command:
 
-        gnatmake -P demos.gpr
+        gnatmake -P demos.gpr -XOS=$OS
 
 That should create various executables in the `bin` directory, which
 you can run according to the instructions on their respective
@@ -72,7 +109,7 @@ description pages.
 Lumen now also includes the first few lessons from the
 [NeHe OpenGL tutorials][nehe], which can be built thusly:
 
-        gnatmake -P nehe.gpr
+        gnatmake -P nehe.gpr - XOS=$OS
 
 This should create more executables in the `bin` directory.
 
