@@ -1,0 +1,37 @@
+library project OpenGL is
+
+   type Os_Type is
+      ("Windows", "Linux", "MacOSX");
+   Os : Os_Type := external ("OS", "Linux");
+
+   for Library_Name use "AdaOpenGL";
+   for Source_Dirs use ("gl");
+   for Object_Dir use "obj";
+   for Library_Dir use "lib";
+
+   package Ide is
+      for Vcs_Kind use "Git";
+   end Ide;
+
+   package Builder is
+      for Default_Switches ("ada") use ("-s");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnat05", "-gnatn", "-fstack-check");
+   end Compiler;
+
+   package Linker is
+      case Os is
+         when "Windows" =>
+            for Linker_Options use ("-lOpenGL32");
+
+         when "Linux" =>
+            for Linker_Options use ("-lGL");
+
+         when "MacOSX" =>
+            for Linker_Options use ("-Wl,-framework,OpenGL");
+      end case;
+   end Linker;
+
+end OpenGL;

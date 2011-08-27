@@ -1,6 +1,8 @@
+with "OpenGL";
+
 project Lumen is
 
-   for Source_Dirs use ("src", "gl");
+   for Source_Dirs use ("src");
    for Object_Dir use "obj";
    for Library_Name use "lumen";
    for Library_Dir use "lib";

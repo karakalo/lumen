@@ -2,7 +2,6 @@ with Interfaces.C;
 with System;
 
 
-
 package GLU is
 
    pragma Pure;

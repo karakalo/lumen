@@ -1720,488 +1720,488 @@ package GLext.Binding is
 
 private
 
-   pragma Import (C, glBlendFuncSeparate, "glBlendFuncSeparate");
-   pragma Import (C, glMultiDrawArrays, "glMultiDrawArrays");
-   pragma Import (C, glMultiDrawElements, "glMultiDrawElements");
-   pragma Import (C, glPointParameterf, "glPointParameterf");
-   pragma Import (C, glPointParameterfv, "glPointParameterfv");
-   pragma Import (C, glPointParameteri, "glPointParameteri");
-   pragma Import (C, glPointParameteriv, "glPointParameteriv");
-   pragma Import (C, glGenQueries, "glGenQueries");
-   pragma Import (C, glDeleteQueries, "glDeleteQueries");
-   pragma Import (C, glIsQuery, "glIsQuery");
-   pragma Import (C, glBeginQuery, "glBeginQuery");
-   pragma Import (C, glEndQuery, "glEndQuery");
-   pragma Import (C, glGetQueryiv, "glGetQueryiv");
-   pragma Import (C, glGetQueryObjectiv, "glGetQueryObjectiv");
-   pragma Import (C, glGetQueryObjectuiv, "glGetQueryObjectuiv");
-   pragma Import (C, glBindBuffer, "glBindBuffer");
-   pragma Import (C, glDeleteBuffers, "glDeleteBuffers");
-   pragma Import (C, glGenBuffers, "glGenBuffers");
-   pragma Import (C, glIsBuffer, "glIsBuffer");
-   pragma Import (C, glBufferData, "glBufferData");
-   pragma Import (C, glBufferSubData, "glBufferSubData");
-   pragma Import (C, glGetBufferSubData, "glGetBufferSubData");
-   pragma Import (C, glMapBuffer, "glMapBuffer");
-   pragma Import (C, glUnmapBuffer, "glUnmapBuffer");
-   pragma Import (C, glGetBufferParameteriv, "glGetBufferParameteriv");
-   pragma Import (C, glGetBufferPointerv, "glGetBufferPointerv");
-   pragma Import (C, glBlendEquationSeparate, "glBlendEquationSeparate");
-   pragma Import (C, glDrawBuffers, "glDrawBuffers");
-   pragma Import (C, glStencilOpSeparate, "glStencilOpSeparate");
-   pragma Import (C, glStencilFuncSeparate, "glStencilFuncSeparate");
-   pragma Import (C, glStencilMaskSeparate, "glStencilMaskSeparate");
-   pragma Import (C, glAttachShader, "glAttachShader");
-   pragma Import (C, glBindAttribLocation, "glBindAttribLocation");
-   pragma Import (C, glCompileShader, "glCompileShader");
-   pragma Import (C, glCreateProgram, "glCreateProgram");
-   pragma Import (C, glCreateShader, "glCreateShader");
-   pragma Import (C, glDeleteProgram, "glDeleteProgram");
-   pragma Import (C, glDeleteShader, "glDeleteShader");
-   pragma Import (C, glDetachShader, "glDetachShader");
+   pragma Import (StdCall, glBlendFuncSeparate, "glBlendFuncSeparate");
+   pragma Import (StdCall, glMultiDrawArrays, "glMultiDrawArrays");
+   pragma Import (StdCall, glMultiDrawElements, "glMultiDrawElements");
+   pragma Import (StdCall, glPointParameterf, "glPointParameterf");
+   pragma Import (StdCall, glPointParameterfv, "glPointParameterfv");
+   pragma Import (StdCall, glPointParameteri, "glPointParameteri");
+   pragma Import (StdCall, glPointParameteriv, "glPointParameteriv");
+   pragma Import (StdCall, glGenQueries, "glGenQueries");
+   pragma Import (StdCall, glDeleteQueries, "glDeleteQueries");
+   pragma Import (StdCall, glIsQuery, "glIsQuery");
+   pragma Import (StdCall, glBeginQuery, "glBeginQuery");
+   pragma Import (StdCall, glEndQuery, "glEndQuery");
+   pragma Import (StdCall, glGetQueryiv, "glGetQueryiv");
+   pragma Import (StdCall, glGetQueryObjectiv, "glGetQueryObjectiv");
+   pragma Import (StdCall, glGetQueryObjectuiv, "glGetQueryObjectuiv");
+   pragma Import (StdCall, glBindBuffer, "glBindBuffer");
+   pragma Import (StdCall, glDeleteBuffers, "glDeleteBuffers");
+   pragma Import (StdCall, glGenBuffers, "glGenBuffers");
+   pragma Import (StdCall, glIsBuffer, "glIsBuffer");
+   pragma Import (StdCall, glBufferData, "glBufferData");
+   pragma Import (StdCall, glBufferSubData, "glBufferSubData");
+   pragma Import (StdCall, glGetBufferSubData, "glGetBufferSubData");
+   pragma Import (StdCall, glMapBuffer, "glMapBuffer");
+   pragma Import (StdCall, glUnmapBuffer, "glUnmapBuffer");
+   pragma Import (StdCall, glGetBufferParameteriv, "glGetBufferParameteriv");
+   pragma Import (StdCall, glGetBufferPointerv, "glGetBufferPointerv");
+   pragma Import (StdCall, glBlendEquationSeparate, "glBlendEquationSeparate");
+   pragma Import (StdCall, glDrawBuffers, "glDrawBuffers");
+   pragma Import (StdCall, glStencilOpSeparate, "glStencilOpSeparate");
+   pragma Import (StdCall, glStencilFuncSeparate, "glStencilFuncSeparate");
+   pragma Import (StdCall, glStencilMaskSeparate, "glStencilMaskSeparate");
+   pragma Import (StdCall, glAttachShader, "glAttachShader");
+   pragma Import (StdCall, glBindAttribLocation, "glBindAttribLocation");
+   pragma Import (StdCall, glCompileShader, "glCompileShader");
+   pragma Import (StdCall, glCreateProgram, "glCreateProgram");
+   pragma Import (StdCall, glCreateShader, "glCreateShader");
+   pragma Import (StdCall, glDeleteProgram, "glDeleteProgram");
+   pragma Import (StdCall, glDeleteShader, "glDeleteShader");
+   pragma Import (StdCall, glDetachShader, "glDetachShader");
    pragma Import
-     (C,
+     (StdCall,
       glDisableVertexAttribArray,
       "glDisableVertexAttribArray");
    pragma Import
-     (C,
+     (StdCall,
       glEnableVertexAttribArray,
       "glEnableVertexAttribArray");
-   pragma Import (C, glGetActiveAttrib, "glGetActiveAttrib");
-   pragma Import (C, glGetActiveUniform, "glGetActiveUniform");
-   pragma Import (C, glGetAttachedShaders, "glGetAttachedShaders");
-   pragma Import (C, glGetAttribLocation, "glGetAttribLocation");
-   pragma Import (C, glGetProgramiv, "glGetProgramiv");
-   pragma Import (C, glGetProgramInfoLog, "glGetProgramInfoLog");
-   pragma Import (C, glGetShaderiv, "glGetShaderiv");
-   pragma Import (C, glGetShaderInfoLog, "glGetShaderInfoLog");
-   pragma Import (C, glGetShaderSource, "glGetShaderSource");
-   pragma Import (C, glGetUniformLocation, "glGetUniformLocation");
-   pragma Import (C, glGetUniformfv, "glGetUniformfv");
-   pragma Import (C, glGetUniformiv, "glGetUniformiv");
-   pragma Import (C, glGetVertexAttribdv, "glGetVertexAttribdv");
-   pragma Import (C, glGetVertexAttribfv, "glGetVertexAttribfv");
-   pragma Import (C, glGetVertexAttribiv, "glGetVertexAttribiv");
+   pragma Import (StdCall, glGetActiveAttrib, "glGetActiveAttrib");
+   pragma Import (StdCall, glGetActiveUniform, "glGetActiveUniform");
+   pragma Import (StdCall, glGetAttachedShaders, "glGetAttachedShaders");
+   pragma Import (StdCall, glGetAttribLocation, "glGetAttribLocation");
+   pragma Import (StdCall, glGetProgramiv, "glGetProgramiv");
+   pragma Import (StdCall, glGetProgramInfoLog, "glGetProgramInfoLog");
+   pragma Import (StdCall, glGetShaderiv, "glGetShaderiv");
+   pragma Import (StdCall, glGetShaderInfoLog, "glGetShaderInfoLog");
+   pragma Import (StdCall, glGetShaderSource, "glGetShaderSource");
+   pragma Import (StdCall, glGetUniformLocation, "glGetUniformLocation");
+   pragma Import (StdCall, glGetUniformfv, "glGetUniformfv");
+   pragma Import (StdCall, glGetUniformiv, "glGetUniformiv");
+   pragma Import (StdCall, glGetVertexAttribdv, "glGetVertexAttribdv");
+   pragma Import (StdCall, glGetVertexAttribfv, "glGetVertexAttribfv");
+   pragma Import (StdCall, glGetVertexAttribiv, "glGetVertexAttribiv");
    pragma Import
-     (C,
+     (StdCall,
       glGetVertexAttribPointerv,
       "glGetVertexAttribPointerv");
-   pragma Import (C, glIsProgram, "glIsProgram");
-   pragma Import (C, glIsShader, "glIsShader");
-   pragma Import (C, glLinkProgram, "glLinkProgram");
-   pragma Import (C, glShaderSource, "glShaderSource");
-   pragma Import (C, glUseProgram, "glUseProgram");
-   pragma Import (C, glUniform1f, "glUniform1f");
-   pragma Import (C, glUniform2f, "glUniform2f");
-   pragma Import (C, glUniform3f, "glUniform3f");
-   pragma Import (C, glUniform4f, "glUniform4f");
-   pragma Import (C, glUniform1i, "glUniform1i");
-   pragma Import (C, glUniform2i, "glUniform2i");
-   pragma Import (C, glUniform3i, "glUniform3i");
-   pragma Import (C, glUniform4i, "glUniform4i");
-   pragma Import (C, glUniform1fv, "glUniform1fv");
-   pragma Import (C, glUniform2fv, "glUniform2fv");
-   pragma Import (C, glUniform3fv, "glUniform3fv");
-   pragma Import (C, glUniform4fv, "glUniform4fv");
-   pragma Import (C, glUniform1iv, "glUniform1iv");
-   pragma Import (C, glUniform2iv, "glUniform2iv");
-   pragma Import (C, glUniform3iv, "glUniform3iv");
-   pragma Import (C, glUniform4iv, "glUniform4iv");
-   pragma Import (C, glUniformMatrix2fv, "glUniformMatrix2fv");
-   pragma Import (C, glUniformMatrix3fv, "glUniformMatrix3fv");
-   pragma Import (C, glUniformMatrix4fv, "glUniformMatrix4fv");
-   pragma Import (C, glValidateProgram, "glValidateProgram");
-   pragma Import (C, glVertexAttrib1d, "glVertexAttrib1d");
-   pragma Import (C, glVertexAttrib1dv, "glVertexAttrib1dv");
-   pragma Import (C, glVertexAttrib1f, "glVertexAttrib1f");
-   pragma Import (C, glVertexAttrib1fv, "glVertexAttrib1fv");
-   pragma Import (C, glVertexAttrib1s, "glVertexAttrib1s");
-   pragma Import (C, glVertexAttrib1sv, "glVertexAttrib1sv");
-   pragma Import (C, glVertexAttrib2d, "glVertexAttrib2d");
-   pragma Import (C, glVertexAttrib2dv, "glVertexAttrib2dv");
-   pragma Import (C, glVertexAttrib2f, "glVertexAttrib2f");
-   pragma Import (C, glVertexAttrib2fv, "glVertexAttrib2fv");
-   pragma Import (C, glVertexAttrib2s, "glVertexAttrib2s");
-   pragma Import (C, glVertexAttrib2sv, "glVertexAttrib2sv");
-   pragma Import (C, glVertexAttrib3d, "glVertexAttrib3d");
-   pragma Import (C, glVertexAttrib3dv, "glVertexAttrib3dv");
-   pragma Import (C, glVertexAttrib3f, "glVertexAttrib3f");
-   pragma Import (C, glVertexAttrib3fv, "glVertexAttrib3fv");
-   pragma Import (C, glVertexAttrib3s, "glVertexAttrib3s");
-   pragma Import (C, glVertexAttrib3sv, "glVertexAttrib3sv");
-   pragma Import (C, glVertexAttrib4Nbv, "glVertexAttrib4Nbv");
-   pragma Import (C, glVertexAttrib4Niv, "glVertexAttrib4Niv");
-   pragma Import (C, glVertexAttrib4Nsv, "glVertexAttrib4Nsv");
-   pragma Import (C, glVertexAttrib4Nub, "glVertexAttrib4Nub");
-   pragma Import (C, glVertexAttrib4Nubv, "glVertexAttrib4Nubv");
-   pragma Import (C, glVertexAttrib4Nuiv, "glVertexAttrib4Nuiv");
-   pragma Import (C, glVertexAttrib4Nusv, "glVertexAttrib4Nusv");
-   pragma Import (C, glVertexAttrib4bv, "glVertexAttrib4bv");
-   pragma Import (C, glVertexAttrib4d, "glVertexAttrib4d");
-   pragma Import (C, glVertexAttrib4dv, "glVertexAttrib4dv");
-   pragma Import (C, glVertexAttrib4f, "glVertexAttrib4f");
-   pragma Import (C, glVertexAttrib4fv, "glVertexAttrib4fv");
-   pragma Import (C, glVertexAttrib4iv, "glVertexAttrib4iv");
-   pragma Import (C, glVertexAttrib4s, "glVertexAttrib4s");
-   pragma Import (C, glVertexAttrib4sv, "glVertexAttrib4sv");
-   pragma Import (C, glVertexAttrib4ubv, "glVertexAttrib4ubv");
-   pragma Import (C, glVertexAttrib4uiv, "glVertexAttrib4uiv");
-   pragma Import (C, glVertexAttrib4usv, "glVertexAttrib4usv");
-   pragma Import (C, glVertexAttribPointer, "glVertexAttribPointer");
-   pragma Import (C, glUniformMatrix2x3fv, "glUniformMatrix2x3fv");
-   pragma Import (C, glUniformMatrix3x2fv, "glUniformMatrix3x2fv");
-   pragma Import (C, glUniformMatrix2x4fv, "glUniformMatrix2x4fv");
-   pragma Import (C, glUniformMatrix4x2fv, "glUniformMatrix4x2fv");
-   pragma Import (C, glUniformMatrix3x4fv, "glUniformMatrix3x4fv");
-   pragma Import (C, glUniformMatrix4x3fv, "glUniformMatrix4x3fv");
-   pragma Import (C, glColorMaski, "glColorMaski");
-   pragma Import (C, glGetBooleani_v, "glGetBooleani_v");
-   pragma Import (C, glGetIntegeri_v, "glGetIntegeri_v");
-   pragma Import (C, glEnablei, "glEnablei");
-   pragma Import (C, glDisablei, "glDisablei");
-   pragma Import (C, glIsEnabledi, "glIsEnabledi");
+   pragma Import (StdCall, glIsProgram, "glIsProgram");
+   pragma Import (StdCall, glIsShader, "glIsShader");
+   pragma Import (StdCall, glLinkProgram, "glLinkProgram");
+   pragma Import (StdCall, glShaderSource, "glShaderSource");
+   pragma Import (StdCall, glUseProgram, "glUseProgram");
+   pragma Import (StdCall, glUniform1f, "glUniform1f");
+   pragma Import (StdCall, glUniform2f, "glUniform2f");
+   pragma Import (StdCall, glUniform3f, "glUniform3f");
+   pragma Import (StdCall, glUniform4f, "glUniform4f");
+   pragma Import (StdCall, glUniform1i, "glUniform1i");
+   pragma Import (StdCall, glUniform2i, "glUniform2i");
+   pragma Import (StdCall, glUniform3i, "glUniform3i");
+   pragma Import (StdCall, glUniform4i, "glUniform4i");
+   pragma Import (StdCall, glUniform1fv, "glUniform1fv");
+   pragma Import (StdCall, glUniform2fv, "glUniform2fv");
+   pragma Import (StdCall, glUniform3fv, "glUniform3fv");
+   pragma Import (StdCall, glUniform4fv, "glUniform4fv");
+   pragma Import (StdCall, glUniform1iv, "glUniform1iv");
+   pragma Import (StdCall, glUniform2iv, "glUniform2iv");
+   pragma Import (StdCall, glUniform3iv, "glUniform3iv");
+   pragma Import (StdCall, glUniform4iv, "glUniform4iv");
+   pragma Import (StdCall, glUniformMatrix2fv, "glUniformMatrix2fv");
+   pragma Import (StdCall, glUniformMatrix3fv, "glUniformMatrix3fv");
+   pragma Import (StdCall, glUniformMatrix4fv, "glUniformMatrix4fv");
+   pragma Import (StdCall, glValidateProgram, "glValidateProgram");
+   pragma Import (StdCall, glVertexAttrib1d, "glVertexAttrib1d");
+   pragma Import (StdCall, glVertexAttrib1dv, "glVertexAttrib1dv");
+   pragma Import (StdCall, glVertexAttrib1f, "glVertexAttrib1f");
+   pragma Import (StdCall, glVertexAttrib1fv, "glVertexAttrib1fv");
+   pragma Import (StdCall, glVertexAttrib1s, "glVertexAttrib1s");
+   pragma Import (StdCall, glVertexAttrib1sv, "glVertexAttrib1sv");
+   pragma Import (StdCall, glVertexAttrib2d, "glVertexAttrib2d");
+   pragma Import (StdCall, glVertexAttrib2dv, "glVertexAttrib2dv");
+   pragma Import (StdCall, glVertexAttrib2f, "glVertexAttrib2f");
+   pragma Import (StdCall, glVertexAttrib2fv, "glVertexAttrib2fv");
+   pragma Import (StdCall, glVertexAttrib2s, "glVertexAttrib2s");
+   pragma Import (StdCall, glVertexAttrib2sv, "glVertexAttrib2sv");
+   pragma Import (StdCall, glVertexAttrib3d, "glVertexAttrib3d");
+   pragma Import (StdCall, glVertexAttrib3dv, "glVertexAttrib3dv");
+   pragma Import (StdCall, glVertexAttrib3f, "glVertexAttrib3f");
+   pragma Import (StdCall, glVertexAttrib3fv, "glVertexAttrib3fv");
+   pragma Import (StdCall, glVertexAttrib3s, "glVertexAttrib3s");
+   pragma Import (StdCall, glVertexAttrib3sv, "glVertexAttrib3sv");
+   pragma Import (StdCall, glVertexAttrib4Nbv, "glVertexAttrib4Nbv");
+   pragma Import (StdCall, glVertexAttrib4Niv, "glVertexAttrib4Niv");
+   pragma Import (StdCall, glVertexAttrib4Nsv, "glVertexAttrib4Nsv");
+   pragma Import (StdCall, glVertexAttrib4Nub, "glVertexAttrib4Nub");
+   pragma Import (StdCall, glVertexAttrib4Nubv, "glVertexAttrib4Nubv");
+   pragma Import (StdCall, glVertexAttrib4Nuiv, "glVertexAttrib4Nuiv");
+   pragma Import (StdCall, glVertexAttrib4Nusv, "glVertexAttrib4Nusv");
+   pragma Import (StdCall, glVertexAttrib4bv, "glVertexAttrib4bv");
+   pragma Import (StdCall, glVertexAttrib4d, "glVertexAttrib4d");
+   pragma Import (StdCall, glVertexAttrib4dv, "glVertexAttrib4dv");
+   pragma Import (StdCall, glVertexAttrib4f, "glVertexAttrib4f");
+   pragma Import (StdCall, glVertexAttrib4fv, "glVertexAttrib4fv");
+   pragma Import (StdCall, glVertexAttrib4iv, "glVertexAttrib4iv");
+   pragma Import (StdCall, glVertexAttrib4s, "glVertexAttrib4s");
+   pragma Import (StdCall, glVertexAttrib4sv, "glVertexAttrib4sv");
+   pragma Import (StdCall, glVertexAttrib4ubv, "glVertexAttrib4ubv");
+   pragma Import (StdCall, glVertexAttrib4uiv, "glVertexAttrib4uiv");
+   pragma Import (StdCall, glVertexAttrib4usv, "glVertexAttrib4usv");
+   pragma Import (StdCall, glVertexAttribPointer, "glVertexAttribPointer");
+   pragma Import (StdCall, glUniformMatrix2x3fv, "glUniformMatrix2x3fv");
+   pragma Import (StdCall, glUniformMatrix3x2fv, "glUniformMatrix3x2fv");
+   pragma Import (StdCall, glUniformMatrix2x4fv, "glUniformMatrix2x4fv");
+   pragma Import (StdCall, glUniformMatrix4x2fv, "glUniformMatrix4x2fv");
+   pragma Import (StdCall, glUniformMatrix3x4fv, "glUniformMatrix3x4fv");
+   pragma Import (StdCall, glUniformMatrix4x3fv, "glUniformMatrix4x3fv");
+   pragma Import (StdCall, glColorMaski, "glColorMaski");
+   pragma Import (StdCall, glGetBooleani_v, "glGetBooleani_v");
+   pragma Import (StdCall, glGetIntegeri_v, "glGetIntegeri_v");
+   pragma Import (StdCall, glEnablei, "glEnablei");
+   pragma Import (StdCall, glDisablei, "glDisablei");
+   pragma Import (StdCall, glIsEnabledi, "glIsEnabledi");
    pragma Import
-     (C,
+     (StdCall,
       glBeginTransformFeedback,
       "glBeginTransformFeedback");
-   pragma Import (C, glEndTransformFeedback, "glEndTransformFeedback");
-   pragma Import (C, glBindBufferRange, "glBindBufferRange");
-   pragma Import (C, glBindBufferBase, "glBindBufferBase");
+   pragma Import (StdCall, glEndTransformFeedback, "glEndTransformFeedback");
+   pragma Import (StdCall, glBindBufferRange, "glBindBufferRange");
+   pragma Import (StdCall, glBindBufferBase, "glBindBufferBase");
    pragma Import
-     (C,
+     (StdCall,
       glTransformFeedbackVaryings,
       "glTransformFeedbackVaryings");
    pragma Import
-     (C,
+     (StdCall,
       glGetTransformFeedbackVarying,
       "glGetTransformFeedbackVarying");
-   pragma Import (C, glClampColor, "glClampColor");
+   pragma Import (StdCall, glClampColor, "glClampColor");
    pragma Import
-     (C,
+     (StdCall,
       glBeginConditionalRender,
       "glBeginConditionalRender");
-   pragma Import (C, glEndConditionalRender, "glEndConditionalRender");
-   pragma Import (C, glVertexAttribIPointer, "glVertexAttribIPointer");
-   pragma Import (C, glGetVertexAttribIiv, "glGetVertexAttribIiv");
-   pragma Import (C, glGetVertexAttribIuiv, "glGetVertexAttribIuiv");
-   pragma Import (C, glVertexAttribI1i, "glVertexAttribI1i");
-   pragma Import (C, glVertexAttribI2i, "glVertexAttribI2i");
-   pragma Import (C, glVertexAttribI3i, "glVertexAttribI3i");
-   pragma Import (C, glVertexAttribI4i, "glVertexAttribI4i");
-   pragma Import (C, glVertexAttribI1ui, "glVertexAttribI1ui");
-   pragma Import (C, glVertexAttribI2ui, "glVertexAttribI2ui");
-   pragma Import (C, glVertexAttribI3ui, "glVertexAttribI3ui");
-   pragma Import (C, glVertexAttribI4ui, "glVertexAttribI4ui");
-   pragma Import (C, glVertexAttribI1iv, "glVertexAttribI1iv");
-   pragma Import (C, glVertexAttribI2iv, "glVertexAttribI2iv");
-   pragma Import (C, glVertexAttribI3iv, "glVertexAttribI3iv");
-   pragma Import (C, glVertexAttribI4iv, "glVertexAttribI4iv");
-   pragma Import (C, glVertexAttribI1uiv, "glVertexAttribI1uiv");
-   pragma Import (C, glVertexAttribI2uiv, "glVertexAttribI2uiv");
-   pragma Import (C, glVertexAttribI3uiv, "glVertexAttribI3uiv");
-   pragma Import (C, glVertexAttribI4uiv, "glVertexAttribI4uiv");
-   pragma Import (C, glVertexAttribI4bv, "glVertexAttribI4bv");
-   pragma Import (C, glVertexAttribI4sv, "glVertexAttribI4sv");
-   pragma Import (C, glVertexAttribI4ubv, "glVertexAttribI4ubv");
-   pragma Import (C, glVertexAttribI4usv, "glVertexAttribI4usv");
-   pragma Import (C, glGetUniformuiv, "glGetUniformuiv");
-   pragma Import (C, glBindFragDataLocation, "glBindFragDataLocation");
-   pragma Import (C, glGetFragDataLocation, "glGetFragDataLocation");
-   pragma Import (C, glUniform1ui, "glUniform1ui");
-   pragma Import (C, glUniform2ui, "glUniform2ui");
-   pragma Import (C, glUniform3ui, "glUniform3ui");
-   pragma Import (C, glUniform4ui, "glUniform4ui");
-   pragma Import (C, glUniform1uiv, "glUniform1uiv");
-   pragma Import (C, glUniform2uiv, "glUniform2uiv");
-   pragma Import (C, glUniform3uiv, "glUniform3uiv");
-   pragma Import (C, glUniform4uiv, "glUniform4uiv");
-   pragma Import (C, glTexParameterIiv, "glTexParameterIiv");
-   pragma Import (C, glTexParameterIuiv, "glTexParameterIuiv");
-   pragma Import (C, glGetTexParameterIiv, "glGetTexParameterIiv");
-   pragma Import (C, glGetTexParameterIuiv, "glGetTexParameterIuiv");
-   pragma Import (C, glClearBufferiv, "glClearBufferiv");
-   pragma Import (C, glClearBufferuiv, "glClearBufferuiv");
-   pragma Import (C, glClearBufferfv, "glClearBufferfv");
-   pragma Import (C, glClearBufferfi, "glClearBufferfi");
-   pragma Import (C, glGetStringi, "glGetStringi");
-   pragma Import (C, glDrawArraysInstanced, "glDrawArraysInstanced");
-   pragma Import (C, glDrawElementsInstanced, "glDrawElementsInstanced");
-   pragma Import (C, glTexBuffer, "glTexBuffer");
-   pragma Import (C, glPrimitiveRestartIndex, "glPrimitiveRestartIndex");
-   pragma Import (C, glGetInteger64i_v, "glGetInteger64i_v");
+   pragma Import (StdCall, glEndConditionalRender, "glEndConditionalRender");
+   pragma Import (StdCall, glVertexAttribIPointer, "glVertexAttribIPointer");
+   pragma Import (StdCall, glGetVertexAttribIiv, "glGetVertexAttribIiv");
+   pragma Import (StdCall, glGetVertexAttribIuiv, "glGetVertexAttribIuiv");
+   pragma Import (StdCall, glVertexAttribI1i, "glVertexAttribI1i");
+   pragma Import (StdCall, glVertexAttribI2i, "glVertexAttribI2i");
+   pragma Import (StdCall, glVertexAttribI3i, "glVertexAttribI3i");
+   pragma Import (StdCall, glVertexAttribI4i, "glVertexAttribI4i");
+   pragma Import (StdCall, glVertexAttribI1ui, "glVertexAttribI1ui");
+   pragma Import (StdCall, glVertexAttribI2ui, "glVertexAttribI2ui");
+   pragma Import (StdCall, glVertexAttribI3ui, "glVertexAttribI3ui");
+   pragma Import (StdCall, glVertexAttribI4ui, "glVertexAttribI4ui");
+   pragma Import (StdCall, glVertexAttribI1iv, "glVertexAttribI1iv");
+   pragma Import (StdCall, glVertexAttribI2iv, "glVertexAttribI2iv");
+   pragma Import (StdCall, glVertexAttribI3iv, "glVertexAttribI3iv");
+   pragma Import (StdCall, glVertexAttribI4iv, "glVertexAttribI4iv");
+   pragma Import (StdCall, glVertexAttribI1uiv, "glVertexAttribI1uiv");
+   pragma Import (StdCall, glVertexAttribI2uiv, "glVertexAttribI2uiv");
+   pragma Import (StdCall, glVertexAttribI3uiv, "glVertexAttribI3uiv");
+   pragma Import (StdCall, glVertexAttribI4uiv, "glVertexAttribI4uiv");
+   pragma Import (StdCall, glVertexAttribI4bv, "glVertexAttribI4bv");
+   pragma Import (StdCall, glVertexAttribI4sv, "glVertexAttribI4sv");
+   pragma Import (StdCall, glVertexAttribI4ubv, "glVertexAttribI4ubv");
+   pragma Import (StdCall, glVertexAttribI4usv, "glVertexAttribI4usv");
+   pragma Import (StdCall, glGetUniformuiv, "glGetUniformuiv");
+   pragma Import (StdCall, glBindFragDataLocation, "glBindFragDataLocation");
+   pragma Import (StdCall, glGetFragDataLocation, "glGetFragDataLocation");
+   pragma Import (StdCall, glUniform1ui, "glUniform1ui");
+   pragma Import (StdCall, glUniform2ui, "glUniform2ui");
+   pragma Import (StdCall, glUniform3ui, "glUniform3ui");
+   pragma Import (StdCall, glUniform4ui, "glUniform4ui");
+   pragma Import (StdCall, glUniform1uiv, "glUniform1uiv");
+   pragma Import (StdCall, glUniform2uiv, "glUniform2uiv");
+   pragma Import (StdCall, glUniform3uiv, "glUniform3uiv");
+   pragma Import (StdCall, glUniform4uiv, "glUniform4uiv");
+   pragma Import (StdCall, glTexParameterIiv, "glTexParameterIiv");
+   pragma Import (StdCall, glTexParameterIuiv, "glTexParameterIuiv");
+   pragma Import (StdCall, glGetTexParameterIiv, "glGetTexParameterIiv");
+   pragma Import (StdCall, glGetTexParameterIuiv, "glGetTexParameterIuiv");
+   pragma Import (StdCall, glClearBufferiv, "glClearBufferiv");
+   pragma Import (StdCall, glClearBufferuiv, "glClearBufferuiv");
+   pragma Import (StdCall, glClearBufferfv, "glClearBufferfv");
+   pragma Import (StdCall, glClearBufferfi, "glClearBufferfi");
+   pragma Import (StdCall, glGetStringi, "glGetStringi");
+   pragma Import (StdCall, glDrawArraysInstanced, "glDrawArraysInstanced");
+   pragma Import (StdCall, glDrawElementsInstanced, "glDrawElementsInstanced");
+   pragma Import (StdCall, glTexBuffer, "glTexBuffer");
+   pragma Import (StdCall, glPrimitiveRestartIndex, "glPrimitiveRestartIndex");
+   pragma Import (StdCall, glGetInteger64i_v, "glGetInteger64i_v");
    pragma Import
-     (C,
+     (StdCall,
       glGetBufferParameteri64v,
       "glGetBufferParameteri64v");
-   pragma Import (C, glProgramParameteri, "glProgramParameteri");
-   pragma Import (C, glFramebufferTexture, "glFramebufferTexture");
-   pragma Import (C, glIsRenderbuffer, "glIsRenderbuffer");
-   pragma Import (C, glBindRenderbuffer, "glBindRenderbuffer");
-   pragma Import (C, glDeleteRenderbuffers, "glDeleteRenderbuffers");
-   pragma Import (C, glGenRenderbuffers, "glGenRenderbuffers");
-   pragma Import (C, glRenderbufferStorage, "glRenderbufferStorage");
+   pragma Import (StdCall, glProgramParameteri, "glProgramParameteri");
+   pragma Import (StdCall, glFramebufferTexture, "glFramebufferTexture");
+   pragma Import (StdCall, glIsRenderbuffer, "glIsRenderbuffer");
+   pragma Import (StdCall, glBindRenderbuffer, "glBindRenderbuffer");
+   pragma Import (StdCall, glDeleteRenderbuffers, "glDeleteRenderbuffers");
+   pragma Import (StdCall, glGenRenderbuffers, "glGenRenderbuffers");
+   pragma Import (StdCall, glRenderbufferStorage, "glRenderbufferStorage");
    pragma Import
-     (C,
+     (StdCall,
       glGetRenderbufferParameteriv,
       "glGetRenderbufferParameteriv");
-   pragma Import (C, glIsFramebuffer, "glIsFramebuffer");
-   pragma Import (C, glBindFramebuffer, "glBindFramebuffer");
-   pragma Import (C, glDeleteFramebuffers, "glDeleteFramebuffers");
-   pragma Import (C, glGenFramebuffers, "glGenFramebuffers");
+   pragma Import (StdCall, glIsFramebuffer, "glIsFramebuffer");
+   pragma Import (StdCall, glBindFramebuffer, "glBindFramebuffer");
+   pragma Import (StdCall, glDeleteFramebuffers, "glDeleteFramebuffers");
+   pragma Import (StdCall, glGenFramebuffers, "glGenFramebuffers");
    pragma Import
-     (C,
+     (StdCall,
       glCheckFramebufferStatus,
       "glCheckFramebufferStatus");
-   pragma Import (C, glFramebufferTexture1D, "glFramebufferTexture1D");
-   pragma Import (C, glFramebufferTexture2D, "glFramebufferTexture2D");
-   pragma Import (C, glFramebufferTexture3D, "glFramebufferTexture3D");
+   pragma Import (StdCall, glFramebufferTexture1D, "glFramebufferTexture1D");
+   pragma Import (StdCall, glFramebufferTexture2D, "glFramebufferTexture2D");
+   pragma Import (StdCall, glFramebufferTexture3D, "glFramebufferTexture3D");
    pragma Import
-     (C,
+     (StdCall,
       glFramebufferRenderbuffer,
       "glFramebufferRenderbuffer");
    pragma Import
-     (C,
+     (StdCall,
       glGetFramebufferAttachmentParameteriv,
       "glGetFramebufferAttachmentParameteriv");
-   pragma Import (C, glGenerateMipmap, "glGenerateMipmap");
-   pragma Import (C, glBlitFramebuffer, "glBlitFramebuffer");
+   pragma Import (StdCall, glGenerateMipmap, "glGenerateMipmap");
+   pragma Import (StdCall, glBlitFramebuffer, "glBlitFramebuffer");
    pragma Import
-     (C,
+     (StdCall,
       glRenderbufferStorageMultisample,
       "glRenderbufferStorageMultisample");
    pragma Import
-     (C,
+     (StdCall,
       glFramebufferTextureLayer,
       "glFramebufferTextureLayer");
-   pragma Import (C, glMapBufferRange, "glMapBufferRange");
+   pragma Import (StdCall, glMapBufferRange, "glMapBufferRange");
    pragma Import
-     (C,
+     (StdCall,
       glFlushMappedBufferRange,
       "glFlushMappedBufferRange");
-   pragma Import (C, glBindVertexArray, "glBindVertexArray");
-   pragma Import (C, glDeleteVertexArrays, "glDeleteVertexArrays");
-   pragma Import (C, glGenVertexArrays, "glGenVertexArrays");
-   pragma Import (C, glIsVertexArray, "glIsVertexArray");
-   pragma Import (C, glGetUniformIndices, "glGetUniformIndices");
-   pragma Import (C, glGetActiveUniformsiv, "glGetActiveUniformsiv");
-   pragma Import (C, glGetActiveUniformName, "glGetActiveUniformName");
-   pragma Import (C, glGetUniformBlockIndex, "glGetUniformBlockIndex");
+   pragma Import (StdCall, glBindVertexArray, "glBindVertexArray");
+   pragma Import (StdCall, glDeleteVertexArrays, "glDeleteVertexArrays");
+   pragma Import (StdCall, glGenVertexArrays, "glGenVertexArrays");
+   pragma Import (StdCall, glIsVertexArray, "glIsVertexArray");
+   pragma Import (StdCall, glGetUniformIndices, "glGetUniformIndices");
+   pragma Import (StdCall, glGetActiveUniformsiv, "glGetActiveUniformsiv");
+   pragma Import (StdCall, glGetActiveUniformName, "glGetActiveUniformName");
+   pragma Import (StdCall, glGetUniformBlockIndex, "glGetUniformBlockIndex");
    pragma Import
-     (C,
+     (StdCall,
       glGetActiveUniformBlockiv,
       "glGetActiveUniformBlockiv");
    pragma Import
-     (C,
+     (StdCall,
       glGetActiveUniformBlockName,
       "glGetActiveUniformBlockName");
-   pragma Import (C, glUniformBlockBinding, "glUniformBlockBinding");
-   pragma Import (C, glCopyBufferSubData, "glCopyBufferSubData");
+   pragma Import (StdCall, glUniformBlockBinding, "glUniformBlockBinding");
+   pragma Import (StdCall, glCopyBufferSubData, "glCopyBufferSubData");
    pragma Import
-     (C,
+     (StdCall,
       glDrawElementsBaseVertex,
       "glDrawElementsBaseVertex");
    pragma Import
-     (C,
+     (StdCall,
       glDrawRangeElementsBaseVertex,
       "glDrawRangeElementsBaseVertex");
    pragma Import
-     (C,
+     (StdCall,
       glDrawElementsInstancedBaseVertex,
       "glDrawElementsInstancedBaseVertex");
    pragma Import
-     (C,
+     (StdCall,
       glMultiDrawElementsBaseVertex,
       "glMultiDrawElementsBaseVertex");
-   pragma Import (C, glProvokingVertex, "glProvokingVertex");
-   pragma Import (C, glTexImage2DMultisample, "glTexImage2DMultisample");
-   pragma Import (C, glTexImage3DMultisample, "glTexImage3DMultisample");
-   pragma Import (C, glGetMultisamplefv, "glGetMultisamplefv");
-   pragma Import (C, glSampleMaski, "glSampleMaski");
-   pragma Import (C, glBlendEquationi, "glBlendEquationi");
+   pragma Import (StdCall, glProvokingVertex, "glProvokingVertex");
+   pragma Import (StdCall, glTexImage2DMultisample, "glTexImage2DMultisample");
+   pragma Import (StdCall, glTexImage3DMultisample, "glTexImage3DMultisample");
+   pragma Import (StdCall, glGetMultisamplefv, "glGetMultisamplefv");
+   pragma Import (StdCall, glSampleMaski, "glSampleMaski");
+   pragma Import (StdCall, glBlendEquationi, "glBlendEquationi");
    pragma Import
-     (C,
+     (StdCall,
       glBlendEquationSeparatei,
       "glBlendEquationSeparatei");
-   pragma Import (C, glBlendFunci, "glBlendFunci");
-   pragma Import (C, glBlendFuncSeparatei, "glBlendFuncSeparatei");
-   pragma Import (C, glMinSampleShading, "glMinSampleShading");
+   pragma Import (StdCall, glBlendFunci, "glBlendFunci");
+   pragma Import (StdCall, glBlendFuncSeparatei, "glBlendFuncSeparatei");
+   pragma Import (StdCall, glMinSampleShading, "glMinSampleShading");
    pragma Import
-     (C,
+     (StdCall,
       glBindFragDataLocationIndexed,
       "glBindFragDataLocationIndexed");
-   pragma Import (C, glGetFragDataIndex, "glGetFragDataIndex");
-   pragma Import (C, glGenSamplers, "glGenSamplers");
-   pragma Import (C, glDeleteSamplers, "glDeleteSamplers");
-   pragma Import (C, glIsSampler, "glIsSampler");
-   pragma Import (C, glBindSampler, "glBindSampler");
-   pragma Import (C, glSamplerParameteri, "glSamplerParameteri");
-   pragma Import (C, glSamplerParameteriv, "glSamplerParameteriv");
-   pragma Import (C, glSamplerParameterf, "glSamplerParameterf");
-   pragma Import (C, glSamplerParameterfv, "glSamplerParameterfv");
-   pragma Import (C, glSamplerParameterIiv, "glSamplerParameterIiv");
-   pragma Import (C, glSamplerParameterIuiv, "glSamplerParameterIuiv");
-   pragma Import (C, glGetSamplerParameteriv, "glGetSamplerParameteriv");
+   pragma Import (StdCall, glGetFragDataIndex, "glGetFragDataIndex");
+   pragma Import (StdCall, glGenSamplers, "glGenSamplers");
+   pragma Import (StdCall, glDeleteSamplers, "glDeleteSamplers");
+   pragma Import (StdCall, glIsSampler, "glIsSampler");
+   pragma Import (StdCall, glBindSampler, "glBindSampler");
+   pragma Import (StdCall, glSamplerParameteri, "glSamplerParameteri");
+   pragma Import (StdCall, glSamplerParameteriv, "glSamplerParameteriv");
+   pragma Import (StdCall, glSamplerParameterf, "glSamplerParameterf");
+   pragma Import (StdCall, glSamplerParameterfv, "glSamplerParameterfv");
+   pragma Import (StdCall, glSamplerParameterIiv, "glSamplerParameterIiv");
+   pragma Import (StdCall, glSamplerParameterIuiv, "glSamplerParameterIuiv");
+   pragma Import (StdCall, glGetSamplerParameteriv, "glGetSamplerParameteriv");
    pragma Import
-     (C,
+     (StdCall,
       glGetSamplerParameterIiv,
       "glGetSamplerParameterIiv");
-   pragma Import (C, glGetSamplerParameterfv, "glGetSamplerParameterfv");
+   pragma Import (StdCall, glGetSamplerParameterfv, "glGetSamplerParameterfv");
    pragma Import
-     (C,
+     (StdCall,
       glGetSamplerParameterIfv,
       "glGetSamplerParameterIfv");
-   pragma Import (C, glQueryCounter, "glQueryCounter");
-   pragma Import (C, glGetQueryObjecti64v, "glGetQueryObjecti64v");
-   pragma Import (C, glGetQueryObjectui64v, "glGetQueryObjectui64v");
-   pragma Import (C, glVertexP2ui, "glVertexP2ui");
-   pragma Import (C, glVertexP2uiv, "glVertexP2uiv");
-   pragma Import (C, glVertexP3ui, "glVertexP3ui");
-   pragma Import (C, glVertexP3uiv, "glVertexP3uiv");
-   pragma Import (C, glVertexP4ui, "glVertexP4ui");
-   pragma Import (C, glVertexP4uiv, "glVertexP4uiv");
-   pragma Import (C, glTexCoordP1ui, "glTexCoordP1ui");
-   pragma Import (C, glTexCoordP1uiv, "glTexCoordP1uiv");
-   pragma Import (C, glTexCoordP2ui, "glTexCoordP2ui");
-   pragma Import (C, glTexCoordP2uiv, "glTexCoordP2uiv");
-   pragma Import (C, glTexCoordP3ui, "glTexCoordP3ui");
-   pragma Import (C, glTexCoordP3uiv, "glTexCoordP3uiv");
-   pragma Import (C, glTexCoordP4ui, "glTexCoordP4ui");
-   pragma Import (C, glTexCoordP4uiv, "glTexCoordP4uiv");
-   pragma Import (C, glMultiTexCoordP1ui, "glMultiTexCoordP1ui");
-   pragma Import (C, glMultiTexCoordP1uiv, "glMultiTexCoordP1uiv");
-   pragma Import (C, glMultiTexCoordP2ui, "glMultiTexCoordP2ui");
-   pragma Import (C, glMultiTexCoordP2uiv, "glMultiTexCoordP2uiv");
-   pragma Import (C, glMultiTexCoordP3ui, "glMultiTexCoordP3ui");
-   pragma Import (C, glMultiTexCoordP3uiv, "glMultiTexCoordP3uiv");
-   pragma Import (C, glMultiTexCoordP4ui, "glMultiTexCoordP4ui");
-   pragma Import (C, glMultiTexCoordP4uiv, "glMultiTexCoordP4uiv");
-   pragma Import (C, glNormalP3ui, "glNormalP3ui");
-   pragma Import (C, glNormalP3uiv, "glNormalP3uiv");
-   pragma Import (C, glColorP3ui, "glColorP3ui");
-   pragma Import (C, glColorP3uiv, "glColorP3uiv");
-   pragma Import (C, glColorP4ui, "glColorP4ui");
-   pragma Import (C, glColorP4uiv, "glColorP4uiv");
-   pragma Import (C, glSecondaryColorP3ui, "glSecondaryColorP3ui");
-   pragma Import (C, glSecondaryColorP3uiv, "glSecondaryColorP3uiv");
-   pragma Import (C, glVertexAttribP1ui, "glVertexAttribP1ui");
-   pragma Import (C, glVertexAttribP1uiv, "glVertexAttribP1uiv");
-   pragma Import (C, glVertexAttribP2ui, "glVertexAttribP2ui");
-   pragma Import (C, glVertexAttribP2uiv, "glVertexAttribP2uiv");
-   pragma Import (C, glVertexAttribP3ui, "glVertexAttribP3ui");
-   pragma Import (C, glVertexAttribP3uiv, "glVertexAttribP3uiv");
-   pragma Import (C, glVertexAttribP4ui, "glVertexAttribP4ui");
-   pragma Import (C, glVertexAttribP4uiv, "glVertexAttribP4uiv");
-   pragma Import (C, glDrawArraysIndirect, "glDrawArraysIndirect");
-   pragma Import (C, glDrawElementsIndirect, "glDrawElementsIndirect");
-   pragma Import (C, glUniform1d, "glUniform1d");
-   pragma Import (C, glUniform2d, "glUniform2d");
-   pragma Import (C, glUniform3d, "glUniform3d");
-   pragma Import (C, glUniform4d, "glUniform4d");
-   pragma Import (C, glUniform1dv, "glUniform1dv");
-   pragma Import (C, glUniform2dv, "glUniform2dv");
-   pragma Import (C, glUniform3dv, "glUniform3dv");
-   pragma Import (C, glUniform4dv, "glUniform4dv");
-   pragma Import (C, glUniformMatrix2dv, "glUniformMatrix2dv");
-   pragma Import (C, glUniformMatrix3dv, "glUniformMatrix3dv");
-   pragma Import (C, glUniformMatrix4dv, "glUniformMatrix4dv");
-   pragma Import (C, glUniformMatrix2x3dv, "glUniformMatrix2x3dv");
-   pragma Import (C, glUniformMatrix2x4dv, "glUniformMatrix2x4dv");
-   pragma Import (C, glUniformMatrix3x2dv, "glUniformMatrix3x2dv");
-   pragma Import (C, glUniformMatrix3x4dv, "glUniformMatrix3x4dv");
-   pragma Import (C, glUniformMatrix4x2dv, "glUniformMatrix4x2dv");
-   pragma Import (C, glUniformMatrix4x3dv, "glUniformMatrix4x3dv");
-   pragma Import (C, glGetUniformdv, "glGetUniformdv");
-   pragma Import (C, glProgramUniform1dEXT, "glProgramUniform1dEXT");
-   pragma Import (C, glProgramUniform2dEXT, "glProgramUniform2dEXT");
-   pragma Import (C, glProgramUniform3dEXT, "glProgramUniform3dEXT");
-   pragma Import (C, glProgramUniform4dEXT, "glProgramUniform4dEXT");
-   pragma Import (C, glProgramUniform1dvEXT, "glProgramUniform1dvEXT");
-   pragma Import (C, glProgramUniform2dvEXT, "glProgramUniform2dvEXT");
-   pragma Import (C, glProgramUniform3dvEXT, "glProgramUniform3dvEXT");
-   pragma Import (C, glProgramUniform4dvEXT, "glProgramUniform4dvEXT");
+   pragma Import (StdCall, glQueryCounter, "glQueryCounter");
+   pragma Import (StdCall, glGetQueryObjecti64v, "glGetQueryObjecti64v");
+   pragma Import (StdCall, glGetQueryObjectui64v, "glGetQueryObjectui64v");
+   pragma Import (StdCall, glVertexP2ui, "glVertexP2ui");
+   pragma Import (StdCall, glVertexP2uiv, "glVertexP2uiv");
+   pragma Import (StdCall, glVertexP3ui, "glVertexP3ui");
+   pragma Import (StdCall, glVertexP3uiv, "glVertexP3uiv");
+   pragma Import (StdCall, glVertexP4ui, "glVertexP4ui");
+   pragma Import (StdCall, glVertexP4uiv, "glVertexP4uiv");
+   pragma Import (StdCall, glTexCoordP1ui, "glTexCoordP1ui");
+   pragma Import (StdCall, glTexCoordP1uiv, "glTexCoordP1uiv");
+   pragma Import (StdCall, glTexCoordP2ui, "glTexCoordP2ui");
+   pragma Import (StdCall, glTexCoordP2uiv, "glTexCoordP2uiv");
+   pragma Import (StdCall, glTexCoordP3ui, "glTexCoordP3ui");
+   pragma Import (StdCall, glTexCoordP3uiv, "glTexCoordP3uiv");
+   pragma Import (StdCall, glTexCoordP4ui, "glTexCoordP4ui");
+   pragma Import (StdCall, glTexCoordP4uiv, "glTexCoordP4uiv");
+   pragma Import (StdCall, glMultiTexCoordP1ui, "glMultiTexCoordP1ui");
+   pragma Import (StdCall, glMultiTexCoordP1uiv, "glMultiTexCoordP1uiv");
+   pragma Import (StdCall, glMultiTexCoordP2ui, "glMultiTexCoordP2ui");
+   pragma Import (StdCall, glMultiTexCoordP2uiv, "glMultiTexCoordP2uiv");
+   pragma Import (StdCall, glMultiTexCoordP3ui, "glMultiTexCoordP3ui");
+   pragma Import (StdCall, glMultiTexCoordP3uiv, "glMultiTexCoordP3uiv");
+   pragma Import (StdCall, glMultiTexCoordP4ui, "glMultiTexCoordP4ui");
+   pragma Import (StdCall, glMultiTexCoordP4uiv, "glMultiTexCoordP4uiv");
+   pragma Import (StdCall, glNormalP3ui, "glNormalP3ui");
+   pragma Import (StdCall, glNormalP3uiv, "glNormalP3uiv");
+   pragma Import (StdCall, glColorP3ui, "glColorP3ui");
+   pragma Import (StdCall, glColorP3uiv, "glColorP3uiv");
+   pragma Import (StdCall, glColorP4ui, "glColorP4ui");
+   pragma Import (StdCall, glColorP4uiv, "glColorP4uiv");
+   pragma Import (StdCall, glSecondaryColorP3ui, "glSecondaryColorP3ui");
+   pragma Import (StdCall, glSecondaryColorP3uiv, "glSecondaryColorP3uiv");
+   pragma Import (StdCall, glVertexAttribP1ui, "glVertexAttribP1ui");
+   pragma Import (StdCall, glVertexAttribP1uiv, "glVertexAttribP1uiv");
+   pragma Import (StdCall, glVertexAttribP2ui, "glVertexAttribP2ui");
+   pragma Import (StdCall, glVertexAttribP2uiv, "glVertexAttribP2uiv");
+   pragma Import (StdCall, glVertexAttribP3ui, "glVertexAttribP3ui");
+   pragma Import (StdCall, glVertexAttribP3uiv, "glVertexAttribP3uiv");
+   pragma Import (StdCall, glVertexAttribP4ui, "glVertexAttribP4ui");
+   pragma Import (StdCall, glVertexAttribP4uiv, "glVertexAttribP4uiv");
+   pragma Import (StdCall, glDrawArraysIndirect, "glDrawArraysIndirect");
+   pragma Import (StdCall, glDrawElementsIndirect, "glDrawElementsIndirect");
+   pragma Import (StdCall, glUniform1d, "glUniform1d");
+   pragma Import (StdCall, glUniform2d, "glUniform2d");
+   pragma Import (StdCall, glUniform3d, "glUniform3d");
+   pragma Import (StdCall, glUniform4d, "glUniform4d");
+   pragma Import (StdCall, glUniform1dv, "glUniform1dv");
+   pragma Import (StdCall, glUniform2dv, "glUniform2dv");
+   pragma Import (StdCall, glUniform3dv, "glUniform3dv");
+   pragma Import (StdCall, glUniform4dv, "glUniform4dv");
+   pragma Import (StdCall, glUniformMatrix2dv, "glUniformMatrix2dv");
+   pragma Import (StdCall, glUniformMatrix3dv, "glUniformMatrix3dv");
+   pragma Import (StdCall, glUniformMatrix4dv, "glUniformMatrix4dv");
+   pragma Import (StdCall, glUniformMatrix2x3dv, "glUniformMatrix2x3dv");
+   pragma Import (StdCall, glUniformMatrix2x4dv, "glUniformMatrix2x4dv");
+   pragma Import (StdCall, glUniformMatrix3x2dv, "glUniformMatrix3x2dv");
+   pragma Import (StdCall, glUniformMatrix3x4dv, "glUniformMatrix3x4dv");
+   pragma Import (StdCall, glUniformMatrix4x2dv, "glUniformMatrix4x2dv");
+   pragma Import (StdCall, glUniformMatrix4x3dv, "glUniformMatrix4x3dv");
+   pragma Import (StdCall, glGetUniformdv, "glGetUniformdv");
+   pragma Import (StdCall, glProgramUniform1dEXT, "glProgramUniform1dEXT");
+   pragma Import (StdCall, glProgramUniform2dEXT, "glProgramUniform2dEXT");
+   pragma Import (StdCall, glProgramUniform3dEXT, "glProgramUniform3dEXT");
+   pragma Import (StdCall, glProgramUniform4dEXT, "glProgramUniform4dEXT");
+   pragma Import (StdCall, glProgramUniform1dvEXT, "glProgramUniform1dvEXT");
+   pragma Import (StdCall, glProgramUniform2dvEXT, "glProgramUniform2dvEXT");
+   pragma Import (StdCall, glProgramUniform3dvEXT, "glProgramUniform3dvEXT");
+   pragma Import (StdCall, glProgramUniform4dvEXT, "glProgramUniform4dvEXT");
    pragma Import
-     (C,
+     (StdCall,
       glProgramUniformMatrix2dvEXT,
       "glProgramUniformMatrix2dvEXT");
    pragma Import
-     (C,
+     (StdCall,
       glProgramUniformMatrix3dvEXT,
       "glProgramUniformMatrix3dvEXT");
    pragma Import
-     (C,
+     (StdCall,
       glProgramUniformMatrix4dvEXT,
       "glProgramUniformMatrix4dvEXT");
    pragma Import
-     (C,
+     (StdCall,
       glProgramUniformMatrix2x3dvEXT,
       "glProgramUniformMatrix2x3dvEXT");
    pragma Import
-     (C,
+     (StdCall,
       glProgramUniformMatrix2x4dvEXT,
       "glProgramUniformMatrix2x4dvEXT");
    pragma Import
-     (C,
+     (StdCall,
       glProgramUniformMatrix3x2dvEXT,
       "glProgramUniformMatrix3x2dvEXT");
    pragma Import
-     (C,
+     (StdCall,
       glProgramUniformMatrix3x4dvEXT,
       "glProgramUniformMatrix3x4dvEXT");
    pragma Import
-     (C,
+     (StdCall,
       glProgramUniformMatrix4x2dvEXT,
       "glProgramUniformMatrix4x2dvEXT");
    pragma Import
-     (C,
+     (StdCall,
       glProgramUniformMatrix4x3dvEXT,
       "glProgramUniformMatrix4x3dvEXT");
    pragma Import
-     (C,
+     (StdCall,
       glGetSubroutineUniformLocation,
       "glGetSubroutineUniformLocation");
-   pragma Import (C, glGetSubroutineIndex, "glGetSubroutineIndex");
+   pragma Import (StdCall, glGetSubroutineIndex, "glGetSubroutineIndex");
    pragma Import
-     (C,
+     (StdCall,
       glGetActiveSubroutineUniformiv,
       "glGetActiveSubroutineUniformiv");
    pragma Import
-     (C,
+     (StdCall,
       glGetActiveSubroutineUniformName,
       "glGetActiveSubroutineUniformName");
    pragma Import
-     (C,
+     (StdCall,
       glGetActiveSubroutineName,
       "glGetActiveSubroutineName");
-   pragma Import (C, glUniformSubroutinesuiv, "glUniformSubroutinesuiv");
+   pragma Import (StdCall, glUniformSubroutinesuiv, "glUniformSubroutinesuiv");
    pragma Import
-     (C,
+     (StdCall,
       glGetUniformSubroutineuiv,
       "glGetUniformSubroutineuiv");
-   pragma Import (C, glGetProgramStageiv, "glGetProgramStageiv");
-   pragma Import (C, glPatchParameteri, "glPatchParameteri");
-   pragma Import (C, glPatchParameterfv, "glPatchParameterfv");
-   pragma Import (C, glBindTransformFeedback, "glBindTransformFeedback");
+   pragma Import (StdCall, glGetProgramStageiv, "glGetProgramStageiv");
+   pragma Import (StdCall, glPatchParameteri, "glPatchParameteri");
+   pragma Import (StdCall, glPatchParameterfv, "glPatchParameterfv");
+   pragma Import (StdCall, glBindTransformFeedback, "glBindTransformFeedback");
    pragma Import
-     (C,
+     (StdCall,
       glDeleteTransformFeedbacks,
       "glDeleteTransformFeedbacks");
-   pragma Import (C, glGenTransformFeedbacks, "glGenTransformFeedbacks");
-   pragma Import (C, glIsTransformFeedback, "glIsTransformFeedback");
+   pragma Import (StdCall, glGenTransformFeedbacks, "glGenTransformFeedbacks");
+   pragma Import (StdCall, glIsTransformFeedback, "glIsTransformFeedback");
    pragma Import
-     (C,
+     (StdCall,
       glPauseTransformFeedback,
       "glPauseTransformFeedback");
    pragma Import
-     (C,
+     (StdCall,
       glResumeTransformFeedback,
       "glResumeTransformFeedback");
-   pragma Import (C, glDrawTransformFeedback, "glDrawTransformFeedback");
+   pragma Import (StdCall, glDrawTransformFeedback, "glDrawTransformFeedback");
    pragma Import
-     (C,
+     (StdCall,
       glDrawTransformFeedbackStream,
       "glDrawTransformFeedbackStream");
-   pragma Import (C, glBeginQueryIndexed, "glBeginQueryIndexed");
-   pragma Import (C, glEndQueryIndexed, "glEndQueryIndexed");
-   pragma Import (C, glGetQueryIndexediv, "glGetQueryIndexediv");
+   pragma Import (StdCall, glBeginQueryIndexed, "glBeginQueryIndexed");
+   pragma Import (StdCall, glEndQueryIndexed, "glEndQueryIndexed");
+   pragma Import (StdCall, glGetQueryIndexediv, "glGetQueryIndexediv");
 
 end GLext.Binding;

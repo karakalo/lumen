@@ -1,5 +1,5 @@
 
-package glu.Pointers is
+package GLU.Pointers is
 
    -- GLUnurbs_Pointer
    --
@@ -65,4 +65,4 @@ package glu.Pointers is
      array (C.size_t range <>)
             of aliased a_GLUfuncptr_Pointer;
 
-end glu.Pointers;
+end GLU.Pointers;
