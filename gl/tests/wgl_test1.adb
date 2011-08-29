@@ -4,7 +4,7 @@ with GL.WGL;
 
 with System;
 
-procedure GL_Test1 is
+procedure WGL_Test1 is
 
    type Dummy_Refs_Array is array (Positive range <>) of System.Address;
 
@@ -17,4 +17,4 @@ procedure GL_Test1 is
       GL.WGL.wglGetProcAddress'Address, GL.WGL.wglChoosePixelFormat'Address);
 begin
    null;
-end GL_Test1;
+end WGL_Test1;

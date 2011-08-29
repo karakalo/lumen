@@ -8,7 +8,7 @@ library project OpenGL is
    case Os is
       when "Windows" => for Source_Dirs use ("gl", "gl/windows");
       when "Linux" => for Source_Dirs use ("gl");
-      when "MacOSX" => for Source_Dirs use ("gl");
+      when "MacOSX" => for Source_Dirs use ("gl", "gl/macosx");
    end case;
 
    for Object_Dir use "obj";

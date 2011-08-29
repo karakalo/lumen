@@ -6,11 +6,24 @@ with "opengl.gpr";
 
 project OpenGL_Test is
 
-   type Os_Type is
-      ("Windows", "Linux", "MacOSX");
    for Object_Dir use "obj";
    for Exec_Dir use "bin";
-   OS : Os_Type := external ("OS");
+   for Source_Dirs use ("gl/tests");
+   type Os_Type is
+      ("Windows", "Linux", "MacOSX");
+   Os : Os_Type := external ("OS");
+
+
+   case Os is
+
+      when "Windows" =>
+         for Source_Files use ("wgl_test1.adb");
+         for Main use ("wgl_test1.adb");
+      when "Linux" => null;
+      when "MacOSX" =>
+         for Source_Files use ("cgl_test1.adb");
+         for Main use ("cgl_test1.adb");
+   end case;
 
    package Ide is
       for Vcs_Kind use "Git";
@@ -23,18 +36,6 @@ project OpenGL_Test is
    package Compiler is
       for Default_Switches ("ada") use ("-gnat05", "-gnatn", "-fstack-check");
    end Compiler;
-
-   case OS is
-      when "Windows" =>
-         for Source_Dirs use ("gl\tests");
-         for Main use ("gl_test1.adb");
-
-      when "Linux" =>
-         null;
-
-      when "MacOSX" =>
-         null;
-   end case;
 
 end OpenGL_Test;
 
