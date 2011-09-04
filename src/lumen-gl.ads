@@ -1000,6 +1000,11 @@ package Lumen.GL is
    
    procedure BlendEquation (Mode : in Enum);  -- GL v1.2
 
+   procedure BlendColor (Red   : in ClampF;
+                         Green : in ClampF;
+                         Blue  : in ClampF;
+                         Alpha : in ClampF);  -- GL v1.2
+   
    -- Drawing parameters
    procedure PointSize (Size : in Float);
 
@@ -1365,6 +1370,7 @@ private
    pragma Import (C, BindTexture, "glBindTexture");
    pragma Import (C, BlendFunc, "glBlendFunc");
    pragma Import (C, BlendEquation, "glBlendEquation");
+   pragma Import (C, BlendColor, "glBlendColor");
    pragma Import (C, Clear, "glClear");
    pragma Import (C, ClearAccum, "glClearAccum");
    pragma Import (C, ClearColor, "glClearColor");
