@@ -10,7 +10,6 @@
 --   ESC - Quit
 --
 -- TODO:
---   * Add in support for BlendColor for use with the BlendEquation.
 --   * Add LOGIC_OP to the Equations.
 
 with Ada.Command_Line;
