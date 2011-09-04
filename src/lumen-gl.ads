@@ -997,6 +997,8 @@ package Lumen.GL is
    -- Blending
    procedure BlendFunc (S_Factor : in Enum;
                         D_Factor : in Enum);
+   
+   procedure BlendEquation (Mode : in Enum);
 
    -- Drawing parameters
    procedure PointSize (Size : in Float);
@@ -1362,6 +1364,7 @@ private
    pragma Import (C, AlphaFunc, "glAlphaFunc");
    pragma Import (C, BindTexture, "glBindTexture");
    pragma Import (C, BlendFunc, "glBlendFunc");
+   pragma Import (C, BlendEquation, "glBlendEquation");
    pragma Import (C, Clear, "glClear");
    pragma Import (C, ClearAccum, "glClearAccum");
    pragma Import (C, ClearColor, "glClearColor");
