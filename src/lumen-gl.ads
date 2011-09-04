@@ -1137,6 +1137,8 @@ package Lumen.GL is
                        Params : in Float_Params);
 
    procedure FrontFace (Mode : in Enum);
+   
+   procedure CullFace (Mode : in Enum);
 
    procedure ShadeModel (Mode : in Enum);
    pragma Inline (Light, Material);
@@ -1373,6 +1375,7 @@ private
    pragma Import (C, Finish, "glFinish");
    pragma Import (C, Flush, "glFlush");
    pragma Import (C, FrontFace, "glFrontFace");
+   pragma Import (C, CullFace, "glCullFace");
    pragma Import (C, Frustum, "glFrustum");
    pragma Import (C, GenTextures, "glGenTextures");
    pragma Import (C, GetPolygonStipple, "glGetPolygonStipple");
