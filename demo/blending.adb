@@ -347,6 +347,7 @@ begin  -- Blending
    
    Lumen.GL.Enable(Lumen.GL.GL_TEXTURE_2D);
    Lumen.GL.Enable(Lumen.GL.GL_BLEND);
+   Lumen.GL.BlendColor(1.0, 1.0, 0.0, 1.0);  -- Example purple for blending with.
    
    -- Enter the event loop
    Lumen.Events.Receive_Events (Win, Handler'Unrestricted_Access);
