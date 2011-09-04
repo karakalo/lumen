@@ -261,7 +261,8 @@ procedure Blending is
    procedure Handler (Event : in Lumen.Events.Event_Data) is
       
       use Lumen;
-      use type Lumen.Events.Event_Type;
+      use type Events.Event_Type;
+      use type Events.Key_Category;
 
    begin  -- Handler
 
@@ -284,23 +285,25 @@ procedure Blending is
 		  raise Program_Exit;
 	       end if;
 	       
-	       declare
-		  Key_Char : constant Character := Events.To_Character(Event.Key_Data.Key);
-	       begin
-		  case Key_Char is
-		     when 's' =>
-			Next_Factor(Source_Factor);
+	       if Event.Key_Data.Key_Type = Events.Key_Graphic then
+		  declare
+		     Key_Char : constant Character := Events.To_Character(Event.Key_Data.Key);
+		  begin
+		     case Key_Char is
+			when 's' =>
+			   Next_Factor(Source_Factor);
 
-		     when 'd' =>
-			Next_Factor(Dest_Factor);
+			when 'd' =>
+			   Next_Factor(Dest_Factor);
 
-		     when 'e' =>
-			Next_Equation(Equation);
+			when 'e' =>
+			   Next_Equation(Equation);
 			
-		     when others =>
-			null;
-		  end case;
-	       end;
+			when others =>
+			   null;
+		     end case;
+		  end;
+	       end if;
 	       
 	       Ada.Text_IO.Put_Line
 		 ("Blend(" & Equation_Names(Equation) &
@@ -347,7 +350,7 @@ begin  -- Blending
    
    Lumen.GL.Enable(Lumen.GL.GL_TEXTURE_2D);
    Lumen.GL.Enable(Lumen.GL.GL_BLEND);
-   Lumen.GL.BlendColor(1.0, 1.0, 0.0, 1.0);  -- Example purple for blending with.
+   Lumen.GL.BlendColor(0.0, 1.0, 0.0, 1.0);  -- Example green for blending with.
    
    -- Enter the event loop
    Lumen.Events.Receive_Events (Win, Handler'Unrestricted_Access);
