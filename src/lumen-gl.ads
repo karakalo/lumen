@@ -998,7 +998,7 @@ package Lumen.GL is
    procedure BlendFunc (S_Factor : in Enum;
                         D_Factor : in Enum);
    
-   procedure BlendEquation (Mode : in Enum);
+   procedure BlendEquation (Mode : in Enum);  -- GL v1.2
 
    -- Drawing parameters
    procedure PointSize (Size : in Float);
