@@ -1,4 +1,4 @@
-with "OpenGL";
+with "opengl";
 
 project Lumen is
 
