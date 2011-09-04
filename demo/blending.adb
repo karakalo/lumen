@@ -8,6 +8,10 @@
 --   d   - Change the destinsation blending factor
 --   e   - Change the blending equation
 --   ESC - Quit
+--
+-- TODO:
+--   * Add in support for BlendColor for use with the BlendEquation.
+--   * Add LOGIC_OP to the Equations.
 
 with Ada.Command_Line;
 with Ada.Characters.Latin_1;
@@ -81,9 +85,7 @@ procedure Blending is
       "GL_FUNC_REVERSE_SUBTRACT",
       "GL_MIN                  ",
       "GL_MAX                  ");
-   -- TODO LOGIC_OP in the Equations.
-      
-   
+
    Bitmap1, Bitmap2 : Lumen.Image.Descriptor;
    Tx1, Tx2         : Lumen.GL.UInt;
    
