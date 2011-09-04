@@ -1,11 +1,13 @@
 
 -- Demo of the blending modes in GL.
--- Uses BlendEquation, BlendFunc(Source, Dest)
+-- Uses BlendEquation & BlendFunc to show how texture 2 can be combined with texture 1, which
+-- is rendered normally.
 --
 -- Keys:
--- s - Change the source blending factor
--- d - Change the destinsation blending factor
--- e - Change the blending equation
+--   s   - Change the source blending factor
+--   d   - Change the destinsation blending factor
+--   e   - Change the blending equation
+--   ESC - Quit
 
 with Ada.Command_Line;
 with Ada.Characters.Latin_1;
@@ -79,6 +81,7 @@ procedure Blending is
       "GL_FUNC_REVERSE_SUBTRACT",
       "GL_MIN                  ",
       "GL_MAX                  ");
+   -- TODO LOGIC_OP in the Equations.
       
    
    Bitmap1, Bitmap2 : Lumen.Image.Descriptor;
