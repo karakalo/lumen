@@ -26,11 +26,10 @@ procedure Blending is
 
    ---------------------------------------------------------------------------
    
-   type Factors_Range is range 1 .. 15;
-   type Factors_Array is array (Factors_Range) of Lumen.GL.Enum;
+   type Enum_Array is array (Positive range <>) of Lumen.GL.Enum;
    
-   type Equations_Range is range 1 .. 5;
-   type Equations_Array is array (Equations_Range) of Lumen.GL.Enum;
+   subtype Factors_Range   is Positive range 1 .. 15;
+   subtype Equations_Range is Positive range 1 .. 5;
    
    Win     : Lumen.Window.Handle;
    Event   : Lumen.Events.Event_Data;
@@ -39,7 +38,7 @@ procedure Blending is
    
    Source_Factor : Factors_Range := Factors_Range'First;
    Dest_Factor   : Factors_Range := Factors_Range'First;
-   Factors       : Factors_Array := 
+   Factors       : Enum_Array(Factors_Range) :=
      (Lumen.GL.GL_ZERO,
       Lumen.GL.GL_ONE,
       Lumen.GL.GL_SRC_COLOR,
@@ -72,7 +71,7 @@ procedure Blending is
       "GL_ONE_MINUS_CONSTANT_ALPHA",
       "GL_SRC_ALPHA_SATURATE      ");
    Equation   : Equations_Range := Equations_Range'First;
-   Equations  : Equations_Array :=
+   Equations  : Enum_Array(Equations_Range) :=
      (Lumen.GL.GL_FUNC_ADD,
       Lumen.GL.GL_FUNC_SUBTRACT,
       Lumen.GL.GL_FUNC_REVERSE_SUBTRACT,
