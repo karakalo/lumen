@@ -852,6 +852,8 @@ package Lumen.GL is
    GL_PROXY_TEXTURE_2D_ARRAY_EXT               : constant Enum := 16#8C1B#;
    GL_TEXTURE_BINDING_1D_ARRAY_EXT             : constant Enum := 16#8C1C#;
    GL_TEXTURE_BINDING_2D_ARRAY_EXT             : constant Enum := 16#8C1D#;
+   GL_POINT_SPRITE                             : constant Enum := 16#8861#;
+   GL_COORD_REPLACE                            : constant Enum := 16#8862#;
    GL_MAX_ARRAY_TEXTURE_LAYERS_EXT             : constant Enum := 16#88FF#;
    GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER_EXT : constant Enum := 16#8CD4#;
 
