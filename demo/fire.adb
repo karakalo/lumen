@@ -170,9 +170,8 @@ procedure Fire is
          glBegin (GL_POINTS);
          Alpha := Float ((Particle_Lifetime
 			    - Particles (I).Age) / Particle_Lifetime);
-         --  Color (Particle_Red, Particle_Green, Particle_Blue,
-	 --  	0.25 * Alpha);
-	 Color (1.0, 0.25, 0.1, 0.25 * Alpha);
+         Color (Particle_Red, Particle_Green, Particle_Blue,
+	 	0.25 * Alpha);
          Vertex (Particles (I).R.X, Particles (I).R.Y);
          glEnd;
       end loop;
