@@ -22,12 +22,8 @@
 --  CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 with Ada.Numerics.Elementary_Functions;
-use Ada.Numerics.Elementary_Functions;
-
-with Ada.Real_Time; use Ada.Real_Time;
-
+with Ada.Real_Time;
 with Ada.Numerics.Float_Random;
-use Ada.Numerics.Float_Random;
 
 with Lumen.Window;
 with Lumen.Events;
@@ -40,25 +36,25 @@ procedure Fire is
    --  These are the system parameters. 
    --
    --  The maximum age of a particle:
-   Particle_Lifetime    : constant Duration     := 2.0;
+   Particle_Lifetime    : constant	:= 2.0;
    --
    --  The number of particles in the particle system:
-   Particle_Count       : constant Positive     := 1000;
+   Particle_Count       : constant	:= 1000;
    --
    --  The amount of scatter around the emitter when spawning:
-   Particle_Spread      : constant Float        := 0.4;
+   Particle_Spread      : constant      := 0.4;
    --
    --  The amount upward acceleration:
-   Particle_Lift	: constant Float	:= 0.5;
+   Particle_Lift	: constant	:= 0.5;
    --
    --  The red component of the particle color:
-   Particle_Red         : constant Float        := 1.0;
+   Particle_Red         : constant      := 1.0;
    --
-   --  The red component of the particle color:
-   Particle_Green       : constant Float        := 0.25;
+   --  The green component of the particle color:
+   Particle_Green       : constant      := 0.25;
    --
-   --  The red component of the particle color:
-   Particle_Blue        : constant Float        := 0.1;
+   --  The blue component of the particle color:
+   Particle_Blue        : constant      := 0.1;
    
    ------------------------------------------------------------------------
    --
@@ -103,17 +99,18 @@ procedure Fire is
    --  The random number generator is needed for the system noise,
    --  which is added to the particles velocity on respawn.
    --
-   RNG : Generator;
+   RNG : Ada.Numerics.Float_Random.Generator;
    
    ------------------------------------------------------------------------
    --
-   --  This sets the age of the particles to that the global particle
+   --  This sets the age of the particles so that the global particle
    --  lifetime is uniformly filled. The spawning interval is
    --  therefore Particle_Lifetime / Particle_Count.
    --
    --  This also jitters the particles' velocities.
    --
    procedure Initialize_Particles is
+      use Ada.Numerics.Float_Random;
       Spawn_Period : Duration := Particle_Lifetime / Duration (Particle_Count);
    begin
       for I in 1 .. Particle_Count loop
@@ -138,6 +135,7 @@ procedure Fire is
    --  particular machine shouldn't even run OpenGL.
    --
    procedure Update_Particles (DT : Duration) is
+      use Ada.Numerics.Float_Random;
    begin
       for I in 1 .. Particle_Count loop
          Particles (I).Age := Particles (I).Age + DT;
@@ -188,16 +186,16 @@ procedure Fire is
    --
    --  This is for real-time rendering.
    --
-   Start_Time	        : Time          := Clock;
-   End_Time		: Time;
-   Delta_Time		: Duration;
+   Start_Time	: Ada.Real_Time.Time    := Ada.Real_Time.Clock;
+   End_Time	: Ada.Real_Time.Time;
+   Delta_Time	: Duration;
    
    ------------------------------------------------------------------------
    --
    --  This is for computing the frame rate every second.
    --
-   FPS_Base_Time	: Time		:= Start_Time;
-   FPS_Counter		: Integer	:= 0;
+   FPS_Base_Time	: Ada.Real_Time.Time	:= Start_Time;
+   FPS_Counter		: Integer		:= 0;
    
 begin
    
@@ -236,6 +234,7 @@ begin
       for X in 1 .. 32 loop
 	 for Y in 1 .. 32 loop
 	    declare
+	       use Ada.Numerics.Elementary_Functions;
 	       X_Dist : Float := abs (Float (X - 17) - 0.5) / 16.0;
 	       Y_Dist : Float := abs (Float (Y - 17) - 0.5) / 16.0;
 	       Alpha : Float := 1.0 - Sqrt (X_Dist**2.0 + Y_Dist**2.0);
@@ -310,30 +309,37 @@ Outer:
          end;
       end loop;
 
-      ---------------------------------------------------------------------
-      --
-      --  This computes the delta time, i.e. the time the last frame
-      --  took to complete.
-      --
-      End_Time := Clock;
-      Delta_Time := To_Duration (End_Time - Start_Time);
-      Start_Time := End_Time;
+      declare
+	 use Ada.Real_Time;
+      begin
+	 
+         ------------------------------------------------------------------
+         --
+         --  This computes the delta time, i.e. the time the last frame
+         --  took to complete.
+         --
+	 End_Time := Clock;
+	 Delta_Time := To_Duration (End_Time - Start_Time);
+	 Start_Time := End_Time;
       
-      ---------------------------------------------------------------------
-      --
-      --  This counts how many frames are rendered in one second. When
-      --  one second is over the frames-per-second value is displayed
-      --  as the window name (usually in the title bar) and the
-      --  counter is reset.
-      --
-      if To_Duration (Start_Time - FPS_Base_Time) >= 1.0 then
-	 Lumen.Window.Set_Names (Window, Name => "FPS: " & Integer'Image (FPS_Counter));
-	 FPS_Base_Time := Start_Time;
-	 FPS_Counter := 0;
-      else
-	 FPS_Counter := FPS_Counter + 1;
-      end if;
-
+         ------------------------------------------------------------------
+         --
+	 --  This counts how many frames are rendered in one
+	 --  second. When one second is over the frames-per-second
+	 --  value is displayed as the window name (usually in the
+	 --  title bar) and the counter is reset.
+         --
+	 if To_Duration (Start_Time - FPS_Base_Time) >= 1.0 then
+	    Lumen.Window.Set_Names (Window,
+				    Name => "FPS: "
+				      & Integer'Image (FPS_Counter));
+	    FPS_Base_Time := Start_Time;
+	    FPS_Counter := 0;
+	 else
+	    FPS_Counter := FPS_Counter + 1;
+	 end if;
+      end;
+      
       ---------------------------------------------------------------------
       --
       --  This is our 'physics update'.
