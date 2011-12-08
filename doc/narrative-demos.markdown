@@ -27,6 +27,10 @@ there ever are any, may not be familiar with some of the terms.
 
 * **[`multi`][multi]**: Illustration of an app with multiple windows.
 
+* **[`blending`][blending]**: Tool for exploring the OpenGL blending function.
+
+* **[`fire`][fire]**: Neat "fire" effect using a particle system and blending.
+
 And these are the [NeHe demos][nehe] that we currently have:
 
 * **[`lesson01`][nehedemo]**: Simplest possible app, just opens a
@@ -53,10 +57,12 @@ And these are the [NeHe demos][nehe] that we currently have:
 * **[`lesson08`][nehedemo]**: Spinning cube with a different texture
     and even more keyboard controls.
 
+[blending]:   narrative-blending.html
 [colors]:     narrative-colors.html
-[nehedemo]:   narrative-nehe.html
+[fire]:       narrative-fire.html
 [multi]:      narrative-multi.html
 [nehe]:       http://nehe.gamedev.net/
+[nehedemo]:   narrative-nehe.html
 [sgi_simple]: narrative-sgi_simple.html
 [spinner]:    narrative-spinner.html
 [text1]:      narrative-text1.html

@@ -37,6 +37,28 @@ though we haven't tested it yet, presumably you can also use
 I'm going to start adding notable events here, so you can check quickly
 whether there's something new since you last visited the site.
 
+* **Tuesday, 6 December 2011**: The documentation on this site was updated, to
+    report the latest news and to include narratives for Luke's
+    [blending demo][nblend] and David's [fire demo][nfire].
+
+* **Monday, 5 December 2011**: David joins the project in a big way, by
+    contributing the "fire" demo!  It's a very pretty demo, depicting a nice
+    "flame" effect using particles and blending.  His OpenGL expertise will be
+    most welcome.
+
+* **Sunday, 4 September 2011**: Luke added a new blending demo, and the calls
+    necessary to support it to the streamlined bindings (Lumen.GL).  And some
+    new image files for it to use.  It's very pretty; do give it a look.  Docs
+    for it are forthcoming.
+
+* **Tuesday, 30 August 2011**: Felix made a bunch of changes:
+    - Restructured the project source a bit, moving Lumen.GL to the regular
+      Lumen source directory.
+    - Added preliminary wgl (MS-Windows) and cgl (Mac OS-X) binding support.
+
+    He has expressed an interest in continuing to modify the thin bindings, so
+    we'll keep an eye out for his future changes!
+
 * **Thursday, 12 May 2011**: Several changes in the past few days:
     - Some additions to Lumen.GL and Lumen.GLU contributed by Julian.
     - New directory structure, including `bin` and `data` dirs, and
@@ -47,37 +69,16 @@ whether there's something new since you last visited the site.
       raw thin bindings.
     - Replicated git repository to [github][].
 
-* **Wednesday, 22 Dec 2010**: New visual-choosing code, should allow operation
-    on more systems.  Also integrated Julian's latest BMP image loading
-    changes, supporting a wider variety of BMP formats.
-
-* **Monday, 19 Jul 2010**: Added support for joysticks; probably
-    Linux-specific for now.
-
-* **Sunday, 18 Jul 2010**: Added loading of BMP images, courtesy of Julian
-    Leyh.
-
-* **Tuesday, 13 Jul 2010**: Raw keycodes can now be translated to Latin-1
-    characters, and extended character codes for non-Latin-1 keystrokes.
-
-* **Thursday, 1 Jul 2010**: Added the Lumen.Image package and the `texture`
-    demo to show it in action.
-
-* **Sunday, 20 Jun 2010**: Library is now portable between 64-bit and 32-bit
-    systems.
-
-* **Saturday, 29 May 2010**: Added animation support, and a third demo app to
-    show it off.
-
-* **Saturday, 15 May 2010**: Lumen project begins adding code and
-    documentation.  Yay!
-
+* Older news items are now on a [separate page][oldnews].
 
 [freenode]:  http://freenode.net/
 [github]:    https://github.com/karakalo/lumen
 [install]:   install.html
 [intro]:     old-intro.html
 [issues]:    https://github.com/karakalo/lumen/issues
+[nblend]:    narrative-blending.html
 [ndemos]:    narrative-demos.html
+[nfire]:     narrative-fire.html
 [nlumen]:    narrative-lumen.html
 [rat]:       rationale.html
+[oldnews]:   old-news.html
