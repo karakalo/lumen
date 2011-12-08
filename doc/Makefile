@@ -9,11 +9,14 @@ PAGES = \
 	demo-manual \
 	install \
 	old-intro \
+	old-news \
 	rationale
 
 NARRS = \
+	narrative-blending \
 	narrative-colors \
 	narrative-demos \
+	narrative-fire \
 	narrative-lumen \
 	narrative-lumen-events \
 	narrative-lumen-image \

@@ -3,11 +3,17 @@
 
 code
 {
-    font-weight : bold;
-    font-size   : larger;
+  font-weight : bold;
+  font-size   : larger;
 }
 
 .centered
 {
-    text-align : center;
+  text-align : center;
+}
+
+blockquote
+{
+  background-color : #DDDDDD;
+  padding          : 0.1cm 0.5cm;
 }

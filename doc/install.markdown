@@ -10,6 +10,13 @@ bindings, though we discourage their direct use; either use the
 streamlined bindings (Lumen.GL, GLU, and soon to come, GLExt), or wait
 for our fancy "thick" Lumen.OpenGL bindings.
 
+To link the demos, you'll need the "development" versions of the OpenGL
+libraries; on Debian and presumably Ubuntu, the package names are
+`libgl1-mesa-dev` and `libglu1-mesa-dev`.  These are apparently only needed to
+create two crucial softlinks, but needed they are, so be sure to install them
+if you want to build the demos.  (And trust us, you *do* want to build the
+demos!)
+
 (NOTE: As of this writing, May 2011, Lumen does use one GNAT-specific
 library routine, so it is currently dependent on GNAT.  It's a very
 trivial task being done, though, and we're working on replacing it
@@ -38,7 +45,7 @@ its demos, and its docs.
 ### Windows Prerequisites
 
 In order to link the Lumen OpenGL binding on Windows, you need to have
-OpenGL32.lib and Gdi32.lib in your path. You can acquire these files as part of the 
+OpenGL32.lib and Gdi32.lib in your path. You can acquire these files as part of the
 [Microsoft Windows SDK](http://msdn.microsoft.com/en-us/windows/bb980924).
 Another option is to build them yourself from OpenGL32.dll and Gdi32.dll
 following the
@@ -54,14 +61,14 @@ setting the scenario variable **OS**. It currently supports three values:
  * `Linux`: Compiles Lumen for a Linux / X-Server based system
  * `MacOSX`: Compiles Lumen for MacOSX
  * `Windows`: Compiles Lumen for Windows
- 
+
 Please substitute **$OS** with the value representing your operating system
 in the following commands.
- 
+
 For compiling Lumen itself, do:
 
 		cd lumen
-		gnatmake -P lumen.gpr -XOS=$OS
+		gnatmake -p -P lumen.gpr -XOS=$OS
 
 That should create `liblumen.a` and a clutter of `.ali` files in the
 `lib` directory.
@@ -100,7 +107,7 @@ a joystick or a game pad or something similar, you should be able to actually
 Once you have built the library, you should be able to build
 [the demo programs][demos] with this command:
 
-        gnatmake -P demos.gpr -XOS=$OS
+        gnatmake -p -P demos.gpr -XOS=$OS
 
 That should create various executables in the `bin` directory, which
 you can run according to the instructions on their respective
