@@ -627,6 +627,298 @@ package body Lumen.GL is
    end Normal;
 
    -- Texturing
+   -- 1D
+   procedure MultiTexCoord (Target : in Enum;
+			    S      : in Double) is
+      procedure glMultiTexCoord1d (Target : in Enum;
+				   S      : in Double);
+      pragma Import(C, glMultiTexCoord1d, "glMultiTexCoord1d");
+   begin  -- MultiTexCoord
+      glMultiTexCoord1d (Target, S);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Doubles_1) is
+      procedure glMultiTexCoord1dv (Target : in Enum;
+				    V      : in Doubles_1);
+      pragma Import(C, glMultiTexCoord1dv, "glMultiTexCoord1dv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord1dv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    S      : in Float) is
+      procedure glMultiTexCoord1f (Target : in Enum;
+				   S      : in Float);
+      pragma Import(C, glMultiTexCoord1f, "glMultiTexCoord1f");
+   begin  -- MultiTexCoord
+      glMultiTexCoord1f (Target, S);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Floats_1) is
+      procedure glMultiTexCoord1fv (Target : in Enum;
+				    V      : in Floats_1);
+      pragma Import(C, glMultiTexCoord1fv, "glMultiTexCoord1fv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord1fv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    S      : in Int) is
+      procedure glMultiTexCoord1i (Target : in Enum;
+				   S      : in Int);
+      pragma Import(C, glMultiTexCoord1i, "glMultiTexCoord1i");
+   begin  -- MultiTexCoord
+      glMultiTexCoord1i (Target, S);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Ints_1) is
+      procedure glMultiTexCoord1iv (Target : in Enum;
+				    V      : in Ints_1);
+      pragma Import(C, glMultiTexCoord1iv, "glMultiTexCoord1iv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord1iv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    S      : in Short) is
+      procedure glMultiTexCoord1s (Target : in Enum;
+				   S      : in Short);
+      pragma Import(C, glMultiTexCoord1s, "glMultiTexCoord1s");
+   begin  -- MultiTexCoord
+      glMultiTexCoord1s (Target, S);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Shorts_1) is
+      procedure glMultiTexCoord1sv (Target : in Enum;
+				    V      : in Shorts_1);
+      pragma Import(C, glMultiTexCoord1sv, "glMultiTexCoord1sv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord1sv (Target, V);
+   end MultiTexCoord;
+      
+   -- 2D
+   procedure MultiTexCoord (Target : in Enum;
+			    S, T   : in Double) is
+      procedure glMultiTexCoord2d (Target : in Enum;
+				   S, T   : in Double);
+      pragma Import(C, glMultiTexCoord2d, "glMultiTexCoord2d");
+   begin  -- MultiTexCoord
+      glMultiTexCoord2d (Target, S, T);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Doubles_2) is
+      procedure glMultiTexCoord2dv (Target : in Enum;
+				    V      : in Doubles_2);
+      pragma Import(C, glMultiTexCoord2dv, "glMultiTexCoord2dv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord2dv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    S, T   : in Float) is
+      procedure glMultiTexCoord2f (Target : in Enum;
+				   S, T   : in Float);
+      pragma Import(C, GlMultiTexCoord2f, "glMultiTexCoord2f");
+   begin  -- MultiTexCoord
+      GlMultiTexCoord2f (Target, S, T);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Floats_2) is
+      procedure glMultiTexCoord2fv (Target : in Enum;
+				    V      : in Floats_2);
+      pragma Import(C, glMultiTexCoord2fv, "glMultiTexCoord2fv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord2fv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    S, T   : in Int) is
+      procedure glMultiTexCoord2i (Target : in Enum;
+				   S, T   : in Int);
+      pragma Import(C, glMultiTexCoord2i, "glMultiTexCoord2i");
+   begin  -- MultiTexCoord
+      glMultiTexCoord2i (Target, S, T);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Ints_2) is
+      procedure glMultiTexCoord2iv (Target : in Enum;
+				    V      : in Ints_2);
+      pragma Import(C, glMultiTexCoord2iv, "glMultiTexCoord2iv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord2iv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    S, T   : in Short) is
+      procedure glMultiTexCoord2s (Target : in Enum;
+				   S, T   : in Short);
+      pragma Import(C, glMultiTexCoord2s, "glMultiTexCoord2s");
+   begin  -- MultiTexCoord
+      glMultiTexCoord2s (Target, S, T);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Shorts_2) is
+      procedure glMultiTexCoord2sv (Target : in Enum;
+				    V      : in Shorts_2);
+      pragma Import(C, glMultiTexCoord2sv, "glMultiTexCoord2sv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord2sv (Target, V);
+   end MultiTexCoord;
+   
+   -- 3D
+   procedure MultiTexCoord (Target  : in Enum;
+			    S, T, R : in Double) is
+      procedure glMultiTexCoord3d (Target  : in Enum;
+				   S, T, R : in Double);
+      pragma Import(C, glMultiTexCoord3d, "glMultiTexCoord3d");
+   begin  -- MultiTexCoord
+      glMultiTexCoord3d (Target, S, T, R);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Doubles_3) is
+      procedure glMultiTexCoord3dv (Target : in Enum;
+				    V      : in Doubles_3);
+      pragma Import(C, glMultiTexCoord3dv, "glMultiTexCoord3dv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord3dv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target  : in Enum;
+			    S, T, R : in Float) is
+      procedure glMultiTexCoord3f (Target  : in Enum;
+				   S, T, R : in Float);
+      pragma Import(C, glMultiTexCoord3f, "glMultiTexCoord3f");
+   begin  -- MultiTexCoord
+      GlMultiTexCoord3f (Target, S, T, R);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Floats_3) is
+      procedure glMultiTexCoord3fv (Target : in Enum;
+				    V      : in Floats_3);
+      pragma Import(C, glMultiTexCoord3fv, "glMultiTexCoord3fv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord3fv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target  : in Enum;
+			    S, T, R : in Int) is
+      procedure glMultiTexCoord3i (Target  : in Enum;
+				   S, T, R : in Int);
+      pragma Import(C, glMultiTexCoord3i, "glMultiTexCoord3i");
+   begin  -- MultiTexCoord
+      glMultiTexCoord3i (Target, S, T, R);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Ints_3) is
+      procedure glMultiTexCoord3iv (Target : in Enum;
+				    V      : in Ints_3);
+      pragma Import(C, glMultiTexCoord3iv, "glMultiTexCoord3iv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord3iv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target  : in Enum;
+			    S, T, R : in Short) is
+      procedure glMultiTexCoord3s (Target  : in Enum;
+				   S, T, R : in Short);
+      pragma Import(C, glMultiTexCoord3s, "glMultiTexCoord3s");
+   begin  -- MultiTexCoord
+      glMultiTexCoord3s (Target, S, T, R);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Shorts_3) is
+      procedure glMultiTexCoord3sv (Target : in Enum;
+				    V      : in Shorts_3);
+      pragma Import(C, glMultiTexCoord3sv, "glMultiTexCoord3sv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord3sv (Target, V);
+   end MultiTexCoord;
+   
+   -- 4D
+   procedure MultiTexCoord (Target     : in Enum;
+			    S, T, R, Q : in Double) is
+      procedure glMultiTexCoord4d (Target     : in Enum;
+				   S, T, R, Q : in Double);
+      pragma Import(C, glMultiTexCoord4d, "glMultiTexCoord4d");
+   begin  -- MultiTexCoord
+      glMultiTexCoord4d (Target, S, T, R, Q);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Doubles_4) is
+      procedure glMultiTexCoord4dv (Target : in Enum;
+				    V      : in Doubles_4);
+      pragma Import(C, glMultiTexCoord4dv, "glMultiTexCoord4dv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord4dv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target     : in Enum;
+			    S, T, R, Q : in Float) is
+      procedure glMultiTexCoord4f (Target     : in Enum;
+				   S, T, R, Q : in Float);
+      pragma Import(C, glMultiTexCoord4f, "glMultiTexCoord4f");
+   begin  -- MultiTexCoord
+      GlMultiTexCoord4f (Target, S, T, R, Q);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Floats_4) is
+      procedure glMultiTexCoord4fv (Target : in Enum;
+				    V      : in Floats_4);
+      pragma Import(C, glMultiTexCoord4fv, "glMultiTexCoord4fv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord4fv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target     : in Enum;
+			    S, T, R, Q : in Int) is
+      procedure glMultiTexCoord4i (Target     : in Enum;
+				   S, T, R, Q : in Int);
+      pragma Import(C, glMultiTexCoord4i, "glMultiTexCoord4i");
+   begin  -- MultiTexCoord
+      glMultiTexCoord4i (Target, S, T, R, Q);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Ints_4) is
+      procedure glMultiTexCoord4iv (Target : in Enum;
+				    V      : in Ints_4);
+      pragma Import(C, glMultiTexCoord4iv, "glMultiTexCoord4iv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord4iv (Target, V);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target     : in Enum;
+			    S, T, R, Q : in Short) is
+      procedure glMultiTexCoord4s (Target     : in Enum;
+				   S, T, R, Q : in Short);
+      pragma Import(C, glMultiTexCoord4s, "glMultiTexCoord4s");
+   begin  -- MultiTexCoord
+      glMultiTexCoord4s (Target, S, T, R, Q);
+   end MultiTexCoord;
+   
+   procedure MultiTexCoord (Target : in Enum;
+			    V      : in Shorts_4) is
+      procedure glMultiTexCoord4sv (Target : in Enum;
+				    V      : in Shorts_4);
+      pragma Import(C, glMultiTexCoord4sv, "glMultiTexCoord4sv");
+   begin  -- MultiTexCoord
+      glMultiTexCoord4sv (Target, V);
+   end MultiTexCoord;
+   
    procedure TexParameter (Target : in Enum;
                            PName  : in Enum;
                            Param  : in Enum) is
