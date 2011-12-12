@@ -46,15 +46,15 @@ procedure Lesson04 is
       Viewport (0, 0, Width, Height);
 
       -- select projection matrix and reset it
-      MatrixMode (GL_PROJECTION);
-      LoadIdentity;
+      Matrix_Mode (GL_PROJECTION);
+      Load_Identity;
 
       -- calculate aspect ratio
       Perspective (45.0, Long_Float (Width) / Long_Float (Height), 0.1, 100.0);
 
       -- select modelview matrix and reset it
-      MatrixMode (GL_MODELVIEW);
-      LoadIdentity;
+      Matrix_Mode (GL_MODELVIEW);
+      Load_Identity;
    end Resize_Scene;
 
    procedure Init_GL is
@@ -62,17 +62,17 @@ procedure Lesson04 is
       use Lumen.GLU;
    begin
       -- smooth shading
-      ShadeModel (GL_SMOOTH);
+      Shade_Model (GL_SMOOTH);
 
       -- black background
-      ClearColor (0.0, 0.0, 0.0, 0.0);
+      Clear_Color (0.0, 0.0, 0.0, 0.0);
 
       -- depth buffer setup
-      ClearDepth (1.0);
+      Clear_Depth (1.0);
       -- enable depth testing
       Enable (GL_DEPTH_TEST);
       -- type of depth test
-      DepthFunc (GL_LEQUAL);
+      Depth_Func (GL_LEQUAL);
 
       Hint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   end Init_GL;
@@ -97,13 +97,13 @@ procedure Lesson04 is
       -- clear screen and depth buffer
       Clear (GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
       -- reset current modelview matrix
-      LoadIdentity;
+      Load_Identity;
       -- move to the left half of the screen
       Translate (Float (-1.5), 0.0, -6.0);
       -- rotate the Triangle
       Rotate (Triangle_Rotation, 0.0, 1.0, 0.0);
       -- draw triangle
-      glBegin (GL_TRIANGLES);
+      Begin_Primitive (GL_TRIANGLES);
       begin
          Color (Float (1.0), 0.0, 0.0);
          Vertex (Float (0.0),  1.0, 0.0);
@@ -112,24 +112,24 @@ procedure Lesson04 is
          Color (Float (0.0), 0.0, 1.0);
          Vertex (Float (1.0), -1.0, 0.0);
       end;
-      glEnd;
+      End_Primitive;
 
       -- reset current modelview matrix
-      LoadIdentity;
+      Load_Identity;
       -- move to the right half of the screen
       Translate (Float (1.5), 0.0, -6.0);
       -- rotate the Quad
       Rotate (Quad_Rotation, 1.0, 0.0, 0.0);
       -- draw square
       Color (Float (0.5), 0.5, 1.0);
-      glBegin (GL_QUADS);
+      Begin_Primitive (GL_QUADS);
       begin
          Vertex (Float (-1.0),  1.0, 0.0);
          Vertex (Float (1.0),  1.0, 0.0);
          Vertex (Float (1.0), -1.0, 0.0);
          Vertex (Float (-1.0), -1.0, 0.0);
       end;
-      glEnd;
+      End_Primitive;
 
       Triangle_Rotation := Triangle_Rotation + 10.0;
       Quad_Rotation := Quad_Rotation - 7.5;

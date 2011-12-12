@@ -58,14 +58,14 @@ procedure Lesson08 is
       Viewport (0, 0, Width, Height);
 
       -- select projection matrix and reset it
-      MatrixMode (GL_PROJECTION);
-      LoadIdentity;
+      Matrix_Mode (GL_PROJECTION);
+      Load_Identity;
 
       -- calculate aspect ratio
       Perspective (45.0, Double (Width) / Double (Height), 0.1, 100.0);
 
       -- select modelview matrix and reset it
-      MatrixMode (GL_MODELVIEW);
+      Matrix_Mode (GL_MODELVIEW);
    end Resize_Scene;
 
    procedure Load_GL_Textures is
@@ -77,32 +77,32 @@ procedure Lesson08 is
       Texture_Pointer : constant System.Address := Textures'Address;
    begin
       -- create three textures
-      GenTextures (3, Texture_Pointer);
+      Gen_Textures (3, Texture_Pointer);
 
       -- Bind texture operations to the newly-created texture name
-      BindTexture (GL_TEXTURE_2D, Textures (Textures'First));
-      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+      Bind_Texture (GL_TEXTURE_2D, Textures (Textures'First));
+      Tex_Parameter (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+      Tex_Parameter (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
       IP := Image.Values.all'Address;
-      TexImage (GL_TEXTURE_2D, 0, GL_RGB, Image.Width, Image.Height,
+      Tex_Image (GL_TEXTURE_2D, 0, GL_RGB, Image.Width, Image.Height,
                 0, GL_RGBA, GL_UNSIGNED_BYTE, IP);
 
       -- Bind texture operations to the newly-created texture name
-      BindTexture (GL_TEXTURE_2D, Textures (Textures'First + 1));
-      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      Bind_Texture (GL_TEXTURE_2D, Textures (Textures'First + 1));
+      Tex_Parameter (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      Tex_Parameter (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       IP := Image.Values.all'Address;
-      TexImage (GL_TEXTURE_2D, 0, GL_RGB, Image.Width, Image.Height,
+      Tex_Image (GL_TEXTURE_2D, 0, GL_RGB, Image.Width, Image.Height,
                 0, GL_RGBA, GL_UNSIGNED_BYTE, IP);
 
       -- Bind texture operations to the newly-created texture name
-      BindTexture (GL_TEXTURE_2D, Textures (Textures'First + 2));
-      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      TexParameter (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+      Bind_Texture (GL_TEXTURE_2D, Textures (Textures'First + 2));
+      Tex_Parameter (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      Tex_Parameter (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
       IP := Image.Values.all'Address;
       declare
          X : constant Int :=
-               Build2DMipmaps (GL_TEXTURE_2D, Int (GL_RGB), Image.Width, Image.Height,
+               Build_2D_Mipmaps (GL_TEXTURE_2D, Int (GL_RGB), Image.Width, Image.Height,
                                GL_RGBA, GL_UNSIGNED_BYTE, IP);
          pragma Unreferenced (X);
       begin
@@ -118,17 +118,17 @@ procedure Lesson08 is
       -- enable texture mapping (new)
       Enable (GL_TEXTURE_2D);
       -- smooth shading
-      ShadeModel (GL_SMOOTH);
+      Shade_Model (GL_SMOOTH);
 
       -- black background
-      ClearColor (0.0, 0.0, 0.0, 0.5);
+      Clear_Color (0.0, 0.0, 0.0, 0.5);
 
       -- depth buffer setup
-      ClearDepth (1.0);
+      Clear_Depth (1.0);
       -- enable depth testing
       Enable (GL_DEPTH_TEST);
       -- type of depth test
-      DepthFunc (GL_LEQUAL);
+      Depth_Func (GL_LEQUAL);
 
       Hint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
@@ -143,7 +143,7 @@ procedure Lesson08 is
              Green => 1.0,
              Blue  => 1.0,
              Alpha => 0.5);
-      BlendFunc (GL_SRC_ALPHA, GL_ONE);
+      Blend_Func (GL_SRC_ALPHA, GL_ONE);
    end Init_GL;
 
    -- Resize and Initialize the GL window
@@ -166,7 +166,7 @@ procedure Lesson08 is
       -- clear screen and depth buffer
       Clear (GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
       -- reset current modelview matrix
-      LoadIdentity;
+      Load_Identity;
       -- move into the screen 5 units
       Translate (0.0, 0.0, Z_Position);
 
@@ -176,49 +176,49 @@ procedure Lesson08 is
       Rotate (Y_Rotation, 0.0, 1.0, 0.0);
 
       -- select the texture
-      BindTexture (GL_TEXTURE_2D, Textures (Selected_Texture));
+      Bind_Texture (GL_TEXTURE_2D, Textures (Selected_Texture));
 
       -- draw square
-      glBegin (GL_QUADS);
+      Begin_Primitive (GL_QUADS);
       begin
          -- front
          Normal (Float (0.0), 0.0, 1.0);
-         TexCoord (Float (0.0), 0.0); Vertex (Float (-1.0), -1.0, 1.0);
-         TexCoord (Float (0.0), 1.0); Vertex (Float (1.0), -1.0, 1.0);
-         TexCoord (Float (1.0), 1.0); Vertex (Float (1.0), 1.0, 1.0);
-         TexCoord (Float (1.0), 0.0); Vertex (Float (-1.0), 1.0, 1.0);
+         Tex_Coord (Float (0.0), 0.0); Vertex (Float (-1.0), -1.0, 1.0);
+         Tex_Coord (Float (0.0), 1.0); Vertex (Float (1.0), -1.0, 1.0);
+         Tex_Coord (Float (1.0), 1.0); Vertex (Float (1.0), 1.0, 1.0);
+         Tex_Coord (Float (1.0), 0.0); Vertex (Float (-1.0), 1.0, 1.0);
          -- back
          Normal (Float (0.0), 0.0, -1.0);
-         TexCoord (Float (0.0), 0.0); Vertex (Float (1.0), -1.0, -1.0);
-         TexCoord (Float (0.0), 1.0); Vertex (Float (-1.0), -1.0, -1.0);
-         TexCoord (Float (1.0), 1.0); Vertex (Float (-1.0), 1.0, -1.0);
-         TexCoord (Float (1.0), 0.0); Vertex (Float (1.0), 1.0, -1.0);
+         Tex_Coord (Float (0.0), 0.0); Vertex (Float (1.0), -1.0, -1.0);
+         Tex_Coord (Float (0.0), 1.0); Vertex (Float (-1.0), -1.0, -1.0);
+         Tex_Coord (Float (1.0), 1.0); Vertex (Float (-1.0), 1.0, -1.0);
+         Tex_Coord (Float (1.0), 0.0); Vertex (Float (1.0), 1.0, -1.0);
          -- top
          Normal (Float (0.0), 1.0, 0.0);
-         TexCoord (Float (0.0), 0.0); Vertex (Float (-1.0), 1.0, 1.0);
-         TexCoord (Float (0.0), 1.0); Vertex (Float (1.0), 1.0, 1.0);
-         TexCoord (Float (1.0), 1.0); Vertex (Float (1.0), 1.0, -1.0);
-         TexCoord (Float (1.0), 0.0); Vertex (Float (-1.0), 1.0, -1.0);
+         Tex_Coord (Float (0.0), 0.0); Vertex (Float (-1.0), 1.0, 1.0);
+         Tex_Coord (Float (0.0), 1.0); Vertex (Float (1.0), 1.0, 1.0);
+         Tex_Coord (Float (1.0), 1.0); Vertex (Float (1.0), 1.0, -1.0);
+         Tex_Coord (Float (1.0), 0.0); Vertex (Float (-1.0), 1.0, -1.0);
          -- bottom
          Normal (Float (0.0), -1.0, 0.0);
-         TexCoord (Float (0.0), 0.0); Vertex (Float (1.0), -1.0, 1.0);
-         TexCoord (Float (0.0), 1.0); Vertex (Float (-1.0), -1.0, 1.0);
-         TexCoord (Float (1.0), 1.0); Vertex (Float (-1.0), -1.0, -1.0);
-         TexCoord (Float (1.0), 0.0); Vertex (Float (1.0), -1.0, -1.0);
+         Tex_Coord (Float (0.0), 0.0); Vertex (Float (1.0), -1.0, 1.0);
+         Tex_Coord (Float (0.0), 1.0); Vertex (Float (-1.0), -1.0, 1.0);
+         Tex_Coord (Float (1.0), 1.0); Vertex (Float (-1.0), -1.0, -1.0);
+         Tex_Coord (Float (1.0), 0.0); Vertex (Float (1.0), -1.0, -1.0);
          -- right
          Normal (Float (1.0), 0.0, 0.0);
-         TexCoord (Float (0.0), 0.0); Vertex (Float (1.0), -1.0, 1.0);
-         TexCoord (Float (0.0), 1.0); Vertex (Float (1.0), -1.0, -1.0);
-         TexCoord (Float (1.0), 1.0); Vertex (Float (1.0), 1.0, -1.0);
-         TexCoord (Float (1.0), 0.0); Vertex (Float (1.0), 1.0, 1.0);
+         Tex_Coord (Float (0.0), 0.0); Vertex (Float (1.0), -1.0, 1.0);
+         Tex_Coord (Float (0.0), 1.0); Vertex (Float (1.0), -1.0, -1.0);
+         Tex_Coord (Float (1.0), 1.0); Vertex (Float (1.0), 1.0, -1.0);
+         Tex_Coord (Float (1.0), 0.0); Vertex (Float (1.0), 1.0, 1.0);
          -- left
          Normal (Float (-1.0), 0.0, 0.0);
-         TexCoord (Float (0.0), 0.0); Vertex (Float (-1.0), -1.0, -1.0);
-         TexCoord (Float (0.0), 1.0); Vertex (Float (-1.0), -1.0, 1.0);
-         TexCoord (Float (1.0), 1.0); Vertex (Float (-1.0), 1.0, 1.0);
-         TexCoord (Float (1.0), 0.0); Vertex (Float (-1.0), 1.0, -1.0);
+         Tex_Coord (Float (0.0), 0.0); Vertex (Float (-1.0), -1.0, -1.0);
+         Tex_Coord (Float (0.0), 1.0); Vertex (Float (-1.0), -1.0, 1.0);
+         Tex_Coord (Float (1.0), 1.0); Vertex (Float (-1.0), 1.0, 1.0);
+         Tex_Coord (Float (1.0), 0.0); Vertex (Float (-1.0), 1.0, -1.0);
       end;
-      glEnd;
+      End_Primitive;
 
       X_Rotation := X_Rotation + X_Speed;
       Y_Rotation := Y_Rotation + Y_Speed;

@@ -43,14 +43,14 @@ procedure Lesson01 is
       Viewport (0, 0, Width, Height);
 
       -- select projection matrix and reset it
-      MatrixMode (GL_PROJECTION);
-      LoadIdentity;
+      Matrix_Mode (GL_PROJECTION);
+      Load_Identity;
 
       -- calculate aspect ratio
       Perspective (45.0, Long_Float (Width) / Long_Float (Height), 0.1, 100.0);
 
       -- select modelview matrix and reset it
-      MatrixMode (GL_MODELVIEW);
+      Matrix_Mode (GL_MODELVIEW);
    end Resize_Scene;
 
    procedure Init_GL is
@@ -58,17 +58,17 @@ procedure Lesson01 is
       use Lumen.GLU;
    begin
       -- smooth shading
-      ShadeModel (GL_SMOOTH);
+      Shade_Model (GL_SMOOTH);
 
       -- black background
-      ClearColor (0.0, 0.0, 0.0, 0.0);
+      Clear_Color (0.0, 0.0, 0.0, 0.0);
 
       -- depth buffer setup
-      ClearDepth (1.0);
+      Clear_Depth (1.0);
       -- enable depth testing
       Enable (GL_DEPTH_TEST);
       -- type of depth test
-      DepthFunc (GL_LEQUAL);
+      Depth_Func (GL_LEQUAL);
 
       Hint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
    end Init_GL;
@@ -93,7 +93,7 @@ procedure Lesson01 is
       -- clear screen and depth buffer
       Clear (GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
       -- reset current modelview matrix
-      LoadIdentity;
+      Load_Identity;
    end Draw;
 
    procedure Frame_Handler (Frame_Delta : in Duration) is
