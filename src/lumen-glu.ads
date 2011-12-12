@@ -31,7 +31,7 @@ with Lumen.Image;
 package Lumen.GLU is
 
    -- Build mipmaps
-   function Build1DMipmaps (Target     : in Enum;
+   function Build_1D_Mipmaps (Target     : in Enum;
                             Components : in Int;
                             Width      : in Int;
                             Format     : in Enum;
@@ -39,7 +39,7 @@ package Lumen.GLU is
                             Data       : in System.Address)
    return Int;
 
-   function Build2DMipmaps (Target     : in Enum;
+   function Build_2D_Mipmaps (Target     : in Enum;
                             Components : in Int;
                             Width      : in Int;
                             Height     : in Int;
@@ -49,7 +49,7 @@ package Lumen.GLU is
    return Int;
 
    -- Projections
-   procedure Ortho2D (Left   : in Double;
+   procedure Ortho_2D (Left   : in Double;
                       Right  : in Double;
                       Bottom : in Double;
                       Top    : in Double);
@@ -59,20 +59,20 @@ package Lumen.GLU is
    -- Quadrics
    type Quadric is new Pointer;
 
-   function NewQuadric return Quadric;
+   function New_Quadric return Quadric;
 
-   procedure DeleteQuadric (Quad : in Quadric);
+   procedure Delete_Quadric (Quad : in Quadric);
 
-   procedure QuadricDrawStyle (Quad : in Quadric;
+   procedure Quadric_Draw_Style (Quad : in Quadric;
                                Draw : in Enum);
 
-   procedure QuadricNormals (Quad   : in Quadric;
+   procedure Quadric_Normals (Quad   : in Quadric;
                              Normal : in Enum);
 
-   procedure QuadricOrientation (Quad        : in Quadric;
+   procedure Quadric_Orientation (Quad        : in Quadric;
                                  Orientation : in Enum);
 
-   procedure QuadricTexture (Quad    : in Quadric;
+   procedure Quadric_Texture (Quad    : in Quadric;
                              Texture : in Bool);
 
    -- Shapes
@@ -89,7 +89,7 @@ package Lumen.GLU is
                    Slices : in Int;
                    Loops  : in Int);
 
-   procedure PartialDisk (Quad   : in Quadric;
+   procedure Partial_Disk (Quad   : in Quadric;
                           Inner  : in Double;
                           Outer  : in Double;
                           Slices : in Int;
@@ -105,20 +105,20 @@ package Lumen.GLU is
 
 private
    -- These can be bound directly
-   pragma Import (C, Build1DMipmaps, "gluBuild1DMipmaps");
-   pragma Import (C, Build2DMipmaps, "gluBuild2DMipmaps");
-   pragma Import (C, Ortho2D, "gluOrtho2D");
+   pragma Import (C, Build_1D_Mipmaps, "gluBuild1DMipmaps");
+   pragma Import (C, Build_2D_Mipmaps, "gluBuild2DMipmaps");
+   pragma Import (C, Ortho_2D, "gluOrtho2D");
    pragma Import (C, Perspective, "gluPerspective");
-   pragma Import (C, NewQuadric, "gluNewQuadric");
-   pragma Import (C, DeleteQuadric, "gluDeleteQuadric");
-   pragma Import (C, QuadricDrawStyle, "gluQuadricDrawStyle");
-   pragma Import (C, QuadricOrientation, "gluQuadricOrientation");
-   pragma Import (C, QuadricNormals, "gluQuadricNormals");
-   pragma Import (C, QuadricTexture, "gluQuadricTexture");
+   pragma Import (C, New_Quadric, "gluNewQuadric");
+   pragma Import (C, Delete_Quadric, "gluDeleteQuadric");
+   pragma Import (C, Quadric_Draw_Style, "gluQuadricDrawStyle");
+   pragma Import (C, Quadric_Orientation, "gluQuadricOrientation");
+   pragma Import (C, Quadric_Normals, "gluQuadricNormals");
+   pragma Import (C, Quadric_Texture, "gluQuadricTexture");
    pragma Import (C, Cylinder, "gluCylinder");
    pragma Import (C, Sphere, "gluSphere");
    pragma Import (C, Disk, "gluDisk");
-   pragma Import (C, PartialDisk, "gluPartialDisk");
+   pragma Import (C, Partial_Disk, "gluPartialDisk");
 
    pragma Linker_Options ("-lGLU");
 

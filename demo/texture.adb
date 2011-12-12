@@ -56,24 +56,24 @@ procedure Texture is
    begin  -- Create_Texture
 
       -- Allocate a texture name
-      GL.GenTextures (1, Tx_Name'Address);
+      GL.Gen_Textures (1, Tx_Name'Address);
 
       -- Bind texture operations to the newly-created texture name
-      Gl.BindTexture (GL.GL_TEXTURE_2D, Tx_Name);
+      Gl.Bind_Texture (GL.GL_TEXTURE_2D, Tx_Name);
 
       -- Select modulate to mix texture with color for shading
-      GL.TexEnv (GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+      GL.Tex_Env (GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
 
       -- Wrap textures at both edges
-      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
-      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+      GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+      GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
 
       -- How the texture behaves when minified and magnified
-      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+      GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+      GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
 
       -- Build our texture from the image we loaded earlier
-      GL.TexImage (GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, GL.SizeI (Image.Width), GL.SizeI (Image.Height), 0,
+      GL.Tex_Image (GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, GL.SizeI (Image.Width), GL.SizeI (Image.Height), 0,
                    GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, Image.Values.all'Address);
 
    end Create_Texture;
@@ -101,8 +101,8 @@ procedure Texture is
 
       -- Set up the projection matrix based on the window's shape--wider than
       -- high, or higher than wide
-      GL.MatrixMode (GL.GL_PROJECTION);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_PROJECTION);
+      GL.Load_Identity;
 
       -- Set up a 3D viewing frustum, which is basically a truncated pyramid
       -- in which the scene takes place.  Roughly, the narrow end is your
@@ -127,31 +127,31 @@ procedure Texture is
    begin  -- Draw
 
       -- Set a light grey background
-      GL.ClearColor (0.8, 0.8, 0.8, 1.0);
+      GL.Clear_Color (0.8, 0.8, 0.8, 1.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT);
 
       -- Draw a texture-mapped rectangle with the same aspect ratio as the
       -- original image
-      GL.glBegin (GL.GL_POLYGON);
+      GL.Begin_Primitive (GL.GL_POLYGON);
       begin
-         GL.TexCoord (Float (0.0), 1.0, 0.0);
+         GL.Tex_Coord (Float (0.0), 1.0, 0.0);
          GL.Vertex (-Img_Wide, -Img_High, 0.0);
 
-         GL.TexCoord (Float (0.0), 0.0, 0.0);
+         GL.Tex_Coord (Float (0.0), 0.0, 0.0);
          GL.Vertex (-Img_Wide,  Img_High, 0.0);
 
-         GL.TexCoord (Float (1.0), 0.0, 0.0);
+         GL.Tex_Coord (Float (1.0), 0.0, 0.0);
          GL.Vertex ( Img_Wide,  Img_High, 0.0);
 
-         GL.TexCoord (Float (1.0), 1.0, 0.0);
+         GL.Tex_Coord (Float (1.0), 1.0, 0.0);
          GL.Vertex ( Img_Wide, -Img_High, 0.0);
       end;
-      GL.glEnd;
+      GL.End_Primitive;
 
       -- Rotate the object around the Y and Z axes by the current amount, to
       -- give a "tumbling" effect.
-      GL.MatrixMode (GL.GL_MODELVIEW);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_MODELVIEW);
+      GL.Load_Identity;
       GL.Translate (Float (0.0), 0.0, -4.0);
       GL.Rotate (GL.Double (Rotation), 0.0, 1.0, 0.0);
       GL.Rotate (GL.Double (Rotation), 0.0, 0.0, 1.0);
@@ -268,7 +268,7 @@ begin  -- Texture
    -- Now create the texture and set up to use it
    Create_Texture;
    GL.Enable (GL.GL_TEXTURE_2D);
-   GL.BindTexture (GL.GL_TEXTURE_2D, Tx_Name);
+   GL.Bind_Texture (GL.GL_TEXTURE_2D, Tx_Name);
 
    -- Enter the event loop, which will terminate when the Quit_Handler calls End_Events
    declare

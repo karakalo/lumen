@@ -98,33 +98,33 @@ package body Lumen.GL is
    ---------------------------------------------------------------------------
 
    -- Matrix operations
-   procedure LoadMatrix (M : in Float_Matrix) is
+   procedure Load_Matrix (M : in Float_Matrix) is
       procedure glLoadMatrixf (M : in System.Address);
       pragma Import (C, glLoadMatrixf, "glLoadMatrixf");
    begin  -- LoadMatrix
       glLoadMatrixf (M'Address);
-   end LoadMatrix;
+   end Load_Matrix;
 
-   procedure LoadMatrix (M : in Double_Matrix) is
+   procedure Load_Matrix (M : in Double_Matrix) is
       procedure glLoadMatrixd (M : in System.Address);
       pragma Import (C, glLoadMatrixd, "glLoadMatrixd");
    begin  -- LoadMatrix
       glLoadMatrixd (M'Address);
-   end LoadMatrix;
+   end Load_Matrix;
 
-   procedure MultMatrix (M : in Float_Matrix) is
+   procedure Mult_Matrix (M : in Float_Matrix) is
       procedure glMultMatrixf (M : in System.Address);
       pragma Import (C, glMultMatrixf, "glMultMatrixf");
    begin  -- MultMatrix
       glMultMatrixf (M'Address);
-   end MultMatrix;
+   end Mult_Matrix;
 
-   procedure MultMatrix (M : in Double_Matrix) is
+   procedure Mult_Matrix (M : in Double_Matrix) is
       procedure glMultMatrixd (M : in System.Address);
       pragma Import (C, glMultMatrixd, "glMultMatrixd");
    begin  -- MultMatrix
       glMultMatrixd (M'Address);
-   end MultMatrix;
+   end Mult_Matrix;
 
    ---------------------------------------------------------------------------
 
@@ -628,298 +628,298 @@ package body Lumen.GL is
 
    -- Texturing
    -- 1D
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    S      : in Double) is
       procedure glMultiTexCoord1d (Target : in Enum;
 				   S      : in Double);
       pragma Import(C, glMultiTexCoord1d, "glMultiTexCoord1d");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord1d (Target, S);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Doubles_1) is
       procedure glMultiTexCoord1dv (Target : in Enum;
 				    V      : in Doubles_1);
       pragma Import(C, glMultiTexCoord1dv, "glMultiTexCoord1dv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord1dv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    S      : in Float) is
       procedure glMultiTexCoord1f (Target : in Enum;
 				   S      : in Float);
       pragma Import(C, glMultiTexCoord1f, "glMultiTexCoord1f");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord1f (Target, S);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Floats_1) is
       procedure glMultiTexCoord1fv (Target : in Enum;
 				    V      : in Floats_1);
       pragma Import(C, glMultiTexCoord1fv, "glMultiTexCoord1fv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord1fv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    S      : in Int) is
       procedure glMultiTexCoord1i (Target : in Enum;
 				   S      : in Int);
       pragma Import(C, glMultiTexCoord1i, "glMultiTexCoord1i");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord1i (Target, S);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Ints_1) is
       procedure glMultiTexCoord1iv (Target : in Enum;
 				    V      : in Ints_1);
       pragma Import(C, glMultiTexCoord1iv, "glMultiTexCoord1iv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord1iv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    S      : in Short) is
       procedure glMultiTexCoord1s (Target : in Enum;
 				   S      : in Short);
       pragma Import(C, glMultiTexCoord1s, "glMultiTexCoord1s");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord1s (Target, S);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Shorts_1) is
       procedure glMultiTexCoord1sv (Target : in Enum;
 				    V      : in Shorts_1);
       pragma Import(C, glMultiTexCoord1sv, "glMultiTexCoord1sv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord1sv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
       
    -- 2D
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    S, T   : in Double) is
       procedure glMultiTexCoord2d (Target : in Enum;
 				   S, T   : in Double);
       pragma Import(C, glMultiTexCoord2d, "glMultiTexCoord2d");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord2d (Target, S, T);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Doubles_2) is
       procedure glMultiTexCoord2dv (Target : in Enum;
 				    V      : in Doubles_2);
       pragma Import(C, glMultiTexCoord2dv, "glMultiTexCoord2dv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord2dv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    S, T   : in Float) is
       procedure glMultiTexCoord2f (Target : in Enum;
 				   S, T   : in Float);
       pragma Import(C, GlMultiTexCoord2f, "glMultiTexCoord2f");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       GlMultiTexCoord2f (Target, S, T);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Floats_2) is
       procedure glMultiTexCoord2fv (Target : in Enum;
 				    V      : in Floats_2);
       pragma Import(C, glMultiTexCoord2fv, "glMultiTexCoord2fv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord2fv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    S, T   : in Int) is
       procedure glMultiTexCoord2i (Target : in Enum;
 				   S, T   : in Int);
       pragma Import(C, glMultiTexCoord2i, "glMultiTexCoord2i");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord2i (Target, S, T);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Ints_2) is
       procedure glMultiTexCoord2iv (Target : in Enum;
 				    V      : in Ints_2);
       pragma Import(C, glMultiTexCoord2iv, "glMultiTexCoord2iv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord2iv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    S, T   : in Short) is
       procedure glMultiTexCoord2s (Target : in Enum;
 				   S, T   : in Short);
       pragma Import(C, glMultiTexCoord2s, "glMultiTexCoord2s");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord2s (Target, S, T);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Shorts_2) is
       procedure glMultiTexCoord2sv (Target : in Enum;
 				    V      : in Shorts_2);
       pragma Import(C, glMultiTexCoord2sv, "glMultiTexCoord2sv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord2sv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
    -- 3D
-   procedure MultiTexCoord (Target  : in Enum;
+   procedure Multi_Tex_Coord (Target  : in Enum;
 			    S, T, R : in Double) is
       procedure glMultiTexCoord3d (Target  : in Enum;
 				   S, T, R : in Double);
       pragma Import(C, glMultiTexCoord3d, "glMultiTexCoord3d");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord3d (Target, S, T, R);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Doubles_3) is
       procedure glMultiTexCoord3dv (Target : in Enum;
 				    V      : in Doubles_3);
       pragma Import(C, glMultiTexCoord3dv, "glMultiTexCoord3dv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord3dv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target  : in Enum;
+   procedure Multi_Tex_Coord (Target  : in Enum;
 			    S, T, R : in Float) is
       procedure glMultiTexCoord3f (Target  : in Enum;
 				   S, T, R : in Float);
       pragma Import(C, glMultiTexCoord3f, "glMultiTexCoord3f");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       GlMultiTexCoord3f (Target, S, T, R);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Floats_3) is
       procedure glMultiTexCoord3fv (Target : in Enum;
 				    V      : in Floats_3);
       pragma Import(C, glMultiTexCoord3fv, "glMultiTexCoord3fv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord3fv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target  : in Enum;
+   procedure Multi_Tex_Coord (Target  : in Enum;
 			    S, T, R : in Int) is
       procedure glMultiTexCoord3i (Target  : in Enum;
 				   S, T, R : in Int);
       pragma Import(C, glMultiTexCoord3i, "glMultiTexCoord3i");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord3i (Target, S, T, R);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Ints_3) is
       procedure glMultiTexCoord3iv (Target : in Enum;
 				    V      : in Ints_3);
       pragma Import(C, glMultiTexCoord3iv, "glMultiTexCoord3iv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord3iv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target  : in Enum;
+   procedure Multi_Tex_Coord (Target  : in Enum;
 			    S, T, R : in Short) is
       procedure glMultiTexCoord3s (Target  : in Enum;
 				   S, T, R : in Short);
       pragma Import(C, glMultiTexCoord3s, "glMultiTexCoord3s");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord3s (Target, S, T, R);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Shorts_3) is
       procedure glMultiTexCoord3sv (Target : in Enum;
 				    V      : in Shorts_3);
       pragma Import(C, glMultiTexCoord3sv, "glMultiTexCoord3sv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord3sv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
    -- 4D
-   procedure MultiTexCoord (Target     : in Enum;
+   procedure Multi_Tex_Coord (Target     : in Enum;
 			    S, T, R, Q : in Double) is
       procedure glMultiTexCoord4d (Target     : in Enum;
 				   S, T, R, Q : in Double);
       pragma Import(C, glMultiTexCoord4d, "glMultiTexCoord4d");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord4d (Target, S, T, R, Q);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Doubles_4) is
       procedure glMultiTexCoord4dv (Target : in Enum;
 				    V      : in Doubles_4);
       pragma Import(C, glMultiTexCoord4dv, "glMultiTexCoord4dv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord4dv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target     : in Enum;
+   procedure Multi_Tex_Coord (Target     : in Enum;
 			    S, T, R, Q : in Float) is
       procedure glMultiTexCoord4f (Target     : in Enum;
 				   S, T, R, Q : in Float);
       pragma Import(C, glMultiTexCoord4f, "glMultiTexCoord4f");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       GlMultiTexCoord4f (Target, S, T, R, Q);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Floats_4) is
       procedure glMultiTexCoord4fv (Target : in Enum;
 				    V      : in Floats_4);
       pragma Import(C, glMultiTexCoord4fv, "glMultiTexCoord4fv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord4fv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target     : in Enum;
+   procedure Multi_Tex_Coord (Target     : in Enum;
 			    S, T, R, Q : in Int) is
       procedure glMultiTexCoord4i (Target     : in Enum;
 				   S, T, R, Q : in Int);
       pragma Import(C, glMultiTexCoord4i, "glMultiTexCoord4i");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord4i (Target, S, T, R, Q);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Ints_4) is
       procedure glMultiTexCoord4iv (Target : in Enum;
 				    V      : in Ints_4);
       pragma Import(C, glMultiTexCoord4iv, "glMultiTexCoord4iv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord4iv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target     : in Enum;
+   procedure Multi_Tex_Coord (Target     : in Enum;
 			    S, T, R, Q : in Short) is
       procedure glMultiTexCoord4s (Target     : in Enum;
 				   S, T, R, Q : in Short);
       pragma Import(C, glMultiTexCoord4s, "glMultiTexCoord4s");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord4s (Target, S, T, R, Q);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure MultiTexCoord (Target : in Enum;
+   procedure Multi_Tex_Coord (Target : in Enum;
 			    V      : in Shorts_4) is
       procedure glMultiTexCoord4sv (Target : in Enum;
 				    V      : in Shorts_4);
       pragma Import(C, glMultiTexCoord4sv, "glMultiTexCoord4sv");
-   begin  -- MultiTexCoord
+   begin  -- Multi_Tex_Coord
       glMultiTexCoord4sv (Target, V);
-   end MultiTexCoord;
+   end Multi_Tex_Coord;
    
-   procedure TexParameter (Target : in Enum;
+   procedure Tex_Parameter (Target : in Enum;
                            PName  : in Enum;
                            Param  : in Enum) is
       procedure glTexParameteri (Target : in Enum;
@@ -928,9 +928,9 @@ package body Lumen.GL is
       pragma Import (C, glTexParameteri, "glTexParameteri");
    begin  -- TexParameter
       glTexParameteri (Target, PName, Param);
-   end TexParameter;
+   end Tex_Parameter;
 
-   procedure TexParameter (Target : in Enum;
+   procedure Tex_Parameter (Target : in Enum;
                            PName  : in Enum;
                            Param  : in Int) is
       procedure glTexParameteri (Target : in Enum;
@@ -939,9 +939,9 @@ package body Lumen.GL is
       pragma Import (C, glTexParameteri, "glTexParameteri");
    begin  -- TexParameter
       glTexParameteri (Target, PName, Param);
-   end TexParameter;
+   end Tex_Parameter;
 
-   procedure TexParameter (Target : in Enum;
+   procedure Tex_Parameter (Target : in Enum;
                            PName  : in Enum;
                            Param  : in Float) is
       procedure glTexParameterf (Target : in Enum;
@@ -950,10 +950,10 @@ package body Lumen.GL is
       pragma Import (C, glTexParameterf, "glTexParameterf");
    begin  -- TexParameter
       glTexParameterf (Target, PName, Param);
-   end TexParameter;
+   end Tex_Parameter;
 
    -- Texture images
-   procedure TexImage (Target          : in Enum;
+   procedure Tex_Image (Target          : in Enum;
                        Level           : in Int;
                        Internal_Format : in Enum;
                        Width           : in SizeI;
@@ -972,9 +972,9 @@ package body Lumen.GL is
       pragma Import (C, glTexImage1D, "glTexImage1D");
    begin  -- TexImage
       glTexImage1D (Target, Level, Internal_Format, Width, Border, Format, Pixel_Type, Pixels);
-   end TexImage;
+   end Tex_Image;
 
-   procedure TexImage (Target          : in Enum;
+   procedure Tex_Image (Target          : in Enum;
                        Level           : in Int;
                        Internal_Format : in Enum;
                        Width           : in SizeI;
@@ -995,9 +995,9 @@ package body Lumen.GL is
       pragma Import (C, glTexImage2D, "glTexImage2D");
    begin  -- TexImage
       glTexImage2D (Target, Level, Internal_Format, Width, Height, Border, Format, Pixel_Type, Pixels);
-   end TexImage;
+   end Tex_Image;
 
-   procedure TexImage (Target          : in Enum;
+   procedure Tex_Image (Target          : in Enum;
                        Level           : in Int;
                        Internal_Format : in Enum;
                        Width           : in SizeI;
@@ -1020,118 +1020,118 @@ package body Lumen.GL is
       pragma Import (C, glTexImage3D, "glTexImage3D");
    begin  -- TexImage
       glTexImage3D (Target, Level, Internal_Format, Width, Height, Depth, Border, Format, Pixel_Type, Pixels);
-   end TexImage;
+   end Tex_Image;
 
    -- Texture coordinates
-   procedure TexCoord (S : in Short) is
+   procedure Tex_Coord (S : in Short) is
       procedure glTexCoord1s (S : in Short);
       pragma Import (C, glTexCoord1s, "glTexCoord1s");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord1s (S);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Int) is
+   procedure Tex_Coord (S : in Int) is
       procedure glTexCoord1i (S : in Int);
       pragma Import (C, glTexCoord1i, "glTexCoord1i");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord1i (S);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Float) is
+   procedure Tex_Coord (S : in Float) is
       procedure glTexCoord1f (S : in Float);
       pragma Import (C, glTexCoord1f, "glTexCoord1f");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord1f (S);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Double) is
+   procedure Tex_Coord (S : in Double) is
       procedure glTexCoord1d (S : in Double);
       pragma Import (C, glTexCoord1d, "glTexCoord1d");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord1d (S);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Short;
+   procedure Tex_Coord (S : in Short;
                        T : in Short) is
       procedure glTexCoord2s (S : in Short;
                               T : in Short);
       pragma Import (C, glTexCoord2s, "glTexCoord2s");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord2s (S, T);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Int;
+   procedure Tex_Coord (S : in Int;
                        T : in Int) is
       procedure glTexCoord2i (S : in Int;
                               T : in Int);
       pragma Import (C, glTexCoord2i, "glTexCoord2i");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord2i (S, T);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Float;
+   procedure Tex_Coord (S : in Float;
                        T : in Float) is
       procedure glTexCoord2f (S : in Float;
                               T : in Float);
       pragma Import (C, glTexCoord2f, "glTexCoord2f");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord2f (S, T);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Double;
+   procedure Tex_Coord (S : in Double;
                        T : in Double) is
       procedure glTexCoord2d (S : in Double;
                               T : in Double);
       pragma Import (C, glTexCoord2d, "glTexCoord2d");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord2d (S, T);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Short;
+   procedure Tex_Coord (S : in Short;
                        T : in Short;
                        R : in Short) is
       procedure glTexCoord3s (S : in Short;
                               T : in Short;
                               R : in Short);
       pragma Import (C, glTexCoord3s, "glTexCoord3s");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord3s (S, T, R);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Int;
+   procedure Tex_Coord (S : in Int;
                        T : in Int;
                        R : in Int) is
       procedure glTexCoord3i (S : in Int;
                               T : in Int;
                               R : in Int);
       pragma Import (C, glTexCoord3i, "glTexCoord3i");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord3i (S, T, R);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Float;
+   procedure Tex_Coord (S : in Float;
                        T : in Float;
                        R : in Float) is
       procedure glTexCoord3f (S : in Float;
                               T : in Float;
                               R : in Float);
       pragma Import (C, glTexCoord3f, "glTexCoord3f");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord3f (S, T, R);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Double;
+   procedure Tex_Coord (S : in Double;
                        T : in Double;
                        R : in Double) is
       procedure glTexCoord3d (S : in Double;
                               T : in Double;
                               R : in Double);
       pragma Import (C, glTexCoord3d, "glTexCoord3d");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord3d (S, T, R);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Short;
+   procedure Tex_Coord (S : in Short;
                        T : in Short;
                        R : in Short;
                        Q : in Short) is
@@ -1140,11 +1140,11 @@ package body Lumen.GL is
                               R : in Short;
                               Q : in Short);
       pragma Import (C, glTexCoord4s, "glTexCoord4s");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord4s (S, T, R, Q);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Int;
+   procedure Tex_Coord (S : in Int;
                        T : in Int;
                        R : in Int;
                        Q : in Int) is
@@ -1153,11 +1153,11 @@ package body Lumen.GL is
                               R : in Int;
                               Q : in Int);
       pragma Import (C, glTexCoord4i, "glTexCoord4i");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord4i (S, T, R, Q);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Float;
+   procedure Tex_Coord (S : in Float;
                        T : in Float;
                        R : in Float;
                        Q : in Float) is
@@ -1166,11 +1166,11 @@ package body Lumen.GL is
                               R : in Float;
                               Q : in Float);
       pragma Import (C, glTexCoord4f, "glTexCoord4f");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord4f (S, T, R, Q);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (S : in Double;
+   procedure Tex_Coord (S : in Double;
                        T : in Double;
                        R : in Double;
                        Q : in Double) is
@@ -1179,121 +1179,121 @@ package body Lumen.GL is
                               R : in Double;
                               Q : in Double);
       pragma Import (C, glTexCoord4d, "glTexCoord4d");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord4d (S, T, R, Q);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Shorts_1) is
+   procedure Tex_Coord (V : in Shorts_1) is
       procedure glTexCoord1sv (S : in Shorts_1);
       pragma Import (C, glTexCoord1sv, "glTexCoord1sv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord1sv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Shorts_2) is
+   procedure Tex_Coord (V : in Shorts_2) is
       procedure glTexCoord2sv (S : in Shorts_2);
       pragma Import (C, glTexCoord2sv, "glTexCoord2sv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord2sv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Shorts_3) is
+   procedure Tex_Coord (V : in Shorts_3) is
       procedure glTexCoord3sv (S : in Shorts_3);
       pragma Import (C, glTexCoord3sv, "glTexCoord3sv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord3sv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Shorts_4) is
+   procedure Tex_Coord (V : in Shorts_4) is
       procedure glTexCoord4sv (S : in Shorts_4);
       pragma Import (C, glTexCoord4sv, "glTexCoord4sv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord4sv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Ints_1) is
+   procedure Tex_Coord (V : in Ints_1) is
       procedure glTexCoord1iv (S : in Ints_1);
       pragma Import (C, glTexCoord1iv, "glTexCoord1iv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord1iv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Ints_2) is
+   procedure Tex_Coord (V : in Ints_2) is
       procedure glTexCoord2iv (S : in Ints_2);
       pragma Import (C, glTexCoord2iv, "glTexCoord2iv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord2iv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Ints_3) is
+   procedure Tex_Coord (V : in Ints_3) is
       procedure glTexCoord3iv (S : in Ints_3);
       pragma Import (C, glTexCoord3iv, "glTexCoord3iv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord3iv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Ints_4) is
+   procedure Tex_Coord (V : in Ints_4) is
       procedure glTexCoord4iv (S : in Ints_4);
       pragma Import (C, glTexCoord4iv, "glTexCoord4iv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord4iv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Floats_1) is
+   procedure Tex_Coord (V : in Floats_1) is
       procedure glTexCoord1fv (S : in Floats_1);
       pragma Import (C, glTexCoord1fv, "glTexCoord1fv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord1fv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Floats_2) is
+   procedure Tex_Coord (V : in Floats_2) is
       procedure glTexCoord2fv (S : in Floats_2);
       pragma Import (C, glTexCoord2fv, "glTexCoord2fv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord2fv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Floats_3) is
+   procedure Tex_Coord (V : in Floats_3) is
       procedure glTexCoord3fv (S : in Floats_3);
       pragma Import (C, glTexCoord3fv, "glTexCoord3fv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord3fv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Floats_4) is
+   procedure Tex_Coord (V : in Floats_4) is
       procedure glTexCoord4fv (S : in Floats_4);
       pragma Import (C, glTexCoord4fv, "glTexCoord4fv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord4fv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Doubles_1) is
+   procedure Tex_Coord (V : in Doubles_1) is
       procedure glTexCoord1dv (S : in Doubles_1);
       pragma Import (C, glTexCoord1dv, "glTexCoord1dv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord1dv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Doubles_2) is
+   procedure Tex_Coord (V : in Doubles_2) is
       procedure glTexCoord2dv (S : in Doubles_2);
       pragma Import (C, glTexCoord2dv, "glTexCoord2dv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord2dv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Doubles_3) is
+   procedure Tex_Coord (V : in Doubles_3) is
       procedure glTexCoord3dv (S : in Doubles_3);
       pragma Import (C, glTexCoord3dv, "glTexCoord3dv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord3dv (V);
-   end TexCoord;
+   end Tex_Coord;
 
-   procedure TexCoord (V : in Doubles_4) is
+   procedure Tex_Coord (V : in Doubles_4) is
       procedure glTexCoord4dv (S : in Doubles_4);
       pragma Import (C, glTexCoord4dv, "glTexCoord4dv");
-   begin  -- TexCoord
+   begin  -- Tex_Coord
       glTexCoord4dv (V);
-   end TexCoord;
+   end Tex_Coord;
 
    ---------------------------------------------------------------------------
 

@@ -63,7 +63,7 @@ procedure Multi is
    Tx_Font    : Font.Txf.Handle;
    Object     : GL.UInt;
    Frame      : Natural := 0;
-   Quad       : GLU.Quadric := GLU.NewQuadric;
+   Quad       : GLU.Quadric := GLU.New_Quadric;
    Checks     : Image.Pixel_Matrix (1 .. 32, 1 .. 32);
    Check_Tx   : GL.UInt;
 
@@ -131,8 +131,8 @@ procedure Multi is
 
       -- Set up the projection matrix based on the window's shape--wider than
       -- high, or higher than wide
-      GL.MatrixMode (GL.GL_PROJECTION);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_PROJECTION);
+      GL.Load_Identity;
 
       -- Set up a 3D viewing frustum, which is basically a truncated pyramid
       -- in which the scene takes place.  Roughly, the narrow end is your
@@ -164,15 +164,15 @@ procedure Multi is
 
       -- Set up the projection matrix based on the window's shape--wider than
       -- high, or higher than wide
-      GL.MatrixMode (GL.GL_PROJECTION);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_PROJECTION);
+      GL.Load_Identity;
 
       if W <= H then
          Aspect := GL.Double (H) / GL.Double (W);
-         GLU.Ortho2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
+         GLU.Ortho_2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
       else
          Aspect := GL.Double (W) / GL.Double (H);
-         GLU.Ortho2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
+         GLU.Ortho_2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
       end if;
 
       -- This makes one world unit equal one screen pixel (the "duh" projection)
@@ -202,41 +202,41 @@ procedure Multi is
       Window.Make_Current (Data);
 
       -- Set a black background
-      GL.ClearColor (0.0, 0.0, 0.0, 0.0);
+      GL.Clear_Color (0.0, 0.0, 0.0, 0.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT);
 
       -- Turn texturing back on and set up to draw the text messages
-      GL.PushMatrix;
+      GL.Push_Matrix;
       GL.Enable (GL.GL_TEXTURE_2D);
       GL.Enable (GL.GL_ALPHA_TEST);
-      GL.AlphaFunc (GL.GL_GEQUAL, 0.0625);
+      GL.Alpha_Func (GL.GL_GEQUAL, 0.0625);
       GL.Enable (GL.GL_BLEND);
-      GL.BlendFunc (GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+      GL.Blend_Func (GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
       GL.Enable (GL.GL_POLYGON_OFFSET_FILL);
-      GL.PolygonOffset (0.0, -3.0);
+      GL.Polygon_Offset (0.0, -3.0);
       GL.Color (Float (0.1), 0.8, 0.1);
       Font.Txf.Bind_Font_Texture (Tx_Font);
 
       -- Draw the frame number, right-justified in upper half of rectangle
-      GL.PushMatrix;
+      GL.Push_Matrix;
       Font.Txf.Get_String_Metrics (Tx_Font, FNum, MW, MA, MD);
       Scale := 2.0 / (Float (MA) * 3.0);
       GL.Translate (2.0 - (Pad + Float (MW) * Scale), Float (MA) * Scale, 0.0);
       GL.Scale (Scale, Scale, Scale);
       Font.Txf.Render (Tx_Font, FNum);
-      GL.PopMatrix;
+      GL.Pop_Matrix;
 
       -- Draw the frame number label, left-justified in upper half of
       -- rectangle, and one-third the size of the number itself
-      GL.PushMatrix;
+      GL.Push_Matrix;
       Font.Txf.Get_String_Metrics (Tx_Font, "Frame", MW, MA, MD);
       GL.Translate (-(2.0 - Pad), Float (MA) * Scale, 0.0);
       GL.Scale (Scale / 3.0, Scale / 3.0, Scale / 3.0);
       Font.Txf.Render (Tx_Font, "Frame");
-      GL.PopMatrix;
+      GL.Pop_Matrix;
 
       -- Draw the frame rate, right-justified in lower half of rectangle
-      GL.PushMatrix;
+      GL.Push_Matrix;
       -- Guard against out-of-range values, and display all question marks if so
       begin
          Ada.Float_Text_IO.Put (FRate, Events.Animate.FPS (Scene), Aft => 3, Exp => 0);
@@ -249,18 +249,18 @@ procedure Multi is
       GL.Translate (2.0 - (Pad + Float (MW) * Scale), -Float (MA) * Scale, 0.0);
       GL.Scale (Scale, Scale, Scale);
       Font.Txf.Render (Tx_Font, FRate);
-      GL.PopMatrix;
+      GL.Pop_Matrix;
 
       -- Draw the frame rate label, left-justified in lower half of
       -- rectangle, and one-third the size of the number itself
-      GL.PushMatrix;
+      GL.Push_Matrix;
       Font.Txf.Get_String_Metrics (Tx_Font, "FPS", MW, MA, MD);
       GL.Translate (-(2.0 - Pad), -Float (MA) * Scale, 0.0);
       GL.Scale (Scale / 3.0, Scale / 3.0, Scale / 3.0);
       Font.Txf.Render (Tx_Font, "FPS");
-      GL.PopMatrix;
+      GL.Pop_Matrix;
 
-      GL.PopMatrix;
+      GL.Pop_Matrix;
 
       -- Now show it
       Window.Swap (Data);
@@ -280,13 +280,13 @@ procedure Multi is
       Window.Make_Current (Scene);
 
       -- Set a light grey background
-      GL.ClearColor (0.85, 0.85, 0.85, 0.0);
+      GL.Clear_Color (0.85, 0.85, 0.85, 0.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT);
 
       -- Draw a textured sphere
       GL.Color (Float (1.0), 1.0, 1.0);  -- white
       GL.Enable (GL.GL_TEXTURE_2D);
-      GL.BindTexture (GL.GL_TEXTURE_2D, Check_Tx);
+      GL.Bind_Texture (GL.GL_TEXTURE_2D, Check_Tx);
       GLU.Sphere (Quad, 1.0, 32, 32);
       -- GL.glBegin (GL.GL_POLYGON);
       -- begin
@@ -305,8 +305,8 @@ procedure Multi is
       -- GL.glEnd;
 
       -- Rotate the sphere around the Z axis by the current amount
-      GL.MatrixMode (GL.GL_MODELVIEW);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_MODELVIEW);
+      GL.Load_Identity;
 
       -- Move the scene back a bit from the viewing plane so we can actually see it
       GL.Translate (GL.Double (0.0), 0.0, -4.0);
@@ -514,18 +514,18 @@ begin  -- Multi
          end if;
       end loop;
    end loop;
-   GL.GenTextures (1, Check_Tx'Address);
-   GL.BindTexture (GL.GL_TEXTURE_2D, Check_Tx);
-   GL.TexEnv (GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-   GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
-   GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
-   GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-   GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+   GL.Gen_Textures (1, Check_Tx'Address);
+   GL.Bind_Texture (GL.GL_TEXTURE_2D, Check_Tx);
+   GL.Tex_Env (GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+   GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+   GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+   GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+   GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
    GL.Enable (GL.GL_DEPTH_TEST);
-   GL.DepthFunc (GL.GL_LEQUAL);
-   GL.TexImage (GL.GL_TEXTURE_2D, 0, GL.GL_RGB, Checks'Last (1), Checks'Last (2), 0,
+   GL.Depth_Func (GL.GL_LEQUAL);
+   GL.Tex_Image (GL.GL_TEXTURE_2D, 0, GL.GL_RGB, Checks'Last (1), Checks'Last (2), 0,
                 GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, Checks'Address);
-   GLU.QuadricTexture (Quad, GL.GL_TRUE);
+   GLU.Quadric_Texture (Quad, GL.GL_TRUE);
 
    -- Set up data window
    Window.Make_Current (Data);

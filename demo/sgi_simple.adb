@@ -40,15 +40,15 @@ procedure SGI_Simple is
 
       -- Set up the projection matrix based on the window's shape--wider than
       -- high, or higher than wide
-      GL.MatrixMode (GL.GL_PROJECTION);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_PROJECTION);
+      GL.Load_Identity;
 
       if W <= H then
          Aspect := GL.Double (H) / GL.Double (W);
-         GLU.Ortho2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
+         GLU.Ortho_2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
       else
          Aspect := GL.Double (W) / GL.Double (H);
-         GLU.Ortho2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
+         GLU.Ortho_2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
       end if;
    end Set_View;
 
@@ -61,19 +61,19 @@ procedure SGI_Simple is
 
    begin  -- Draw
 
-      GL.ClearColor (0.0, 0.0, 0.0, 0.0);
+      GL.Clear_Color (0.0, 0.0, 0.0, 0.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT);
 
       GL.Color (Float (1.0), 1.0, 1.0);
 
-      GL.glBegin (GL.GL_POLYGON);
+      GL.Begin_Primitive (GL.GL_POLYGON);
       begin
          GL.Vertex (Float (-1.0), -1.0);
          GL.Vertex (Float (-1.0),  1.0);
          GL.Vertex (Float ( 1.0),  1.0);
          GL.Vertex (Float ( 1.0), -1.0);
       end;
-      GL.glEnd;
+      GL.End_Primitive;
       GL.Flush;
 
       -- Now show it

@@ -347,21 +347,21 @@ package body Lumen.Font.Txf is
       -- Either use given texture object, or ask GL to generate a new one
       if Font.Info.Object = 0 then
          if Object = 0 then
-            GL.GenTextures (1, Font.Info.Object'Address);
+            GL.Gen_Textures (1, Font.Info.Object'Address);
          else
             Font.Info.Object := Object;
          end if;
       end if;
 
       -- Bind the texture
-      GL.BindTexture (GL.GL_TEXTURE_2D, Font.Info.Object);
+      GL.Bind_Texture (GL.GL_TEXTURE_2D, Font.Info.Object);
 
       -- Now send the texture image to GL, either as a series of mipmaps, or just directly
       if Setup_Mipmaps then
-         Status := GLU.Build2DMipmaps (GL.GL_TEXTURE_2D, GL.Int (GL.GL_INTENSITY4), Font.Info.Width, Font.Info.Height,
+         Status := GLU.Build_2D_Mipmaps (GL.GL_TEXTURE_2D, GL.Int (GL.GL_INTENSITY4), Font.Info.Width, Font.Info.Height,
                                        GL.GL_LUMINANCE, GL.GL_UNSIGNED_BYTE, Font.Info.Image'Address);
       else
-         GL.TexImage (GL.GL_TEXTURE_2D, 0, GL.GL_INTENSITY4, Font.Info.Width, Font.Info.Height, 0,
+         GL.Tex_Image (GL.GL_TEXTURE_2D, 0, GL.GL_INTENSITY4, Font.Info.Width, Font.Info.Height, 0,
                       GL.GL_LUMINANCE, GL.GL_UNSIGNED_BYTE, Font.Info.Image'Address);
       end if;
 
@@ -374,7 +374,7 @@ package body Lumen.Font.Txf is
    -- Bind the font's texture to an OpenGL texture object
    procedure Bind_Font_Texture (Font : in Handle) is
    begin  -- Bind_Font_Texture
-      GL.BindTexture (GL.GL_TEXTURE_2D, Font.Info.Object);
+      GL.Bind_Texture (GL.GL_TEXTURE_2D, Font.Info.Object);
    end Bind_Font_Texture;
 
    ---------------------------------------------------------------------------
@@ -421,16 +421,16 @@ package body Lumen.Font.Txf is
       V : Txf_Vertex_Info := Get_Vertex_Info (Font, Character'Pos (Char));
 
    begin  -- Render
-      GL.glBegin (GL.GL_QUADS);
-      GL.TexCoord (V.T (1));
+      GL.Begin_Primitive (GL.GL_QUADS);
+      GL.Tex_Coord (V.T (1));
       GL.Vertex (V.V (1));
-      GL.TexCoord (V.T (2));
+      GL.Tex_Coord (V.T (2));
       GL.Vertex (V.V (2));
-      GL.TexCoord (V.T (3));
+      GL.Tex_Coord (V.T (3));
       GL.Vertex (V.V (3));
-      GL.TexCoord (V.T (4));
+      GL.Tex_Coord (V.T (4));
       GL.Vertex (V.V (4));
-      GL.glEnd;
+      GL.End_Primitive;
 
       GL.Translate (V.Advance, 0.0, 0.0);
    end Render;

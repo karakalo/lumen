@@ -37,17 +37,17 @@ begin  -- Colors
          use Lumen.GL;
       begin
          -- Red
-         ClearColor (1.0, 0.0, 0.0, 1.0);
+         Clear_Color (1.0, 0.0, 0.0, 1.0);
          Clear (GL_COLOR_BUFFER_BIT);
          Flush;
          delay 1.0;
           -- Green
-         ClearColor (0.0, 1.0, 0.0, 1.0);
+         Clear_Color (0.0, 1.0, 0.0, 1.0);
          Clear (GL_COLOR_BUFFER_BIT);
          Flush;
          delay 1.0;
           -- Blue
-         ClearColor (0.0, 0.0, 1.0, 1.0);
+         Clear_Color (0.0, 0.0, 1.0, 1.0);
          Clear (GL_COLOR_BUFFER_BIT);
          Flush;
          delay 1.0;

@@ -47,15 +47,15 @@ procedure Text1 is
 
       -- Set up the projection matrix based on the window's shape--wider than
       -- high, or higher than wide
-      GL.MatrixMode (GL.GL_PROJECTION);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_PROJECTION);
+      GL.Load_Identity;
 
       if W <= H then
          Aspect := GL.Double (H) / GL.Double (W);
-         GLU.Ortho2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
+         GLU.Ortho_2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
       else
          Aspect := GL.Double (W) / GL.Double (H);
-         GLU.Ortho2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
+         GLU.Ortho_2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
       end if;
    end Set_View;
 
@@ -76,12 +76,12 @@ procedure Text1 is
       procedure Draw_Msg (Msg : in String;
                           Y   : in Float) is
       begin  -- Draw_Msg
-         GL.PushMatrix;
+         GL.Push_Matrix;
          Font.Txf.Get_String_Metrics (Tx_Font, Msg, MW, MA, MD);
          GL.Translate (-(Scale * Float (MW)) / 2.0, Y, 0.0);  -- center each string
          GL.Scale (Scale, Scale, Scale);
          Font.Txf.Render (Tx_Font, Msg);
-         GL.PopMatrix;
+         GL.Pop_Matrix;
       end Draw_Msg;
 
       ------------------------------------------------------------------------
@@ -89,7 +89,7 @@ procedure Text1 is
    begin  -- Draw
 
       -- Draw the white square
-      GL.ClearColor (0.0, 0.0, 0.0, 0.0);
+      GL.Clear_Color (0.0, 0.0, 0.0, 0.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT);
 
       GL.Disable (GL.GL_TEXTURE_2D);
@@ -97,29 +97,29 @@ procedure Text1 is
       GL.Disable (GL.GL_ALPHA_TEST);
 
       GL.Color (Float (1.0), 1.0, 1.0);
-      GL.glBegin (GL.GL_POLYGON);
+      GL.Begin_Primitive (GL.GL_POLYGON);
       GL.Vertex (Float (-1.0), -1.0);
       GL.Vertex (Float (-1.0),  1.0);
       GL.Vertex (Float ( 1.0),  1.0);
       GL.Vertex (Float ( 1.0), -1.0);
-      GL.glEnd;
+      GL.End_Primitive;
 
       -- Draw the text messages
-      GL.PushMatrix;
+      GL.Push_Matrix;
       GL.Enable (GL.GL_TEXTURE_2D);
       GL.Enable (GL.GL_ALPHA_TEST);
-      GL.AlphaFunc (GL.GL_GEQUAL, 0.0625);
+      GL.Alpha_Func (GL.GL_GEQUAL, 0.0625);
       GL.Enable (GL.GL_BLEND);
-      GL.BlendFunc (GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+      GL.Blend_Func (GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
       GL.Enable (GL.GL_POLYGON_OFFSET_FILL);
-      GL.PolygonOffset (0.0, -3.0);
+      GL.Polygon_Offset (0.0, -3.0);
       GL.Color (Float (0.0), 0.0, 0.7);
       Font.Txf.Get_String_Metrics (Tx_Font, "OpenGL", MW, MA, MD);
       Scale := 1.5 / Float (MW);  -- draw all messages at the same size
       Draw_Msg ("OpenGL", 0.3);  -- these values were just hand-jobbed, but could be calculated
       Draw_Msg ("does",  -0.1);
       Draw_Msg ("text!", -0.5);
-      GL.PopMatrix;
+      GL.Pop_Matrix;
 
       -- Now show it
       Window.Swap (Win);

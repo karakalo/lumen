@@ -107,8 +107,8 @@ procedure Text2 is
 
       -- Set up the projection matrix based on the window's shape--wider than
       -- high, or higher than wide
-      GL.MatrixMode (GL.GL_PROJECTION);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_PROJECTION);
+      GL.Load_Identity;
 
       -- Set up a 3D viewing frustum, which is basically a truncated pyramid
       -- in which the scene takes place.  Roughly, the narrow end is your
@@ -142,7 +142,7 @@ procedure Text2 is
    begin  -- Draw
 
       -- Set a light grey background
-      GL.ClearColor (0.85, 0.85, 0.85, 0.0);
+      GL.Clear_Color (0.85, 0.85, 0.85, 0.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT);
 
       -- Draw a black rectangle, disabling texturing so we can do plain colors
@@ -150,46 +150,46 @@ procedure Text2 is
       GL.Disable (GL.GL_BLEND);
       GL.Disable (GL.GL_ALPHA_TEST);
       GL.Color (Float (0.0), 0.0, 0.0);
-      GL.glBegin (GL.GL_POLYGON);
+      GL.Begin_Primitive (GL.GL_POLYGON);
       begin
          GL.Vertex (-Img_Wide, -Img_High, 0.0);
          GL.Vertex (-Img_Wide,  Img_High, 0.0);
          GL.Vertex ( Img_Wide,  Img_High, 0.0);
          GL.Vertex ( Img_Wide, -Img_High, 0.0);
       end;
-      GL.glEnd;
+      GL.End_Primitive;
 
       -- Turn texturing back on and set up to draw the text messages
-      GL.PushMatrix;
+      GL.Push_Matrix;
       GL.Enable (GL.GL_TEXTURE_2D);
       GL.Enable (GL.GL_ALPHA_TEST);
-      GL.AlphaFunc (GL.GL_GEQUAL, 0.0625);
+      GL.Alpha_Func (GL.GL_GEQUAL, 0.0625);
       GL.Enable (GL.GL_BLEND);
-      GL.BlendFunc (GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+      GL.Blend_Func (GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
       GL.Enable (GL.GL_POLYGON_OFFSET_FILL);
-      GL.PolygonOffset (0.0, -3.0);
+      GL.Polygon_Offset (0.0, -3.0);
       GL.Color (Float (0.1), 0.8, 0.1);
 
       -- Draw the frame number, right-justified in upper half of rectangle
-      GL.PushMatrix;
+      GL.Push_Matrix;
       Font.Txf.Get_String_Metrics (Tx_Font, FNum, MW, MA, MD);
       Scale := Img_High / (Float (MA) * 3.0);
       GL.Translate (Img_Wide - (Pad + Float (MW) * Scale), Float (MA) * Scale, 0.0);
       GL.Scale (Scale, Scale, Scale);
       Font.Txf.Render (Tx_Font, FNum);
-      GL.PopMatrix;
+      GL.Pop_Matrix;
 
       -- Draw the frame number label, left-justified in upper half of
       -- rectangle, and one-third the size of the number itself
-      GL.PushMatrix;
+      GL.Push_Matrix;
       Font.Txf.Get_String_Metrics (Tx_Font, "Frame", MW, MA, MD);
       GL.Translate (-(Img_Wide - Pad), Float (MA) * Scale, 0.0);
       GL.Scale (Scale / 3.0, Scale / 3.0, Scale / 3.0);
       Font.Txf.Render (Tx_Font, "Frame");
-      GL.PopMatrix;
+      GL.Pop_Matrix;
 
       -- Draw the frame rate, right-justified in lower half of rectangle
-      GL.PushMatrix;
+      GL.Push_Matrix;
       -- Guard against out-of-range values, and display all question marks if so
       begin
          Ada.Float_Text_IO.Put (FRate, Events.Animate.FPS (Win), Aft => 3, Exp => 0);
@@ -202,23 +202,23 @@ procedure Text2 is
       GL.Translate (Img_Wide - (Pad + Float (MW) * Scale), -Float (MA) * Scale, 0.0);
       GL.Scale (Scale, Scale, Scale);
       Font.Txf.Render (Tx_Font, FRate);
-      GL.PopMatrix;
+      GL.Pop_Matrix;
 
       -- Draw the frame rate label, left-justified in lower half of
       -- rectangle, and one-third the size of the number itself
-      GL.PushMatrix;
+      GL.Push_Matrix;
       Font.Txf.Get_String_Metrics (Tx_Font, "FPS", MW, MA, MD);
       GL.Translate (-(Img_Wide - Pad), -Float (MA) * Scale, 0.0);
       GL.Scale (Scale / 3.0, Scale / 3.0, Scale / 3.0);
       Font.Txf.Render (Tx_Font, "FPS");
-      GL.PopMatrix;
+      GL.Pop_Matrix;
 
-      GL.PopMatrix;
+      GL.Pop_Matrix;
 
       -- Rotate the object around the Y and Z axes by the current amount, to
       -- give a "tumbling" effect.
-      GL.MatrixMode (GL.GL_MODELVIEW);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_MODELVIEW);
+      GL.Load_Identity;
       GL.Translate (GL.Double (0.0), 0.0, -4.0);
       GL.Rotate (GL.Double (Rotation), 0.0, 1.0, 0.0);
       GL.Rotate (GL.Double (Rotation), 0.0, 0.0, 1.0);

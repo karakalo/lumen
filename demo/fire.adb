@@ -165,13 +165,13 @@ procedure Fire is
       Alpha : Float;
    begin
       for I in 1 .. Particle_Count loop
-         glBegin (GL_POINTS);
+         Begin_Primitive (GL_POINTS);
          Alpha := Float ((Particle_Lifetime
 			    - Particles (I).Age) / Particle_Lifetime);
          Color (Particle_Red, Particle_Green, Particle_Blue,
 	 	0.25 * Alpha);
          Vertex (Particles (I).R.X, Particles (I).R.Y);
-         glEnd;
+         End_Primitive;
       end loop;
    end Render_Particles;
 
@@ -222,7 +222,7 @@ begin
       --
       --  We need large point size for the point sprites.
       --
-      GL.PointSize (32.0);
+      GL.Point_Size (32.0);
       
       ---------------------------------------------------------------------
       --
@@ -253,25 +253,25 @@ begin
       --  additive blending for the effect to work.
       --
       GL.Enable (GL.GL_BLEND);
-      GL.BlendFunc (GL.GL_SRC_ALPHA, GL.GL_ONE);
+      GL.Blend_Func (GL.GL_SRC_ALPHA, GL.GL_ONE);
       
       ---------------------------------------------------------------------
       --
       --  This creates the point sprite texture.
       --
       GL.Enable (GL.GL_TEXTURE_2D);
-      GL.GenTextures (1, Texture'Address);
-      GL.BindTexture (GL.GL_TEXTURE_2D, Texture);
+      GL.Gen_Textures (1, Texture'Address);
+      GL.Bind_Texture (GL.GL_TEXTURE_2D, Texture);
       
-      GL.TexParameter (GL.GL_TEXTURE_2D,
+      GL.Tex_Parameter (GL.GL_TEXTURE_2D,
 		       GL.GL_TEXTURE_MAG_FILTER,
 		       GL.GL_NEAREST);
       
-      GL.TexParameter (GL.GL_TEXTURE_2D,
+      GL.Tex_Parameter (GL.GL_TEXTURE_2D,
 		       GL.GL_TEXTURE_MIN_FILTER,
 		       GL.GL_NEAREST);
       
-      GL.TexImage (GL.GL_TEXTURE_2D,
+      GL.Tex_Image (GL.GL_TEXTURE_2D,
 		   0,
 		   GL.GL_RGBA,
 		   32, 32,
@@ -283,7 +283,7 @@ begin
       --
       --  This enables the actual 
       GL.Enable (GL.GL_POINT_SPRITE);
-      GL.TexEnv (GL.GL_POINT_SPRITE, GL.GL_COORD_REPLACE, 1);
+      GL.Tex_Env (GL.GL_POINT_SPRITE, GL.GL_COORD_REPLACE, 1);
    end;
 
    ------------------------------------------------------------------------
@@ -354,7 +354,7 @@ Outer:
       declare
          use Lumen;
       begin
-         GL.ClearColor (0.0, 0.0, 0.0, 1.0);
+         GL.Clear_Color (0.0, 0.0, 0.0, 1.0);
          GL.Clear (GL.GL_COLOR_BUFFER_BIT);
          Render_Particles;
          GL.Flush;

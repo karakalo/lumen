@@ -107,7 +107,7 @@ procedure Blending is
    procedure Set_Blend_Function(Source, Dest : in Factors_Range) is
    begin  -- Set_Blend_Function
       
-      Lumen.GL.BlendFunc(Factors(Source), Factors(Dest));
+      Lumen.GL.Blend_Func(Factors(Source), Factors(Dest));
       
    end Set_Blend_Function;
 
@@ -125,7 +125,7 @@ procedure Blending is
    procedure Set_Equation_Function(Equation : in Equations_Range) is
    begin  -- Set_Equation_Function
       
-      Lumen.GL.BlendEquation(Equations(Equation));
+      Lumen.GL.Blend_Equation(Equations(Equation));
       
    end Set_Equation_Function;
 
@@ -137,24 +137,24 @@ procedure Blending is
    begin  -- Create_Texture
 
       -- Allocate a texture name
-      GL.GenTextures (1, Result'Address);
+      GL.Gen_Textures (1, Result'Address);
 
       -- Bind texture operations to the newly-created texture name
-      Gl.BindTexture (GL.GL_TEXTURE_2D, Result);
+      Gl.Bind_Texture (GL.GL_TEXTURE_2D, Result);
 
       -- Select modulate to mix texture with color for shading
-      GL.TexEnv (GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+      GL.Tex_Env (GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
 
       -- Wrap textures at both edges
-      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
-      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+      GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+      GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
 
       -- How the texture behaves when minified and magnified
-      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);--BILINEAR);
-      GL.TexParameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);--BILINEAR);
+      GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);--BILINEAR);
+      GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);--BILINEAR);
 
       -- Build our texture from the image we loaded earlier
-      GL.TexImage (GL.GL_TEXTURE_2D, 0, GL.GL_RGBA,
+      GL.Tex_Image (GL.GL_TEXTURE_2D, 0, GL.GL_RGBA,
 		   GL.SizeI (Bitmap.Width), GL.SizeI (Bitmap.Height), 0,
                    GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, Bitmap.Values.all'Address);
       
@@ -176,15 +176,15 @@ procedure Blending is
 
       -- Set up the projection matrix based on the window's shape--wider than
       -- high, or higher than wide
-      GL.MatrixMode (GL.GL_PROJECTION);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_PROJECTION);
+      GL.Load_Identity;
 
       if W <= H then
          Aspect := GL.Double (H) / GL.Double (W);
-         GLU.Ortho2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
+         GLU.Ortho_2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
       else
          Aspect := GL.Double (W) / GL.Double (H);
-         GLU.Ortho2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
+         GLU.Ortho_2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
       end if;
    end Set_View;
 
@@ -199,53 +199,53 @@ procedure Blending is
 
    begin  -- Draw
       
-      GL.ClearColor (0.0, 0.0, 0.0, 0.0);
+      GL.Clear_Color (0.0, 0.0, 0.0, 0.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT);
        
-      GL.BlendFunc(GL.GL_ONE, GL.GL_ZERO);
+      GL.Blend_Func(GL.GL_ONE, GL.GL_ZERO);
       
-      GL.BindTexture(GL.GL_TEXTURE_2D, Tx1);
+      GL.Bind_Texture(GL.GL_TEXTURE_2D, Tx1);
 
       -- GL.Color (Float (1.0), 1.0, 1.0);
 
-      GL.glBegin (GL.GL_POLYGON);
+      GL.Begin_Primitive (GL.GL_POLYGON);
       begin
-	 GL.TexCoord (Float (0.0), 0.0);
+	 GL.Tex_Coord (Float (0.0), 0.0);
          GL.Vertex (Float (-1.0), -1.0);
 	 
-	 GL.TexCoord (Float (0.0), 1.0);
+	 GL.Tex_Coord (Float (0.0), 1.0);
          GL.Vertex (Float (-1.0),  1.0);
 	 
-	 GL.TexCoord (Float (1.0), 1.0);
+	 GL.Tex_Coord (Float (1.0), 1.0);
          GL.Vertex (Float ( 1.0),  1.0);
 	 
-	 GL.TexCoord (Float (1.0), 0.0);
+	 GL.Tex_Coord (Float (1.0), 0.0);
          GL.Vertex (Float ( 1.0), -1.0);
       end;
-      GL.glEnd;
+      GL.End_Primitive;
       
       Set_Equation_Function(Equation);
       Set_Blend_Function(Source_Factor, Dest_Factor);
       
-      GL.BindTexture(GL.GL_TEXTURE_2D, Tx2);
+      GL.Bind_Texture(GL.GL_TEXTURE_2D, Tx2);
 
       -- GL.Color (Float (1.0), 1.0, 1.0);
 
-      GL.glBegin (GL.GL_POLYGON);
+      GL.Begin_Primitive (GL.GL_POLYGON);
       begin
-	 GL.TexCoord (Float (0.0), 0.0);
+	 GL.Tex_Coord (Float (0.0), 0.0);
          GL.Vertex (Float (-0.5), -0.5);
 	 
-	 GL.TexCoord (Float (0.0), 1.0);
+	 GL.Tex_Coord (Float (0.0), 1.0);
          GL.Vertex (Float (-0.5),  1.5);
 	 
-	 GL.TexCoord (Float (1.0), 1.0);
+	 GL.Tex_Coord (Float (1.0), 1.0);
          GL.Vertex (Float ( 1.5),  1.5);
 	 
-	 GL.TexCoord (Float (1.0), 0.0);
+	 GL.Tex_Coord (Float (1.0), 0.0);
          GL.Vertex (Float ( 1.5), -0.5);
       end;
-      GL.glEnd;
+      GL.End_Primitive;
       GL.Flush;
 
       -- Now show it
@@ -348,7 +348,7 @@ begin  -- Blending
    
    Lumen.GL.Enable(Lumen.GL.GL_TEXTURE_2D);
    Lumen.GL.Enable(Lumen.GL.GL_BLEND);
-   Lumen.GL.BlendColor(0.0, 1.0, 0.0, 1.0);  -- Example green for blending with.
+   Lumen.GL.Blend_Color(0.0, 1.0, 0.0, 1.0);  -- Example green for blending with.
    
    -- Enter the event loop
    Lumen.Events.Receive_Events (Win, Handler'Unrestricted_Access);

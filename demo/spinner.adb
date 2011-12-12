@@ -44,15 +44,15 @@ procedure Spinner is
 
       -- Set up the projection matrix based on the window's shape--wider than
       -- high, or higher than wide
-      GL.MatrixMode (GL.GL_PROJECTION);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_PROJECTION);
+      GL.Load_Identity;
 
       if W <= H then
          Aspect := GL.Double (H) / GL.Double (W);
-         GLU.Ortho2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
+         GLU.Ortho_2D (-2.0, 2.0, -2.0 * Aspect, 2.0 * Aspect);
       else
          Aspect := GL.Double (W) / GL.Double (H);
-         GLU.Ortho2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
+         GLU.Ortho_2D (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0);
       end if;
    end Set_View;
 
@@ -66,11 +66,11 @@ procedure Spinner is
    begin  -- Draw
 
       -- Set a black background
-      gl.ClearColor (0.0, 0.0, 0.0, 0.0);
+      gl.Clear_Color (0.0, 0.0, 0.0, 0.0);
       gl.Clear (GL.GL_COLOR_BUFFER_BIT);
 
       -- Draw a smooth-blended (the default mode) square going from red to yellow
-      GL.glBegin (GL.GL_POLYGON);
+      GL.Begin_Primitive (GL.GL_POLYGON);
       begin
          GL.Color (Float (1.0), 0.0, 0.0);  -- red
          GL.Vertex (Float (-1.0), -1.0);
@@ -81,11 +81,11 @@ procedure Spinner is
          GL.Color (Float (1.0), 1.0, 0.0);  -- yellow
          GL.Vertex (Float ( 1.0), -1.0);
       end;
-      GL.glEnd;
+      GL.End_Primitive;
 
       -- Rotate the square around the Z axis by the current amount
-      GL.MatrixMode (GL.GL_MODELVIEW);
-      GL.LoadIdentity;
+      GL.Matrix_Mode (GL.GL_MODELVIEW);
+      GL.Load_Identity;
       GL.Rotate (GL.Double (Rotation), 0.0, 0.0, -1.0);
 
       GL.Flush;
