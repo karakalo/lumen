@@ -856,11 +856,14 @@ package Lumen.GL is
    GL_COORD_REPLACE                            : constant Enum := 16#8862#;
    GL_MAX_ARRAY_TEXTURE_LAYERS_EXT             : constant Enum := 16#88FF#;
    GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER_EXT : constant Enum := 16#8CD4#;
-   
+
    GL_FRAMEBUFFER                              : constant Enum := 16#8D40#;
    GL_READ_FRAMEBUFFER                         : constant Enum := 16#8CA8#;
    GL_WRITE_FRAMEBUFFER                        : constant Enum := 16#8CA9#;
    GL_RENDERBUFFER                             : constant Enum := 16#8D41#;
+
+   GL_ARRAY_BUFFER                             : constant Enum := 16#8892#;
+   GL_STATIC_DRAW                              : constant Enum := 16#88E4#;
 
    -- Bitfield constants
    GL_CURRENT_BIT                              : constant Bitfield := 16#00001#;
@@ -1004,14 +1007,14 @@ package Lumen.GL is
    -- Blending
    procedure Blend_Func (S_Factor : in Enum;
                         D_Factor : in Enum);
-   
+
    procedure Blend_Equation (Mode : in Enum);  -- GL v1.2
 
    procedure Blend_Color (Red   : in ClampF;
                          Green : in ClampF;
                          Blue  : in ClampF;
                          Alpha : in ClampF);  -- GL v1.2
-   
+
    -- Drawing parameters
    procedure Point_Size (Size : in Float);
 
@@ -1151,7 +1154,7 @@ package Lumen.GL is
                        Params : in Float_Params);
 
    procedure Front_Face (Mode : in Enum);
-   
+
    procedure Cull_Face (Mode : in Enum);
 
    procedure Shade_Model (Mode : in Enum);
@@ -1172,145 +1175,145 @@ package Lumen.GL is
 
    -- Texturing
    procedure Active_Texture (Texture : in Enum); -- v1.3
-   
+
    procedure Bind_Texture (Target  : in Enum;
                           Texture : in UInt);
 
    procedure Gen_Textures (N        : in SizeI;
                           Textures : in Pointer);
-   
+
    -- MultiTexCoord v1.3
    -- 1D
    procedure Multi_Tex_Coord (Target : in Enum;
-			    S      : in Double);
+                            S      : in Double);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Doubles_1);
+                            V      : in Doubles_1);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    S      : in Float);
+                            S      : in Float);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Floats_1);
+                            V      : in Floats_1);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    S      : in Int);
+                            S      : in Int);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Ints_1);
+                            V      : in Ints_1);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    S      : in Short);
+                            S      : in Short);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Shorts_1);
+                            V      : in Shorts_1);
    pragma Inline(Multi_Tex_Coord);
-   
+
    -- 2D
    procedure Multi_Tex_Coord (Target : in Enum;
-			    S, T   : in Double);
-   pragma Inline(Multi_Tex_Coord);
-   
-   procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Doubles_2);
-   pragma Inline(Multi_Tex_Coord);
-   
-   procedure Multi_Tex_Coord (Target : in Enum;
-			    S, T   : in Float);
+                            S, T   : in Double);
    pragma Inline(Multi_Tex_Coord);
 
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Floats_2);
+                            V      : in Doubles_2);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    S, T   : in Int);
+                            S, T   : in Float);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Ints_2);
+                            V      : in Floats_2);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    S, T   : in Short);
+                            S, T   : in Int);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Shorts_2);
+                            V      : in Ints_2);
    pragma Inline(Multi_Tex_Coord);
-   
+
+   procedure Multi_Tex_Coord (Target : in Enum;
+                            S, T   : in Short);
+   pragma Inline(Multi_Tex_Coord);
+
+   procedure Multi_Tex_Coord (Target : in Enum;
+                            V      : in Shorts_2);
+   pragma Inline(Multi_Tex_Coord);
+
    -- 3D
    procedure Multi_Tex_Coord (Target  : in Enum;
-			    S, T, R : in Double);
-   pragma Inline(Multi_Tex_Coord);
-   
-   procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Doubles_3);
-   pragma Inline(Multi_Tex_Coord);
-   
-   procedure Multi_Tex_Coord (Target  : in Enum;
-			    S, T, R : in Float);
+                            S, T, R : in Double);
    pragma Inline(Multi_Tex_Coord);
 
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Floats_3);
+                            V      : in Doubles_3);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target  : in Enum;
-			    S, T, R : in Int);
+                            S, T, R : in Float);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Ints_3);
+                            V      : in Floats_3);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target  : in Enum;
-			    S, T, R : in Short);
+                            S, T, R : in Int);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Shorts_3);
-   
+                            V      : in Ints_3);
+   pragma Inline(Multi_Tex_Coord);
+
+   procedure Multi_Tex_Coord (Target  : in Enum;
+                            S, T, R : in Short);
+   pragma Inline(Multi_Tex_Coord);
+
+   procedure Multi_Tex_Coord (Target : in Enum;
+                            V      : in Shorts_3);
+
    -- 4D
    procedure Multi_Tex_Coord (Target     : in Enum;
-			    S, T, R, Q : in Double);
-   pragma Inline(Multi_Tex_Coord);
-   
-   procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Doubles_4);
-   pragma Inline(Multi_Tex_Coord);
-   
-   procedure Multi_Tex_Coord (Target     : in Enum;
-			    S, T, R, Q : in Float);
+                            S, T, R, Q : in Double);
    pragma Inline(Multi_Tex_Coord);
 
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Floats_4);
+                            V      : in Doubles_4);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target     : in Enum;
-			    S, T, R, Q : in Int);
+                            S, T, R, Q : in Float);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Ints_4);
+                            V      : in Floats_4);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target     : in Enum;
-			    S, T, R, Q : in Short);
+                            S, T, R, Q : in Int);
    pragma Inline(Multi_Tex_Coord);
-   
+
    procedure Multi_Tex_Coord (Target : in Enum;
-			    V      : in Shorts_4);
+                            V      : in Ints_4);
    pragma Inline(Multi_Tex_Coord);
-   
+
+   procedure Multi_Tex_Coord (Target     : in Enum;
+                            S, T, R, Q : in Short);
+   pragma Inline(Multi_Tex_Coord);
+
+   procedure Multi_Tex_Coord (Target : in Enum;
+                            V      : in Shorts_4);
+   pragma Inline(Multi_Tex_Coord);
+
    procedure Tex_Env (Coord : in Enum;
                      PName : in Enum;
                      Param : in Enum);
@@ -1500,14 +1503,42 @@ package Lumen.GL is
    procedure Vertex (V : in Doubles_3);
    procedure Vertex (V : in Doubles_4);
    pragma Inline (Vertex);
-   
+
    -- Buffer objects v2.1???
    procedure Gen_Framebuffers (N    : in SizeI;
-			      FBOs : in Pointer);
-   
+                              FBOs : in Pointer);
+
    procedure Bind_Framebuffer (Target : in Enum;
-			      FBO    : in UInt);
-   
+                               FBO    : in UInt);
+
+   -- Vertex buffer stuff:
+   procedure Gen_Buffers (N     : in SizeI;
+                          VBO   : in Pointer);
+
+   procedure Bind_Buffer (Target        : in Enum;
+                          VBO           : in UInt);
+
+   procedure Buffer_Data (Target : in Enum;
+                          Size : in SizeI;
+                          Data : in Pointer;
+                          Usage : in Enum);
+
+   procedure Enable_Client_State (Target : in Enum);
+
+   procedure Vertex_Pointer (Size : in SizeI;
+                             Element_Type : in Enum;
+                             Stride : in SizeI;
+                             Data_Pointer : Pointer);
+
+   procedure Vertex_Pointer (Size : in SizeI;
+                             Element_Type : in Enum;
+                             Stride : in SizeI;
+                             Offset : in SizeI);
+
+   procedure Draw_Arrays (Mode : in Enum;
+                          First : in Int;
+                          Count : in SizeI);
+
    ---------------------------------------------------------------------------
 
 private
@@ -1516,10 +1547,12 @@ private
    pragma Import (C, End_Primitive, "glEnd");
    pragma Import (C, Alpha_Func, "glAlphaFunc");
    pragma Import (C, Active_Texture, "glActiveTexture");
+   pragma Import (C, Bind_Buffer, "glBindBuffer");
    pragma Import (C, Bind_Texture, "glBindTexture");
    pragma Import (C, Blend_Func, "glBlendFunc");
    pragma Import (C, Blend_Equation, "glBlendEquation");
    pragma Import (C, Blend_Color, "glBlendColor");
+   pragma Import (C, Buffer_Data, "glBufferData");
    pragma Import (C, Clear, "glClear");
    pragma Import (C, Clear_Accum, "glClearAccum");
    pragma Import (C, Clear_Color, "glClearColor");
@@ -1527,14 +1560,17 @@ private
    pragma Import (C, Clear_Index, "glClearIndex");
    pragma Import (C, Depth_Func, "glDepthFunc");
    pragma Import (C, Disable, "glDisable");
+   pragma Import (C, Draw_Arrays, "glDrawArrays");
    pragma Import (C, Edge_Flag, "glEdgeFlag");
    pragma Import (C, Edge_Flagv, "glEdgeFlagv");
    pragma Import (C, Enable, "glEnable");
+   pragma Import (C, Enable_Client_State, "glEnableClientState");
    pragma Import (C, Finish, "glFinish");
    pragma Import (C, Flush, "glFlush");
    pragma Import (C, Front_Face, "glFrontFace");
    pragma Import (C, Cull_Face, "glCullFace");
    pragma Import (C, Frustum, "glFrustum");
+   pragma Import (C, Gen_Buffers, "glGenBuffers");
    pragma Import (C, Gen_Textures, "glGenTextures");
    pragma Import (C, Get_Polygon_Stipple, "glGetPolygonStipple");
    pragma Import (C, Hint, "glHint");
@@ -1556,7 +1592,7 @@ private
    pragma Import (C, Tex_Env, "glTexEnvi");
    pragma Import (C, Tex_Gen, "glTexGeni");
    pragma Import (C, Viewport, "glViewport");
-   
+
    pragma Import (C, Gen_Framebuffers, "glGenFramebuffers");
    pragma Import (C, Bind_Framebuffer, "glBindFramebuffer");
 
