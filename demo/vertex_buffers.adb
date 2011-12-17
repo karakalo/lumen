@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------
 --
---  Shows how to use simple vertex buffers with the thin binding
+--  Shows a very simple vertex buffer using the Lumen thin binding
 --
 ---------------------------------------------------------------------------
 
@@ -244,8 +244,7 @@ Outer:
 
       ---------------------------------------------------------------------
       --
-      --  This renders all particles. Depth testing is disabled so we
-      --  don't need to clear the depth buffer.
+      --  This calls the main rendering function
       --
       declare
          use Lumen;
