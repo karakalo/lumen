@@ -865,6 +865,9 @@ package Lumen.GL is
    GL_ARRAY_BUFFER                             : constant Enum := 16#8892#;
    GL_STATIC_DRAW                              : constant Enum := 16#88E4#;
 
+   GL_VERTEX_SHADER                            : constant Enum := 16#8B31#;
+   GL_FRAGMENT_SHADER                          : constant Enum := 16#8B30#;
+
    -- Bitfield constants
    GL_CURRENT_BIT                              : constant Bitfield := 16#00001#;
    GL_POINT_BIT                                : constant Bitfield := 16#00002#;
@@ -895,6 +898,8 @@ package Lumen.GL is
    procedure Begin_Primitive (Mode : in Enum);
 
    procedure End_Primitive;
+
+   function Get_Error return Enum;
 
    -- Pipeline control
    procedure Finish;
@@ -1539,6 +1544,18 @@ package Lumen.GL is
                           First : in Int;
                           Count : in SizeI);
 
+   function Create_Shader (Shader_Type : in Enum) return Uint;
+   function Create_Program return Uint;
+   procedure Shader_Source (Shader : in Uint;
+                            Count : in SizeI;
+                            Source_String : in System.Address;
+                            Length : in System.Address);
+   procedure Compile_Shader (Shader : in Uint);
+   procedure Attach_Shader (Program : in Uint;
+                            Shader : in Uint);
+   procedure Link_Program (Program : in Uint);
+   procedure Use_Program (Program : in Uint);
+
    ---------------------------------------------------------------------------
 
 private
@@ -1547,6 +1564,7 @@ private
    pragma Import (C, End_Primitive, "glEnd");
    pragma Import (C, Alpha_Func, "glAlphaFunc");
    pragma Import (C, Active_Texture, "glActiveTexture");
+   pragma Import (C, Attach_Shader, "glAttachShader");
    pragma Import (C, Bind_Buffer, "glBindBuffer");
    pragma Import (C, Bind_Texture, "glBindTexture");
    pragma Import (C, Blend_Func, "glBlendFunc");
@@ -1558,6 +1576,9 @@ private
    pragma Import (C, Clear_Color, "glClearColor");
    pragma Import (C, Clear_Depth, "glClearDepth");
    pragma Import (C, Clear_Index, "glClearIndex");
+   pragma Import (C, Compile_Shader, "glCompileShader");
+   pragma Import (C, Create_Program, "glCreateProgram");
+   pragma Import (C, Create_Shader, "glCreateShader");
    pragma Import (C, Depth_Func, "glDepthFunc");
    pragma Import (C, Disable, "glDisable");
    pragma Import (C, Draw_Arrays, "glDrawArrays");
@@ -1572,11 +1593,13 @@ private
    pragma Import (C, Frustum, "glFrustum");
    pragma Import (C, Gen_Buffers, "glGenBuffers");
    pragma Import (C, Gen_Textures, "glGenTextures");
+   pragma Import (C, Get_Error, "glGetError");
    pragma Import (C, Get_Polygon_Stipple, "glGetPolygonStipple");
    pragma Import (C, Hint, "glHint");
    pragma Import (C, Is_Enabled, "glIsEnabled");
    pragma Import (C, Line_Stipple, "glLineStipple");
    pragma Import (C, Line_Width, "glLineWidth");
+   pragma Import (C, Link_Program, "glLinkProgram");
    pragma Import (C, Load_Identity, "glLoadIdentity");
    pragma Import (C, Matrix_Mode, "glMatrixMode");
    pragma Import (C, Ortho, "glOrtho");
@@ -1588,9 +1611,11 @@ private
    pragma Import (C, Push_Matrix, "glPushMatrix");
    pragma Import (C, Scissor, "glScissor");
    pragma Import (C, Shade_Model, "glShadeModel");
+   pragma Import (C, Shader_Source, "glShaderSource");
    pragma Import (C, Stencil_Func, "glStencilFunc");
    pragma Import (C, Tex_Env, "glTexEnvi");
    pragma Import (C, Tex_Gen, "glTexGeni");
+   pragma Import (C, Use_Program, "glUseProgram");
    pragma Import (C, Viewport, "glViewport");
 
    pragma Import (C, Gen_Framebuffers, "glGenFramebuffers");
