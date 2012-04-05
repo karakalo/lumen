@@ -29,12 +29,12 @@ it with another compiler, though, so it's not a priority.)
 A preliminary form of the Lumen library, and some demos for it, can be fetched
 using this [git][] command:
 
-        git clone git://ftp.niestu.com/lumen
+        git clone https://github.com/karakalo/lumen.git
 
-The repository is now [replicated on github][github], so as an
+The repository is also replicated for historical reasons to NiEstu, so as an
 alternative to the above you can use this:
 
-        git clone https://github.com/karakalo/lumen.git
+        git clone git://ftp.niestu.com/lumen
 
 That will create a subdirectory named `lumen` containing the library,
 its demos, and its docs.
@@ -128,7 +128,6 @@ That's all for now, but more is coming soon!
 
 [demos]:   narrative-demos.html
 [git]:     http://git-scm.com/
-[github]:  https://github.com/karakalo/lumen
 [gnat]:    http://libre.adacore.com/libre/
 [holm]:    http://adaopengl.sourceforge.net/
 [mesa]:    http://www.mesa3d.org/
