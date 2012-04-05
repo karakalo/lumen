@@ -37,6 +37,22 @@ though we haven't tested it yet, presumably you can also use
 I'm going to start adding notable events here, so you can check quickly
 whether there's something new since you last visited the site.
 
+* **Thursday, 4 April 2012**: Work resumes on Lumen with the addition of a
+    couple of [simple old apps][stages] I had lying around, that I recently
+    ported to use Lumen rather than GtkAda.  They're not much, but may be
+    useful to somebody sometime.
+
+* **Wednesday, 14 December 2011**: Added a [ramble about widgets][ramble]
+    intended to spark discussion about the design of Lumen widgets.  It was
+    aimed at anyone who cares how widgets are done in Lumen, so if you have
+    ideas about that, please do let us know.  The #Ada IRC channel on Freenode
+    is the place such discussions happen, but we could use email if you
+    prefer.
+
+* **Tuesday, 13 December 2011**: David updated the streamlined bindings
+    (`Lumen.GL`) to adhere to the [Ada 95 Quality and Style Guide][aqsg], a
+    change that seemed appropriate.
+
 * **Tuesday, 6 December 2011**: The documentation on this site was updated, to
     report the latest news and to include narratives for Luke's
     [blending demo][nblend] and David's [fire demo][nfire].
@@ -71,6 +87,7 @@ whether there's something new since you last visited the site.
 
 * Older news items are now on a [separate page][oldnews].
 
+[aqsg]:      http://www.adaic.com/docs/95style/html/cover.html
 [freenode]:  http://freenode.net/
 [github]:    https://github.com/karakalo/lumen
 [install]:   install.html
@@ -81,4 +98,6 @@ whether there's something new since you last visited the site.
 [nfire]:     narrative-fire.html
 [nlumen]:    narrative-lumen.html
 [rat]:       rationale.html
+[ramble]:    widgets-1.html
 [oldnews]:   old-news.html
+[stages]:    narrative-stages.html

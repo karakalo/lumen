@@ -31,6 +31,10 @@ there ever are any, may not be familiar with some of the terms.
 
 * **[`fire`][fire]**: Neat "fire" effect using a particle system and blending.
 
+* **[`simple_2d`][stages]** and **[`simple_3d`][stages]**: Simple "stage"
+    demos, as in theatrical stage, skeleton programs you can easily add OpenGL
+    drawing code to when you want to test something quickly.
+
 And these are the [NeHe demos][nehe] that we currently have:
 
 * **[`lesson01`][nehedemo]**: Simplest possible app, just opens a
@@ -65,6 +69,7 @@ And these are the [NeHe demos][nehe] that we currently have:
 [nehedemo]:   narrative-nehe.html
 [sgi_simple]: narrative-sgi_simple.html
 [spinner]:    narrative-spinner.html
+[stages]:     narrative-stages.html
 [text1]:      narrative-text1.html
 [text2]:      narrative-text2.html
 [texture]:    narrative-texture.html

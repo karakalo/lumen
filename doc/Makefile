@@ -10,7 +10,8 @@ PAGES = \
 	install \
 	old-intro \
 	old-news \
-	rationale
+	rationale \
+	widgets-1
 
 NARRS = \
 	narrative-blending \
@@ -23,6 +24,7 @@ NARRS = \
 	narrative-lumen-misc \
 	narrative-sgi_simple \
 	narrative-spinner \
+	narrative-stages \
 	narrative-texture \
 	narrative-text1 \
 	narrative-text2 \
