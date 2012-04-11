@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 --  Filename       : glsc.ads
---  Date           : 2012-04-08
---  File Revision  : 5
+--  Date           : 2012-04-11
+--  File Revision  : 6
 --  Copyright      : Copyright (c) 2011, Eutopia Labs Ltd,
 --                 : All rights reserved.
 --  Purpose        : Raw Ada Binding for Graphics Library API
@@ -13,8 +13,9 @@
 -------------------------------------------------------------------------------
 --  Certifications : NONE
 --  Compliances    : NONE
---  Guidelines     : ISO/IEC TR 15942:2000, Ada 2005 LRM,
+--  Guidance       : ISO/IEC TR 15942:2000, Ada 2005 LRM,
 --                 : Ada Quality and Style Guide [AQS]
+--  Status         : Work In Progress
 -------------------------------------------------------------------------------
 --
 --  Permission to use, copy, modify, and/or distribute this software for any
@@ -51,6 +52,7 @@ package GLSC is
 
    pragma Pure; -- No state at runtime, so it can be consistently replicated in
                 -- more than one partition.
+
 
    ----------------------------------------------------------------------------
    -- External GL Library Constants -------------------------------------------
@@ -309,7 +311,7 @@ package GLSC is
    GL_POSITION : constant := 16#1203#;
 
    -- ListMode
-   GL_COMPILE : constant := 16#1300#;
+   GL_COMPILE                : constant := 16#1300#;
    -- ListMode
    -- GL_COMPILE_AND_EXECUTE : constant := 16#1301#;
 
@@ -358,9 +360,9 @@ package GLSC is
    -- GL_UNSIGNED_BYTE : constant := 16#1401#;
 
    -- ShadingModel
-   GL_COLOR : constant := 16#1800#;
+   GL_COLOR  : constant := 16#1800#;
 
-   GL_FLAT : constant := 16#1D00#;
+   GL_FLAT   : constant := 16#1D00#;
    GL_SMOOTH : constant := 16#1D01#;
 
    -- StencilFunction
@@ -572,123 +574,117 @@ package GLSC is
    -- External Library API procedures -----------------------------------------
    ----------------------------------------------------------------------------
 
-   procedure glActiveTexture (texture : GLenum);
-   procedure glAlphaFunc (func : GLenum; ref : GLclampf);
-   procedure glBegin (mode : GLenum);
-   procedure glBindTexture (target : GLenum; texture : GLuint);
+   procedure glActiveTexture ( Texture : in GLenum );
 
-   procedure glBitmap
-     (width : GLsizei;
-      height : GLsizei;
-      xorig : GLfloat;
-      yorig : GLfloat;
-      xmove : GLfloat;
-      ymove : GLfloat;
-      bitmap : access GLubyte);
+   procedure glAlphaFunc (  Func : in GLenum;
+                            Ref  : in GLclampf );
 
-   procedure glBlendFunc (sfactor : GLenum; dfactor : GLenum);
+   procedure glBegin ( Mode : in GLenum );
 
-   procedure glCallLists
-     (n : GLsizei;
-      c_type : GLenum;
-      lists : System.Address);
+   procedure glBindTexture (  Target  : in GLenum;
+                              Texture : in GLuint );
 
-   procedure glClear (mask : GLbitfield);
+   procedure glBitmap ( Width  : in GLsizei;
+                        Height : in GLsizei;
+                        Xorig  : in GLfloat;
+                        Yorig  : in GLfloat;
+                        Xmove  : in GLfloat;
+                        Ymove  : in GLfloat;
+                        Bitmap : access GLubyte );
 
-   procedure glClearColor
-     (red : GLclampf;
-      green : GLclampf;
-      blue : GLclampf;
-      alpha : GLclampf);
+   procedure glBlendFunc ( Sfactor : in GLenum;
+                           Dfactor : in GLenum );
 
-   procedure glClearDepthf (depth : GLclampf);
+   procedure glCallLists ( N      : in GLsizei;
+                           C_Type : in GLenum;
+                           Lists  : in System.Address );
 
-   procedure glClearStencil (s : GLint);
+   procedure glClear ( Mask : in GLbitfield );
 
-   procedure glClientActiveTexture (texture : GLenum);
+   procedure glClearColor ( Red   : in GLclampf;
+                            Green : in GLclampf;
+                            Blue  : in GLclampf;
+                            Alpha : in GLclampf );
 
-   procedure glColor4f
-     (red : GLfloat;
-      green : GLfloat;
-      blue : GLfloat;
-      alpha : GLfloat);
+   procedure glClearDepthf ( Depth : in GLclampf );
 
-   procedure glColor4fv (v : access GLfloat);
+   procedure glClearStencil ( S : in GLint);
 
-   procedure glColor4ub
-     (red : GLubyte;
-      green : GLubyte;
-      blue : GLubyte;
-      alpha : GLubyte);
+   procedure glClientActiveTexture ( Texture : in GLenum );
 
-   procedure glColorMask
-     (red : GLboolean;
-      green : GLboolean;
-      blue : GLboolean;
-      alpha : GLboolean);
+   procedure glColor4f ( Red   : in GLfloat;
+                         Green : in GLfloat;
+                         Blue  : in GLfloat;
+                         Alpha : in GLfloat );
 
-   procedure glColorPointer
-     (size : GLint;
-      c_type : GLenum;
-      stride : GLsizei;
-      pointer : System.Address);
+   procedure glColor4fv ( V : access GLfloat );
 
-   procedure glColorSubTableEXT
-     (target : GLenum;
-      start : GLsizei;
-      count : GLsizei;
-      format : GLenum;
-      c_type : GLenum;
-      table : System.Address);
+   procedure glColor4ub ( Red   : in GLubyte;
+                          Green : in GLubyte;
+                          Blue  : in GLubyte;
+                          Alpha : in GLubyte );
 
-   procedure glColorTableEXT
-     (target : GLenum;
-      internalformat : GLenum;
-      width : GLsizei;
-      format : GLenum;
-      c_type : GLenum;
-      table : System.Address);
+   procedure glColorMask ( Red   : in GLboolean;
+                           Green : in GLboolean;
+                           Blue  : in GLboolean;
+                           Alpha : in GLboolean );
 
-   procedure glCopyPixels
-     (x : GLint;
-      y : GLint;
-      width : GLsizei;
-      height : GLsizei;
-      c_type : GLenum);
+   procedure glColorPointer ( Size    : in GLint;
+                              C_Type  : in GLenum;
+                              Stride  : in GLsizei;
+                              Pointer : in System.Address );
 
-   procedure glCullFace (mode : GLenum);
+   procedure glColorSubTableEXT ( Target : in GLenum;
+                                  Start  : in GLsizei;
+                                  Count  : in GLsizei;
+                                  Format : in GLenum;
+                                  C_Type : in GLenum;
+                                  Table  : in System.Address );
 
-   procedure glDepthFunc (func : GLenum);
+   procedure glColorTableEXT ( Target         : in GLenum;
+                               Internalformat : in GLenum;
+                               Width          : in GLsizei;
+                               Format         : in GLenum;
+                               C_Type         : in GLenum;
+                               Table          : in System.Address );
 
-   procedure glDepthMask (flag : GLboolean);
+   procedure glCopyPixels ( X      : in GLint;
+                            Y      : in GLint;
+                            Width  : in GLsizei;
+                            Height : in GLsizei;
+                            C_Type : in GLenum );
 
-   procedure glDepthRangef (zNear : GLclampf; zFar : GLclampf);
+   procedure glCullFace ( Mode : in GLenum );
 
-   procedure glDisable (cap : GLenum);
+   procedure glDepthFunc ( Func : in GLenum );
 
-   procedure glDisableClientState (c_array : GLenum);
+   procedure glDepthMask ( Flag : in GLboolean );
 
-   procedure glDrawArrays
-     (mode : GLenum;
-      first : GLint;
-      count : GLsizei);
+   procedure glDepthRangef (  zNear : in GLclampf;
+                              zFar  : in GLclampf );
 
-   procedure glDrawElements
-     (mode : GLenum;
-      count : GLsizei;
-      c_type : GLenum;
-      indices : System.Address);
+   procedure glDisable ( Cap : in GLenum );
 
-   procedure glDrawPixels
-     (width : GLsizei;
-      height : GLsizei;
-      format : GLenum;
-      c_type : GLenum;
-      pixels : System.Address);
+   procedure glDisableClientState ( C_Array : in GLenum );
 
-   procedure glEnable (cap : GLenum);
+   procedure glDrawArrays ( Mode  : in GLenum;
+                            First : in GLint;
+                            Count : in GLsizei );
 
-   procedure glEnableClientState (c_array : GLenum);
+   procedure glDrawElements ( Mode    : in GLenum;
+                              Count   : in GLsizei;
+                              C_Type  : in GLenum;
+                              Indices : in System.Address );
+
+   procedure glDrawPixels ( Width  : in GLsizei;
+                            Height : in GLsizei;
+                            Format : in GLenum;
+                            C_Type : in GLenum;
+                            Pixels : in System.Address );
+
+   procedure glEnable ( Cap : in GLenum );
+
+   procedure glEnableClientState ( C_Array : in GLenum );
 
    procedure glEnd;
 
@@ -698,261 +694,243 @@ package GLSC is
 
    procedure glFlush;
 
-   procedure glFrontFace (mode : GLenum);
+   procedure glFrontFace ( Mode : in GLenum );
 
-   procedure glFrustumf
-     (left : GLfloat;
-      right : GLfloat;
-      bottom : GLfloat;
-      top : GLfloat;
-      zNear : GLfloat;
-      zFar : GLfloat);
+   procedure glFrustumf ( Left   : in GLfloat;
+                          Right  : in GLfloat;
+                          Bottom : in GLfloat;
+                          Top    : in GLfloat;
+                          zNear  : in GLfloat;
+                          zFar   : in GLfloat );
 
-   function glGenLists (c_range : GLsizei) return GLuint;
+   function glGenLists ( C_Range : in GLsizei ) return GLuint;
 
-   procedure glGenTextures (n : GLsizei; textures : access GLuint);
+   procedure glGenTextures ( N        : in GLsizei;
+                             Textures : access GLuint );
 
    function glGetError return GLenum;
 
-   procedure glGetBooleanv (pname : GLenum; params : access GLboolean);
+   procedure glGetBooleanv ( Pname  : in GLenum;
+                             params : access GLboolean );
 
-   procedure glGetColorTableEXT
-     (target : GLenum;
-      format : GLenum;
-      c_type : GLenum;
-      table : System.Address);
+   procedure glGetColorTableEXT ( Target : in GLenum;
+                                  Format : in GLenum;
+                                  C_Type : in GLenum;
+                                  Table  : in System.Address );
 
-   procedure glGetColorTableParameterivEXT
-     (target : GLenum;
-      pname : GLenum;
-      params : access GLint);
+   procedure glGetColorTableParameterivEXT ( Target : in GLenum;
+                                             Pname  : in GLenum;
+                                             Params : access GLint );
 
-   procedure glGetFloatv (pname : GLenum; params : access GLfloat);
+   procedure glGetFloatv ( Pname  : in GLenum;
+                           Params : access GLfloat );
 
-   procedure glGetIntegerv (pname : GLenum; params : access GLint);
+   procedure glGetIntegerv ( Pname  : in GLenum;
+                             Params : access GLint );
 
-   procedure glGetLightfv
-     (light : GLenum;
-      pname : GLenum;
-      params : access GLfloat);
+   procedure glGetLightfv ( Light  : GLenum;
+                            Pname  : GLenum;
+                            Params : access GLfloat );
 
-   procedure glGetMaterialfv
-     (face : GLenum;
-      pname : GLenum;
-      params : access GLfloat);
+   procedure glGetMaterialfv ( Face   : in GLenum;
+                               Pname  : in GLenum;
+                               Params : access GLfloat );
 
-   procedure glGetPointerv (pname : GLenum; params : System.Address);
 
-   procedure glGetPolygonStipple (mask : access GLubyte);
+   procedure glGetPointerv ( Pname  : in GLenum;
+                             Params : in System.Address );
 
-   procedure glGetTexEnvfv
-     (target : GLenum;
-      pname : GLenum;
-      params : access GLfloat);
+   procedure glGetPolygonStipple ( Mask : access GLubyte );
 
-   procedure glGetTexEnviv
-     (target : GLenum;
-      pname : GLenum;
-      params : access GLint);
+   procedure glGetTexEnvfv ( Target : in GLenum;
+                             Pname  : in GLenum;
+                             Params : access GLfloat );
 
-   procedure glGetTexParameteriv
-     (target : GLenum;
-      pname : GLenum;
-      params : access GLint);
+   procedure glGetTexEnviv ( Target : in GLenum;
+                             Pname  : in GLenum;
+                             Params : access GLint );
 
-   function glGetString (name : GLenum) return access GLubyte;
+   procedure glGetTexParameteriv ( Target : in GLenum;
+                                   Pname  : in GLenum;
+                                   Params : access GLint );
 
-   procedure glHint (target : GLenum; mode : GLenum);
+   function glGetString ( Name : in GLenum ) return access GLubyte;
 
-   function glIsEnabled (cap : GLenum) return GLboolean;
+   procedure glHint ( Target : in GLenum;
+                      Mode   : in GLenum );
 
-   procedure glLightfv
-     (light : GLenum;
-      pname : GLenum;
-      params : access GLfloat);
+   function glIsEnabled ( Cap : in GLenum ) return GLboolean;
 
-   procedure glLightModelfv (pname : GLenum; params : access GLfloat);
+   procedure glLightfv ( Light  : in GLenum;
+                         Pname  : in GLenum;
+                         Params : access GLfloat );
 
-   procedure glLineStipple (factor : GLint; pattern : GLushort);
+   procedure glLightModelfv ( Pname  : in GLenum;
+                              Params : access GLfloat );
 
-   procedure glLineWidth (width : GLfloat);
+   procedure glLineStipple ( Factor  : in GLint;
+                             Pattern : GLushort );
 
-   procedure glListBase (base : GLuint);
+   procedure glLineWidth ( Width : in GLfloat );
+
+   procedure glListBase ( Base : in GLuint );
 
    procedure glLoadIdentity;
 
-   procedure glLoadMatrixf (m : access GLfloat);
+   procedure glLoadMatrixf ( M : access GLfloat );
 
-   procedure glMaterialf
-     (face : GLenum;
-      pname : GLenum;
-      param : GLfloat);
+   procedure glMaterialf ( Face  : in GLenum;
+                           Pname : in GLenum;
+                           Param : in GLfloat );
 
-   procedure glMaterialfv
-     (face : GLenum;
-      pname : GLenum;
-      params : access GLfloat);
+   procedure glMaterialfv ( Face   : in GLenum;
+                            Pname  : in GLenum;
+                            Params : access GLfloat );
 
-   procedure glMatrixMode (mode : GLenum);
+   procedure glMatrixMode ( Mode : in GLenum );
 
-   procedure glMultMatrixf (m : access GLfloat);
+   procedure glMultMatrixf ( M : access GLfloat );
 
-   procedure glMultiTexCoord2f
-     (target : GLenum;
-      s : GLfloat;
-      t : GLfloat);
+   procedure glMultiTexCoord2f ( Target : in GLenum;
+                                 S      : in GLfloat;
+                                 T      : in GLfloat );
 
-   procedure glMultiTexCoord2fv (target : GLenum; v : access GLfloat);
+   procedure glMultiTexCoord2fv ( Target : in GLenum;
+                                  V      : access GLfloat );
 
-   procedure glNewList (list : GLuint; mode : GLenum);
+   procedure glNewList ( List : in GLuint;
+                         Mode : in GLenum );
 
-   procedure glNormal3f
-     (nx : GLfloat;
-      ny : GLfloat;
-      nz : GLfloat);
+   procedure glNormal3f ( NX : in GLfloat;
+                          NY : in GLfloat;
+                          NZ : in GLfloat );
 
-   procedure glNormal3fv (v : access GLfloat);
+   procedure glNormal3fv ( V : access GLfloat );
 
-   procedure glNormalPointer
-     (c_type : GLenum;
-      stride : GLsizei;
-      pointer : System.Address);
+   procedure glNormalPointer ( C_Type  : in GLenum;
+                               Stride  : in GLsizei;
+                               Pointer : in System.Address );
 
-   procedure glOrthof
-     (left : GLfloat;
-      right : GLfloat;
-      bottom : GLfloat;
-      top : GLfloat;
-      zNear : GLfloat;
-      zFar : GLfloat);
+   procedure glOrthof ( Left     : in GLfloat;
+                        Right    : in GLfloat;
+                        Bottom   : in GLfloat;
+                        Top      : in GLfloat;
+                        zNear    : in GLfloat;
+                        zFar     : in GLfloat );
 
-   procedure glPixelStorei (pname : GLenum; param : GLint);
+   procedure glPixelStorei ( Pname : in GLenum;
+                             Param : in GLint );
 
-   procedure glPointSize (size : GLfloat);
+   procedure glPointSize ( Size : in GLfloat );
 
-   procedure glPolygonOffset (factor : GLfloat; units : GLfloat);
+   procedure glPolygonOffset ( Factor : in GLfloat;
+                               Units  : in GLfloat );
 
-   procedure glPolygonStipple (mask : access GLubyte);
+   procedure glPolygonStipple ( Mask : access GLubyte );
 
    procedure glPopMatrix;
 
    procedure glPushMatrix;
 
-   procedure glRasterPos3f
-     (x : GLfloat;
-      y : GLfloat;
-      z : GLfloat);
+   procedure glRasterPos3f ( X : in GLfloat;
+                             Y : in GLfloat;
+                             Z : in GLfloat );
 
-   procedure glReadPixels
-     (x : GLint;
-      y : GLint;
-      width : GLsizei;
-      height : GLsizei;
-      format : GLenum;
-      c_type : GLenum;
-      pixels : System.Address);
+   procedure glReadPixels ( X      : in GLint;
+                            Y      : in GLint;
+                            Width  : in GLsizei;
+                            Height : in GLsizei;
+                            Format : in GLenum;
+                            C_Type : in GLenum;
+                            Pixels : in System.Address );
 
-   procedure glRotatef
-     (angle : GLfloat;
-      x : GLfloat;
-      y : GLfloat;
-      z : GLfloat);
+   procedure glRotatef ( Angle : in GLfloat;
+                         X     : in GLfloat;
+                         Y     : in GLfloat;
+                         Z     : in GLfloat );
 
-   procedure glScalef
-     (x : GLfloat;
-      y : GLfloat;
-      z : GLfloat);
+   procedure glScalef ( X : in GLfloat;
+                        Y : in GLfloat;
+                        Z : in GLfloat );
 
-   procedure glScissor
-     (x : GLint;
-      y : GLint;
-      width : GLsizei;
-      height : GLsizei);
+   procedure glScissor ( X      : in GLint;
+                         Y      : in GLint;
+                         Width  : in GLsizei;
+                         Height : in GLsizei );
 
-   procedure glShadeModel (mode : GLenum);
+   procedure glShadeModel ( Mode : in GLenum );
 
-   procedure glStencilFunc
-     (func : GLenum;
-      ref : GLint;
-      mask : GLuint);
+   procedure glStencilFunc ( Func : in GLenum;
+                             Ref  : in GLint;
+                             Mask : in GLuint );
 
-   procedure glStencilMask (mask : GLuint);
+   procedure glStencilMask (mask : in GLuint);
 
-   procedure glStencilOp
-     (fail : GLenum;
-      zfail : GLenum;
-      zpass : GLenum);
+   procedure glStencilOp ( Fail  : in GLenum;
+                           Zfail : in GLenum;
+                           Zpass : in GLenum );
 
-   procedure glTexCoordPointer
-     (size : GLint;
-      c_type : GLenum;
-      stride : GLsizei;
-      pointer : System.Address);
+   procedure glTexCoordPointer ( Size    : in GLint;
+                                 C_Type  : in GLenum;
+                                 Stride  : in GLsizei;
+                                 Pointer : in System.Address );
 
-   procedure glTexEnvfv
-     (target : GLenum;
-      pname : GLenum;
-      params : access GLfloat);
+   procedure glTexEnvfv ( Target : in GLenum;
+                          Pname  : in GLenum;
+                          Params : access GLfloat );
 
-   procedure glTexEnvi
-     (target : GLenum;
-      pname : GLenum;
-      param : GLint);
+   procedure glTexEnvi ( Target : in GLenum;
+                         Pname  : in GLenum;
+                         Param  : in GLint );
 
-   procedure glTexImage2D
-     (target : GLenum;
-      level : GLint;
-      internalformat : GLint;
-      width : GLsizei;
-      height : GLsizei;
-      border : GLint;
-      format : GLenum;
-      c_type : GLenum;
-      pixels : System.Address);
+   procedure glTexImage2D ( Target         : in GLenum;
+                            Level          : in GLint;
+                            Internalformat : in GLint;
+                            Width          : in GLsizei;
+                            Height         : in GLsizei;
+                            Border         : in GLint;
+                            Format         : in GLenum;
+                            C_Type         : in GLenum;
+                            Pixels         : in System.Address );
 
-   procedure glTexParameteri
-     (target : GLenum;
-      pname : GLenum;
-      param : GLint);
+   procedure glTexParameteri ( Target : in GLenum;
+                               Pname  : in GLenum;
+                               Param  : in GLint );
 
-   procedure glTexSubImage2D
-     (target : GLenum;
-      level : GLint;
-      xoffset : GLint;
-      yoffset : GLint;
-      width : GLsizei;
-      height : GLsizei;
-      format : GLenum;
-      c_type : GLenum;
-      pixels : System.Address);
+   procedure glTexSubImage2D ( Target  : in GLenum;
+                               Level   : in GLint;
+                               Xoffset : in GLint;
+                               Yoffset : in GLint;
+                               Width   : in GLsizei;
+                               Height  : in GLsizei;
+                               Format  : in GLenum;
+                               C_Type  : in GLenum;
+                               Pixels  : in System.Address);
 
-   procedure glTranslatef
-     (x : GLfloat;
-      y : GLfloat;
-      z : GLfloat);
+   procedure glTranslatef ( X : in GLfloat;
+                            Y : in GLfloat;
+                            Z : in GLfloat );
 
-   procedure glVertex2f (x : GLfloat; y : GLfloat);
+   procedure glVertex2f ( X : in GLfloat;
+                          Y : in GLfloat );
 
-   procedure glVertex2fv (v : access GLfloat);
+   procedure glVertex2fv ( V : access GLfloat );
 
-   procedure glVertex3f
-     (x : GLfloat;
-      y : GLfloat;
-      z : GLfloat);
+   procedure glVertex3f ( X : in GLfloat;
+                          Y : in GLfloat;
+                          Z : in GLfloat );
 
-   procedure glVertex3fv (v : access GLfloat);
+   procedure glVertex3fv ( V : access GLfloat );
 
-   procedure glVertexPointer
-     (size : GLint;
-      c_type : GLenum;
-      stride : GLsizei;
-      pointer : System.Address);
+   procedure glVertexPointer ( Size    : in GLint;
+                               C_Type  : in GLenum;
+                               Stride  : in GLsizei;
+                               Pointer : in System.Address);
 
-   procedure glViewport
-     (x : GLint;
-      y : GLint;
-      width : GLsizei;
-      height : GLsizei);
+   procedure glViewport ( X      : in GLint;
+                          Y      : in GLint;
+                          Width  : in GLsizei;
+                          Height : in GLsizei );
 
 -------------------------------------------------------------------------------
 
