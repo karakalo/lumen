@@ -1324,7 +1324,16 @@ package Lumen.GL is
                      Param : in Enum);
 
    procedure Tex_Gen (Coord : in Enum;
-                     PName : in Enum);
+                      PName : in Enum;
+                      Param : in Int);
+
+   procedure Tex_Gen (Coord : in Enum;
+                      PName : in Enum;
+                      Param : in Float);
+
+   procedure Tex_Gen (Coord : in Enum;
+                      PName : in Enum;
+                      Param : in Double);
 
    procedure Tex_Parameter (Target : in Enum;
                            PName  : in Enum;
@@ -1614,7 +1623,6 @@ private
    pragma Import (C, Shader_Source, "glShaderSource");
    pragma Import (C, Stencil_Func, "glStencilFunc");
    pragma Import (C, Tex_Env, "glTexEnvi");
-   pragma Import (C, Tex_Gen, "glTexGeni");
    pragma Import (C, Use_Program, "glUseProgram");
    pragma Import (C, Viewport, "glViewport");
 

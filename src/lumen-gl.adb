@@ -919,6 +919,39 @@ package body Lumen.GL is
       glMultiTexCoord4sv (Target, V);
    end Multi_Tex_Coord;
 
+   procedure Tex_Gen (Coord : in Enum;
+                      PName : in Enum;
+                      Param : in Int) is
+      procedure glTexGeni (Coord : in Enum;
+                           PName : in Enum;
+                           Param : in Int);
+      pragma Import (C, glTexGeni, "glTexGeni");
+   begin  -- Tex_Gen
+      glTexGeni (Coord, PName, Param);
+   end Tex_Gen;
+
+   procedure Tex_Gen (Coord : in Enum;
+                      PName : in Enum;
+                      Param : in Float) is
+      procedure glTexGenf (Coord : in Enum;
+                           PName : in Enum;
+                           Param : in Float);
+      pragma Import (C, glTexGenf, "glTexGenf");
+   begin  -- Tex_Gen
+      glTexGenf (Coord, PName, Param);
+   end Tex_Gen;
+
+   procedure Tex_Gen (Coord : in Enum;
+                      PName : in Enum;
+                      Param : in Double) is
+      procedure glTexGend (Coord : in Enum;
+                           PName : in Enum;
+                           Param : in Double);
+      pragma Import (C, glTexGend, "glTexGend");
+   begin  -- Tex_Gen
+      glTexGend (Coord, PName, Param);
+   end Tex_Gen;
+
    procedure Tex_Parameter (Target : in Enum;
                            PName  : in Enum;
                            Param  : in Enum) is
