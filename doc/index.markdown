@@ -37,7 +37,7 @@ though we haven't tested it yet, presumably you can also use
 I'm going to start adding notable events here, so you can check quickly
 whether there's something new since you last visited the site.
 
-* **Thursday, 4 April 2012**: Work resumes on Lumen with the addition of a
+* **Thursday, 5 April 2012**: Work resumes on Lumen with the addition of a
     couple of [simple old apps][stages] I had lying around, that I recently
     ported to use Lumen rather than GtkAda.  They're not much, but may be
     useful to somebody sometime.
