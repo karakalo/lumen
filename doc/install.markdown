@@ -10,12 +10,14 @@ bindings, though we discourage their direct use; either use the
 streamlined bindings (Lumen.GL, GLU, and soon to come, GLExt), or wait
 for our fancy "thick" Lumen.OpenGL bindings.
 
-To link the demos, you'll need the "development" versions of the OpenGL
-libraries; on Debian and presumably Ubuntu, the package names are
-`libgl1-mesa-dev` and `libglu1-mesa-dev`.  These are apparently only needed to
-create two crucial softlinks, but needed they are, so be sure to install them
-if you want to build the demos.  (And trust us, you *do* want to build the
-demos!)
+To link the demos, you'll need the "development" versions of the X11 and
+OpenGL libraries; on Debian and presumably Ubuntu, the package names are
+`libx11-dev`, `libgl1-mesa-dev` and `libglu1-mesa-dev`.  These are apparently
+only needed to create some crucial softlinks, but needed they are, so be sure
+to install them if you want to build the demos.  (And trust us, you *do* want
+to build the demos!)  To *run* the demos, your system must have actual GLX
+support; you can verify this by running the `glxinfo` utility.  Pretty much
+anything other than an error message means you're good to go.
 
 (NOTE: As of this writing, May 2011, Lumen does use one GNAT-specific
 library routine, so it is currently dependent on GNAT.  It's a very
