@@ -1330,6 +1330,149 @@ package body Lumen.GL is
 
    ---------------------------------------------------------------------------
 
+   procedure Map (Target : in Enum;
+                  U1     : in Float;
+                  U2     : in Float;
+                  Stride : in Int;
+                  Order  : in Int;
+                  Points : in System.Address) is
+      procedure glMap1f (Target : in Enum;
+                         U1     : in Float;
+                         U2     : in Float;
+                         Stride : in Int;
+                         Order  : in Int;
+                         Points : in System.Address);
+      pragma Import (C, glMap1f, "glMap1f");
+   begin  -- Map
+      glMap1f (Target, U1, U2, Stride, Order, Points);
+   end Map;
+
+   procedure Map (Target : in Enum;
+                  U1     : in Double;
+                  U2     : in Double;
+                  Stride : in Int;
+                  Order  : in Int;
+                  Points : in System.Address) is
+      procedure glMap1d (Target : in Enum;
+                         U1     : in Double;
+                         U2     : in Double;
+                         Stride : in Int;
+                         Order  : in Int;
+                         Points : in System.Address);
+      pragma Import (C, glMap1d, "glMap1d");
+   begin  -- Map
+      glMap1d (Target, U1, U2, Stride, Order, Points);
+   end Map;
+
+   procedure Map (Target  : in Enum;
+                  U1      : in Float;
+                  U2      : in Float;
+                  UStride : in Int;
+                  UOrder  : in Int;
+                  V1      : in Float;
+                  V2      : in Float;
+                  VStride : in Int;
+                  VOrder  : in Int;
+                  Points  : in System.Address) is
+      procedure glMap2f (Target  : in Enum;
+                         U1      : in Float;
+                         U2      : in Float;
+                         UStride : in Int;
+                         UOrder  : in Int;
+                         V1      : in Float;
+                         V2      : in Float;
+                         VStride : in Int;
+                         VOrder  : in Int;
+                         Points : in System.Address);
+      pragma Import (C, glMap2f, "glMap2f");
+   begin  -- Map
+      glMap2f (Target, U1, U2, UStride, UOrder, V1, V2, VStride, VOrder, Points);
+   end Map;
+
+   procedure Map (Target  : in Enum;
+                  U1      : in Double;
+                  U2      : in Double;
+                  UStride : in Int;
+                  UOrder  : in Int;
+                  V1      : in Double;
+                  V2      : in Double;
+                  VStride : in Int;
+                  VOrder  : in Int;
+                  Points  : in System.Address) is
+      procedure glMap2d (Target  : in Enum;
+                         U1      : in Double;
+                         U2      : in Double;
+                         UStride : in Int;
+                         UOrder  : in Int;
+                         V1      : in Double;
+                         V2      : in Double;
+                         VStride : in Int;
+                         VOrder  : in Int;
+                         Points : in System.Address);
+      pragma Import (C, glMap2d, "glMap2d");
+   begin  -- Map
+      glMap2d (Target, U1, U2, UStride, UOrder, V1, V2, VStride, VOrder, Points);
+   end Map;
+
+   procedure Map_Grid (Un : in Int;
+                       U1 : in Float;
+                       U2 : in Float) is
+      procedure glMapGrid1f (Un : in Int;
+                             U1 : in Float;
+                             U2 : in Float);
+      pragma Import (C, glMapGrid1f, "glMapGrid1f");
+   begin  -- Map_Grid
+      glMapGrid1f (Un, U1, U2);
+   end Map_Grid;
+
+   procedure Map_Grid (Un : in Int;
+                       U1 : in Double;
+                       U2 : in Double) is
+      procedure glMapGrid1d (Un : in Int;
+                             U1 : in Double;
+                             U2 : in Double);
+      pragma Import (C, glMapGrid1d, "glMapGrid1d");
+   begin  -- Map_Grid
+      glMapGrid1d (Un, U1, U2);
+   end Map_Grid;
+
+   procedure Map_Grid (Un : in Int;
+                       U1 : in Float;
+                       U2 : in Float;
+                       Vn : in Int;
+                       V1 : in Float;
+                       V2 : in Float) is
+      procedure glMapGrid2f (Un : in Int;
+                             U1 : in Float;
+                             U2 : in Float;
+                             Vn : in Int;
+                             V1 : in Float;
+                             V2 : in Float);
+      pragma Import (C, glMapGrid2f, "glMapGrid2f");
+   begin  -- Map_Grid
+      glMapGrid2f (Un, U1, U2, Vn, V1, V2);
+   end Map_Grid;
+
+   procedure Map_Grid (Un : in Int;
+                       U1 : in Double;
+                       U2 : in Double;
+                       Vn : in Int;
+                       V1 : in Double;
+                       V2 : in Double) is
+      procedure glMapGrid2d (Un : in Int;
+                             U1 : in Double;
+                             U2 : in Double;
+                             Vn : in Int;
+                             V1 : in Double;
+                             V2 : in Double);
+      pragma Import (C, glMapGrid2d, "glMapGrid2d");
+   begin  -- Map_Grid
+      glMapGrid2d (Un, U1, U2, Vn, V1, V2);
+   end Map_Grid;
+
+
+   ---------------------------------------------------------------------------
+
    procedure Vertex (X : in Short;
                      Y : in Short) is
       procedure glVertex2s (X : in Short;
@@ -1573,4 +1716,7 @@ package body Lumen.GL is
    begin
       glVertexPointer (Size, Element_Type, Stride, Offset);
    end Vertex_Pointer;
+
+   ---------------------------------------------------------------------------
+
 end Lumen.GL;

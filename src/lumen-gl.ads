@@ -899,7 +899,12 @@ package Lumen.GL is
 
    procedure End_Primitive;
 
+   -- Misc
    function Get_Error return Enum;
+
+   procedure Push_Attrib (Mask : in Bitfield);
+
+   procedure Pop_Attrib;
 
    -- Pipeline control
    procedure Finish;
@@ -1455,6 +1460,63 @@ package Lumen.GL is
    procedure Tex_Coord (V : in Doubles_4);
    pragma Inline (Tex_Coord);
 
+   -- Evaluators
+   procedure Map (Target : in Enum;
+                  U1     : in Float;
+                  U2     : in Float;
+                  Stride : in Int;
+                  Order  : in Int;
+                  Points : in System.Address);
+   procedure Map (Target : in Enum;
+                  U1     : in Double;
+                  U2     : in Double;
+                  Stride : in Int;
+                  Order  : in Int;
+                  Points : in System.Address);
+
+   procedure Map (Target  : in Enum;
+                  U1      : in Float;
+                  U2      : in Float;
+                  UStride : in Int;
+                  UOrder  : in Int;
+                  V1      : in Float;
+                  V2      : in Float;
+                  VStride : in Int;
+                  VOrder  : in Int;
+                  Points  : in System.Address);
+   procedure Map (Target  : in Enum;
+                  U1      : in Double;
+                  U2      : in Double;
+                  UStride : in Int;
+                  UOrder  : in Int;
+                  V1      : in Double;
+                  V2      : in Double;
+                  VStride : in Int;
+                  VOrder  : in Int;
+                  Points  : in System.Address);
+   pragma Inline (Map);
+
+   procedure Map_Grid (Un : in Int;
+                       U1 : in Float;
+                       U2 : in Float);
+   procedure Map_Grid (Un : in Int;
+                       U1 : in Double;
+                       U2 : in Double);
+
+   procedure Map_Grid (Un : in Int;
+                       U1 : in Float;
+                       U2 : in Float;
+                       Vn : in Int;
+                       V1 : in Float;
+                       V2 : in Float);
+   procedure Map_Grid (Un : in Int;
+                       U1 : in Double;
+                       U2 : in Double;
+                       Vn : in Int;
+                       V1 : in Double;
+                       V2 : in Double);
+   pragma Inline (Map_Grid);
+
    -- Specify vertices
    procedure Vertex (X : in Short;
                      Y : in Short);
@@ -1553,6 +1615,7 @@ package Lumen.GL is
                           First : in Int;
                           Count : in SizeI);
 
+   -- Shaders
    function Create_Shader (Shader_Type : in Enum) return Uint;
    function Create_Program return Uint;
    procedure Shader_Source (Shader : in Uint;
@@ -1616,7 +1679,9 @@ private
    pragma Import (C, Polygon_Mode, "glPolygonMode");
    pragma Import (C, Polygon_Offset, "glPolygonOffset");
    pragma Import (C, Polygon_Stipple, "glPolygonStipple");
+   pragma Import (C, Pop_Attrib, "glPopAttrib");
    pragma Import (C, Pop_Matrix, "glPopMatrix");
+   pragma Import (C, Push_Attrib, "glPushAttrib");
    pragma Import (C, Push_Matrix, "glPushMatrix");
    pragma Import (C, Scissor, "glScissor");
    pragma Import (C, Shade_Model, "glShadeModel");
