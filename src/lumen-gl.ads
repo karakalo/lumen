@@ -1517,6 +1517,21 @@ package Lumen.GL is
                        V2 : in Double);
    pragma Inline (Map_Grid);
 
+   procedure Eval_Point (I : Int);
+   procedure Eval_Point (I : in Int;
+                         J : in Int);
+   pragma Inline (Eval_Point);
+
+   procedure Eval_Mesh (Mode : in Enum;
+                        I1   : in Int;
+                        I2   : in Int);
+   procedure Eval_Mesh (Mode : in Enum;
+                        I1   : in Int;
+                        I2   : in Int;
+                        J1   : in Int;
+                        J2   : in Int);
+   pragma Inline (Eval_Mesh);
+
    -- Specify vertices
    procedure Vertex (X : in Short;
                      Y : in Short);

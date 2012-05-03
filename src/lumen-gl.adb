@@ -1470,6 +1470,47 @@ package body Lumen.GL is
       glMapGrid2d (Un, U1, U2, Vn, V1, V2);
    end Map_Grid;
 
+   procedure Eval_Point (I : Int) is
+      procedure glEvalPoint1 (I : in Int);
+      pragma Import (C, glEvalPoint1, "glEvalPoint1");
+   begin  -- Eval_Point
+      glEvalPoint1 (I);
+   end Eval_Point;
+
+   procedure Eval_Point (I : in Int;
+                         J : in Int) is
+      procedure glEvalPoint2 (I : in Int;
+                              J : in Int);
+      pragma Import (C, glEvalPoint2, "glEvalPoint2");
+   begin  -- Eval_Point
+      glEvalPoint2 (I, J);
+   end Eval_Point;
+
+   procedure Eval_Mesh (Mode : in Enum;
+                        I1   : in Int;
+                        I2   : in Int) is
+      procedure glEvalMesh1 (Mode : in Enum;
+                             I1   : in Int;
+                             I2   : in Int);
+      pragma Import (C, glEvalMesh1, "glEvalMesh1");
+   begin  -- Eval_Mesh
+      glEvalMesh1 (Mode, I1, I2);
+   end Eval_Mesh;
+
+   procedure Eval_Mesh (Mode : in Enum;
+                        I1   : in Int;
+                        I2   : in Int;
+                        J1   : in Int;
+                        J2   : in Int) is
+      procedure glEvalMesh2 (Mode : in Enum;
+                             I1   : in Int;
+                             I2   : in Int;
+                             J1   : in Int;
+                             J2   : in Int);
+      pragma Import (C, glEvalMesh2, "glEvalMesh2");
+   begin  -- Eval_Mesh
+      glEvalMesh2 (Mode, I1, I2, J2, J2);
+   end Eval_Mesh;
 
    ---------------------------------------------------------------------------
 
