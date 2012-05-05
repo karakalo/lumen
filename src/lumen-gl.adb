@@ -1509,7 +1509,7 @@ package body Lumen.GL is
                              J2   : in Int);
       pragma Import (C, glEvalMesh2, "glEvalMesh2");
    begin  -- Eval_Mesh
-      glEvalMesh2 (Mode, I1, I2, J2, J2);
+      glEvalMesh2 (Mode, I1, I2, J1, J2);
    end Eval_Mesh;
 
    ---------------------------------------------------------------------------
