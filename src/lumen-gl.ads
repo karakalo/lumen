@@ -1647,16 +1647,16 @@ package Lumen.GL is
 
 private
    -- These can be bound directly
-   pragma Import (C, Begin_Primitive, "glBegin");
-   pragma Import (C, End_Primitive, "glEnd");
-   pragma Import (C, Alpha_Func, "glAlphaFunc");
    pragma Import (C, Active_Texture, "glActiveTexture");
+   pragma Import (C, Alpha_Func, "glAlphaFunc");
    pragma Import (C, Attach_Shader, "glAttachShader");
+   pragma Import (C, Begin_Primitive, "glBegin");
    pragma Import (C, Bind_Buffer, "glBindBuffer");
+   pragma Import (C, Bind_Framebuffer, "glBindFramebuffer");
    pragma Import (C, Bind_Texture, "glBindTexture");
-   pragma Import (C, Blend_Func, "glBlendFunc");
-   pragma Import (C, Blend_Equation, "glBlendEquation");
    pragma Import (C, Blend_Color, "glBlendColor");
+   pragma Import (C, Blend_Equation, "glBlendEquation");
+   pragma Import (C, Blend_Func, "glBlendFunc");
    pragma Import (C, Buffer_Data, "glBufferData");
    pragma Import (C, Clear, "glClear");
    pragma Import (C, Clear_Accum, "glClearAccum");
@@ -1666,6 +1666,7 @@ private
    pragma Import (C, Compile_Shader, "glCompileShader");
    pragma Import (C, Create_Program, "glCreateProgram");
    pragma Import (C, Create_Shader, "glCreateShader");
+   pragma Import (C, Cull_Face, "glCullFace");
    pragma Import (C, Depth_Func, "glDepthFunc");
    pragma Import (C, Disable, "glDisable");
    pragma Import (C, Draw_Arrays, "glDrawArrays");
@@ -1673,12 +1674,13 @@ private
    pragma Import (C, Edge_Flagv, "glEdgeFlagv");
    pragma Import (C, Enable, "glEnable");
    pragma Import (C, Enable_Client_State, "glEnableClientState");
+   pragma Import (C, End_Primitive, "glEnd");
    pragma Import (C, Finish, "glFinish");
    pragma Import (C, Flush, "glFlush");
    pragma Import (C, Front_Face, "glFrontFace");
-   pragma Import (C, Cull_Face, "glCullFace");
    pragma Import (C, Frustum, "glFrustum");
    pragma Import (C, Gen_Buffers, "glGenBuffers");
+   pragma Import (C, Gen_Framebuffers, "glGenFramebuffers");
    pragma Import (C, Gen_Textures, "glGenTextures");
    pragma Import (C, Get_Error, "glGetError");
    pragma Import (C, Get_Polygon_Stipple, "glGetPolygonStipple");
@@ -1705,9 +1707,6 @@ private
    pragma Import (C, Tex_Env, "glTexEnvi");
    pragma Import (C, Use_Program, "glUseProgram");
    pragma Import (C, Viewport, "glViewport");
-
-   pragma Import (C, Gen_Framebuffers, "glGenFramebuffers");
-   pragma Import (C, Bind_Framebuffer, "glBindFramebuffer");
 
    pragma Linker_Options ("-lGL");
 
