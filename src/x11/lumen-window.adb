@@ -42,87 +42,15 @@ with Lumen.Binary;
 
 -- This is really "part of" this package, just packaged separately so it can
 -- be used in Events
-with Lumen.Internal;
-use  Lumen.Internal;
+with X11; use X11;
 
 package body Lumen.Window is
 
-   ---------------------------------------------------------------------------
-
-   -- Xlib stuff needed by more than one of the routines below
-   type Data_Format_Type is (Invalid, Bits_8, Bits_16, Bits_32);
-   for  Data_Format_Type use (Invalid => 0, Bits_8 => 8, Bits_16 => 16, Bits_32 => 32);
-
    String_Encoding : String := "STRING" & ASCII.NUL;
 
-   type X_Class_Hint is record
-      Instance_Name : System.Address;
-      Class_Name    : System.Address;
-   end record;
-
-   type X_Text_Property is record
-      Value    : System.Address;
-      Encoding : Atom;
-      Format   : Data_Format_Type;
-      NItems   : Long_Integer;
-   end record;
-
-   function X_Intern_Atom (Display        : Display_Pointer;
-                           Name           : System.Address;
-                           Only_If_Exists : Natural)
-   return Atom;
-   pragma Import (C, X_Intern_Atom, "XInternAtom");
-
-   procedure X_Set_Class_Hint (Display : in Display_Pointer;
-                               Window  : in Window_ID;
-                               Hint    : in X_Class_Hint);
-   pragma Import (C, X_Set_Class_Hint, "XSetClassHint");
-
-   procedure X_Set_Icon_Name (Display : in Display_Pointer;
-                              Window  : in Window_ID;
-                              Name    : in System.Address);
-   pragma Import (C, X_Set_Icon_Name, "XSetIconName");
-
-   procedure X_Set_WM_Icon_Name (Display   : in Display_Pointer;
-                                 Window    : in Window_ID;
-                                 Text_Prop : in System.Address);
-   pragma Import (C, X_Set_WM_Icon_Name, "XSetWMIconName");
-
-   procedure X_Set_WM_Name (Display   : in Display_Pointer;
-                            Window    : in Window_ID;
-                            Text_Prop : in System.Address);
-   pragma Import (C, X_Set_WM_Name, "XSetWMName");
-
-   ---------------------------------------------------------------------------
-
-   GL_TRUE : constant Character := Character'Val (1);
-
-   -- GLX stuff needed by more than one of the routines below
-   function GLX_Create_Context (Display    : Display_Pointer;
-                                Visual     : X_Visual_Info_Pointer;
-                                Share_List : GLX_Context;
-                                Direct     : Character)
-   return GLX_Context;
-   pragma Import (C, GLX_Create_Context, "glXCreateContext");
-
-   function GLX_Make_Current (Display  : Display_Pointer;
-                              Drawable : Window_ID;
-                              Context  : GLX_Context)
-   return Character;
-   pragma Import (C, GLX_Make_Current, "glXMakeCurrent");
-
-   function GLX_Make_Context_Current (Display  : Display_Pointer;
-                                      Draw     : Window_ID;
-                                      Read     : Window_ID;
-                                      Context  : GLX_Context)
-   return Character;
-   pragma Import (C, GLX_Make_Context_Current, "glXMakeContextCurrent");
-
-   ---------------------------------------------------------------------------
-
    -- Create a native window
-   procedure Create (Win           : in out Handle;
-                     Parent        : in     Handle             := No_Window;
+   procedure Create (Win           : in out Window_Handle;
+                     Parent        : in     Window_Handle      := No_Window;
                      Width         : in     Natural            := 400;
                      Height        : in     Natural            := 400;
                      Events        : in     Wanted_Event_Set   := Want_No_Events;
@@ -130,118 +58,16 @@ package body Lumen.Window is
                      Icon_Name     : in     String             := "";
                      Class_Name    : in     String             := "";
                      Instance_Name : in     String             := "";
-                     Context       : in     Context_Handle     := No_Context;
                      Depth         : in     Color_Depth        := True_Color;
                      Direct        : in     Boolean            := True;
                      Animated      : in     Boolean            := True;
                      Attributes    : in     Context_Attributes := Default_Context_Attributes) is
-
-      -- Xlib types needed only by Create
-      type Alloc_Mode               is (Alloc_None, Alloc_All);
-      type Atom_Array               is array (Positive range <>) of Atom;
-      type Colormap_ID              is new Long_Integer;
-      type X_Window_Attributes_Mask is mod 2 ** Integer'Size;
-      type Window_Class             is (Copy_From_Parent, Input_Output, Input_Only);
-      type X_Event_Mask             is mod 2 ** Long_Integer'Size;
-
-      subtype Dimension is Short_Integer;
-      subtype Pixel     is Long_Integer;
-      subtype Position  is Short_Integer;
 
       -- An extremely abbreviated version of the XMapEvent structure.
       type Map_Event_Data is record
          Event_Type : Integer;
          Pad        : Padding;
       end record;
-
-      -- An extremely abbreviated version of the XSetWindowAttributes
-      -- structure, containing only the fields we care about.
-      --
-      -- NOTE: offset multiplier values differ between 32-bit and 64-bit
-      -- systems since on 32-bit systems long size equals int size and the
-      -- record has no padding.  The byte and bit widths come from Internal.
-      Start_32 : constant := 10;
-      Start_64 : constant :=  9;
-      Start    : constant := (Is_32 * Start_32) + (Is_64 * Start_64);
-      type X_Set_Window_Attributes is record
-         Event_Mask  : X_Event_Mask := 0;
-         Colormap    : Colormap_ID  := 0;
-      end record;
-      for X_Set_Window_Attributes use record
-         Event_Mask  at (Start + 0) * Long_Bytes range 0 .. Long_Bits;
-         Colormap    at (Start + 3) * Long_Bytes range 0 .. Long_Bits;
-      end record;
-
-      -- Xlib functions needed only by Create
-      function X_Create_Colormap (Display : Display_Pointer;
-                                  Window  : Window_ID;
-                                  Visual  : System.Address;
-                                  Alloc   : Alloc_Mode)
-      return Colormap_ID;
-      pragma Import (C, X_Create_Colormap, "XCreateColormap");
-
-      function X_Create_Window (Display      : Display_Pointer;
-                                Parent       : Window_ID;
-                                X            : Position;
-                                Y            : Position;
-                                Width        : Dimension;
-                                Height       : Dimension;
-                                Border_Width : Natural;
-                                Depth        : Screen_Depth;
-                                Class        : Window_Class;
-                                Visual       : System.Address;
-                                Valuemask    : X_Window_Attributes_Mask;
-                                Attributes   : System.Address)
-      return Window_ID;
-      pragma Import (C, X_Create_Window, "XCreateWindow");
-
-      function X_Default_Screen (Display : Display_Pointer) return Screen_Number;
-      pragma Import (C, X_Default_Screen, "XDefaultScreen");
-
-      procedure X_Map_Window (Display : in Display_Pointer;   Window : in Window_ID);
-      pragma Import (C, X_Map_Window, "XMapWindow");
-
-      function X_Open_Display (Display_Name : System.Address := System.Null_Address) return Display_Pointer;
-      pragma Import (C, X_Open_Display, "XOpenDisplay");
-
-      function X_Root_Window (Display : Display_Pointer;   Screen_Num : Screen_Number) return Window_ID;
-      pragma Import (C, X_Root_Window, "XRootWindow");
-
-      procedure X_Set_WM_Protocols (Display   : in Display_Pointer;
-                                    Window    : in Window_ID;
-                                    Protocols : in System.Address;
-                                    Count     : in Integer);
-      pragma Import (C, X_Set_WM_Protocols, "XSetWMProtocols");
-
-      -- Xlib constants needed only by Create
-      Configure_Event_Mask : constant X_Window_Attributes_Mask := 2#00_1000_0000_0000#;  -- 11th bit
-      Configure_Colormap   : constant X_Window_Attributes_Mask := 2#10_0000_0000_0000#;  -- 13th bit
-      X_Map_Notify         : constant := 19;  -- the one event we look for here
-
-      -- Atom names
-      WM_Del          : String := "WM_DELETE_WINDOW" & ASCII.NUL;
-
-      ------------------------------------------------------------------------
-
-      -- GLX types needed only by Create
-
-      -- This should be more space than we'll ever need, allowing a value for
-      -- every attr (which not all of them have), and adding 2 for our "extra"
-      -- values of RGBA and double-buffered, which are (or at least can be)
-      -- set separately
-      Max_GLX_Attributes : constant := (Context_Attribute_Name'Pos (Context_Attribute_Name'Last) + 1) * 2 + 2;
-
-      type GLX_Attribute_List     is array (1 .. Max_GLX_Attributes) of Integer;
-      type GLX_Attribute_List_Ptr is new System.Address;
-
-      -- GLX functions needed only by Create
-      function GLX_Choose_Visual (Display        : Display_Pointer;
-                                  Screen         : Screen_Number;
-                                  Attribute_List : GLX_Attribute_List_Ptr)
-      return X_Visual_Info_Pointer;
-      pragma Import (C, GLX_Choose_Visual, "glXChooseVisual");
-
-      ------------------------------------------------------------------------
 
       -- Event masks
       type Event_Mask_Table is array (Wanted_Event) of X_Event_Mask;
@@ -288,27 +114,8 @@ package body Lumen.Window is
 
          ---------------------------------------------------------------------
 
-         type Int_Ptr is access all Integer;  -- used to simulate "out" param for C function
-         type FB_Config_Ptr is access all System.Address;  -- actually an array, but only ever one element
-
-         ---------------------------------------------------------------------
-
          -- GLX functions needed only by Choose_Visual, and then only when an
          -- explicit visual ID is given in an environment variable
-         function GLX_Choose_FB_Config (Display        : Display_Pointer;
-                                        Screen         : Screen_Number;
-                                        Attribute_List : GLX_Attribute_List_Ptr;
-                                        Num_Found      : Int_Ptr)
-         return FB_Config_Ptr;
-         pragma Import (C, GLX_Choose_FB_Config, "glXChooseFBConfig");
-
-         function GLX_Get_Visual_From_FB_Config (Display : Display_Pointer;
-                                                 Config  : System.Address)
-         return X_Visual_Info_Pointer;
-         pragma Import (C, GLX_Get_Visual_From_FB_Config, "glXGetVisualFromFBConfig");
-
-         ---------------------------------------------------------------------
-
          ID    : Visual_ID;
          Found : aliased Integer;
          FB    : FB_Config_Ptr;
@@ -335,7 +142,7 @@ package body Lumen.Window is
 
             Found := 9;
             FB := GLX_Choose_FB_Config (Display, X_Default_Screen (Display), GLX_Attribute_List_Ptr (Con_Attributes'Address),
-                                        Found'Access);
+                                        Found'Unrestricted_Access);
             if FB = null then
                raise Not_Available;
             end if;
@@ -396,7 +203,7 @@ package body Lumen.Window is
       if Parent = No_Window then
          Our_Parent := X_Root_Window (Display, Visual.Screen);
       else
-         Our_Parent := Parent.Window;
+         Our_Parent := X11Window_Handle(Parent).Window;
       end if;
 
       -- Build the event mask as requested by the caller
@@ -479,12 +286,8 @@ package body Lumen.Window is
       end;
 
       -- Connect the OpenGL context to the new X window
-      if Context = No_Context then
-         Our_Context := GLX_Create_Context (Display, Visual, GLX_Context (System.Null_Address),
+      Our_Context := GLX_Create_Context (Display, Visual, GLX_Context (System.Null_Address),
                                             Character'Val (Boolean'Pos (Direct)));
-      else
-         Our_Context := Context;
-      end if;
       if Our_Context = Null_Context then
          raise Context_Failed with "Cannot create OpenGL context";
       end if;
@@ -493,34 +296,36 @@ package body Lumen.Window is
          raise Context_Failed with "Cannot make OpenGL context current";
       end if;
 
-      -- Return the results
-      Win := new Window_Info'(Display     => Display,
-                              Window      => Window,
-                              Visual      => Visual,
-                              Width       => Width,
-                              Height      => Height,
-                              Prior_Frame => Never,
-                              App_Start   => Ada.Calendar.Clock,
-                              Last_Start  => Ada.Calendar.Clock,
-                              App_Frames  => 0,
-                              Last_Frames => 0,
-                              SPF         => 0.0,
-                              Context     => Our_Context,
-                              Looping     => True);
+      Win := new X11Window_Type'(Display     => Display,
+                                 Window      => Window,
+                                 Visual      => Visual,
+                                 Width       => Width,
+                                 Height      => Height,
+                                 Prior_Frame => Never,
+                                 App_Start   => Ada.Calendar.Clock,
+                                 Last_Start  => Ada.Calendar.Clock,
+                                 App_Frames  => 0,
+                                 Last_Frames => 0,
+                                 SPF         => 0.0,
+                                 Context     => Our_Context,
+                                 Looping     => True);
+
    end Create;
 
    ---------------------------------------------------------------------------
 
    -- Destroy a native window, including its current rendering context.
-   procedure Destroy (Win : in out Handle) is
+   procedure Destroy (Win : in out Window_Handle) is
+
+      XWin : X11Window_Handle:=X11Window_Handle(Win);
 
       procedure X_Destroy_Window (Display : in Display_Pointer;   Window : in Window_ID);
       pragma Import (C, X_Destroy_Window, "XDestroyWindow");
 
-      procedure Free is new Ada.Unchecked_Deallocation (Window_Info, Handle);
+      procedure Free is new Ada.Unchecked_Deallocation (Window_Type'Class, Window_Handle);
 
    begin  -- Destroy
-      X_Destroy_Window (Win.Display, Win.Window);
+      X_Destroy_Window (XWin.Display, XWin.Window);
       Free (Win);
    end Destroy;
 
@@ -529,11 +334,12 @@ package body Lumen.Window is
    -- Set various textual names associated with a window.  Null string means
    -- leave the current value unchanged.  In the case of class and instance
    -- names, both must be given to change either one.
-   procedure Set_Names (Win           : in Handle;
+   procedure Set_Names (Win           : in Window_Handle;
                         Name          : in String           := "";
                         Icon_Name     : in String           := "";
                         Class_Name    : in String           := "";
                         Instance_Name : in String           := "") is
+      XWin : X11Window_Handle:=X11Window_Handle(Win);
 
       Name_Property : X_Text_Property;
 
@@ -542,96 +348,58 @@ package body Lumen.Window is
       -- Set the window name if one was given
       if Name'Length >= 1 then
          Name_Property := (Name'Address,
-                           X_Intern_Atom (Win.Display, String_Encoding'Address, 0),
+                           X_Intern_Atom (XWin.Display, String_Encoding'Address, 0),
                            Bits_8,
                            Name'Length);
-         X_Set_WM_Name (Win.Display, Win.Window, Name_Property'Address);
+         X_Set_WM_Name (XWin.Display, XWin.Window, Name_Property'Address);
       end if;
 
       -- Set the icon name if one was given
       if Icon_Name'Length >= 1 then
-         X_Set_Icon_Name (Win.Display, Win.Window, Icon_Name'Address);
+         X_Set_Icon_Name (XWin.Display, XWin.Window, Icon_Name'Address);
          Name_Property := (Icon_Name'Address,
-                           X_Intern_Atom (Win.Display, String_Encoding'Address, 0),
+                           X_Intern_Atom (XWin.Display, String_Encoding'Address, 0),
                            Bits_8,
                            Name'Length);
-         X_Set_WM_Icon_Name (Win.Display, Win.Window, Name_Property'Address);
+         X_Set_WM_Icon_Name (XWin.Display, XWin.Window, Name_Property'Address);
       end if;
 
       -- Set the class and instance names if they were both given
       if Class_Name'Length >= 1 and Instance_Name'Length >= 1 then
-         X_Set_Class_Hint (Win.Display, Win.Window, (Class_Name'Address, Instance_Name'Address));
+         X_Set_Class_Hint (XWin.Display, XWin.Window, (Class_Name'Address, Instance_Name'Address));
       end if;
    end Set_Names;
 
    ---------------------------------------------------------------------------
 
-   -- Create an OpenGL rendering context; needed only when you want a second
-   -- or subsequent context for a window, since Create makes one to start
-   -- with
-   function Create_Context (Win    : in Handle;
-                            Direct : in Boolean := True)
-   return Context_Handle is
-   begin  -- Create_Context
-      return GLX_Create_Context (Win.Display, Win.Visual, GLX_Context (System.Null_Address),
-                                 Character'Val (Boolean'Pos (Direct)));
-   end Create_Context;
-
-   ---------------------------------------------------------------------------
-
-   -- Destroy an OpenGL rendering context
-   procedure Destroy_Context (Win : in out Handle) is
-
-      procedure GLX_Destroy_Context (Display : in Display_Pointer;
-                                     Context : GLX_Context);
-      pragma Import (C, GLX_Destroy_Context, "glXDestroyContext");
-
-   begin  -- Destroy_Context
-      GLX_Destroy_Context (Win.Display, Win.Context);
-      Win.Context := No_Context;
-   end Destroy_Context;
-
-   ---------------------------------------------------------------------------
-
    -- Select a window to use for subsequent OpenGL calls
-   procedure Make_Current (Win : in Handle) is
+   procedure Make_Current (Win : in Window_Handle) is
+      XWin : X11Window_Handle:=X11Window_Handle(Win);
    begin  -- Make_Current
-      if GLX_Make_Current (Win.Display, Win.Window, Win.Context) /= GL_TRUE then
+      if GLX_Make_Current (XWin.Display, XWin.Window, XWin.Context) /= GL_TRUE then
          raise Context_Failed with "Cannot make given OpenGL context current";
       end if;
    end Make_Current;
 
    ---------------------------------------------------------------------------
 
-   -- Make a rendering context the current one for a window
-   procedure Set_Context (Win     : in out Handle;
-                          Context : in     Context_Handle) is
-   begin  -- Set_Context
-      if GLX_Make_Current (Win.Display, Win.Window, Context) = GL_TRUE then
-         Win.Context := Context;
-      else
-         raise Context_Failed with "Cannot select given OpenGL context";
-      end if;
-   end Set_Context;
-
-   ---------------------------------------------------------------------------
-
    -- Promotes the back buffer to front; only valid if the window is double
    -- buffered, meaning Animated was true when the window was created.  Useful
    -- for smooth animation.
-   procedure Swap (Win : in Handle) is
+   procedure Swap (Win : in Window_Handle) is
+      XWin : X11Window_Handle:=X11Window_Handle(Win);
 
       procedure GLX_Swap_Buffers (Display : in Display_Pointer;   Window : in Window_ID);
       pragma Import (C, GLX_Swap_Buffers, "glXSwapBuffers");
 
    begin  -- Swap
-      GLX_Swap_Buffers (Win.Display, Win.Window);
+      GLX_Swap_Buffers (XWin.Display, XWin.Window);
    end Swap;
 
    ---------------------------------------------------------------------------
 
    -- Return current window width
-   function Width (Win : in Handle) return Natural is
+   function Width (Win : in Window_Handle) return Natural is
    begin  -- Width
       return Win.Width;
    end Width;
@@ -639,7 +407,7 @@ package body Lumen.Window is
    ---------------------------------------------------------------------------
 
    -- Return current window width
-   function Height (Win : in Handle) return Natural is
+   function Height (Win : in Window_Handle) return Natural is
    begin  -- Height
       return Win.Height;
    end Height;

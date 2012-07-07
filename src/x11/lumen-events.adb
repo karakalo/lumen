@@ -23,12 +23,12 @@
 with System;
 
 with Lumen.Events.Key_Translate;
-with Lumen.Internal;
 with Lumen.Window;
+with X11; use X11;
 
 package body Lumen.Events is
 
-   ---------------------------------------------------------------------------
+   -- Xlib stuff needed for our window info record
 
    -- Convert a Key_Symbol into a Latin-1 character; raises Not_Character if
    -- it's not possible.  Character'Val is simpler.
@@ -81,171 +81,22 @@ package body Lumen.Events is
    -- Useful for more complex event loops.
    function Pending (Win : Window_Handle) return Natural is
 
-      function X_Pending (Display : Internal.Display_Pointer) return Natural;
+      XWin : X11Window_Handle:=X11Window_Handle(Win);
+
+      function X_Pending (Display : Display_Pointer) return Natural;
       pragma Import (C, X_Pending, "XPending");
 
    begin  -- Pending
-      return X_Pending (Win.Display);
+      return X_Pending (XWin.Display);
    end Pending;
 
    ---------------------------------------------------------------------------
 
    -- Retrieve the next input event from the queue and return it
-   function Next_Event (Win       : in Window.Handle;
+   function Next_Event (Win       : in Window_Handle;
                         Translate : in Boolean := True) return Event_Data is
 
-      ------------------------------------------------------------------------
-
-      -- Binding needed locally to translate keycodes
-      function X_Lookup_String (Event   : in System.Address;
-                                Buffer  : in System.Address;
-                                Limit   : in Natural;
-                                Keysym  : in System.Address;
-                                Compose : in System.Address)
-      return Natural;
-      pragma Import (C, X_Lookup_String, "XLookupString");
-
-      ------------------------------------------------------------------------
-
-      -- X event type codes
-      X_Error            : constant :=  0;  -- we don't actually use this, just there to define bounds
-      X_Key_Press        : constant :=  2;
-      X_Key_Release      : constant :=  3;
-      X_Button_Press     : constant :=  4;
-      X_Button_Release   : constant :=  5;
-      X_Motion_Notify    : constant :=  6;
-      X_Enter_Notify     : constant :=  7;
-      X_Leave_Notify     : constant :=  8;
-      X_Focus_In         : constant :=  9;
-      X_Focus_Out        : constant := 10;
-      X_Expose           : constant := 12;
-      X_Unmap_Notify     : constant := 18;
-      X_Map_Notify       : constant := 19;
-      X_Configure_Notify : constant := 22;
-      X_Client_Message   : constant := 33;
-      X_Generic_Event    : constant := 35;  -- we don't actually use this, just there to define bounds
-
-      X_First_Event    : constant := X_Error;
-      X_Last_Event     : constant := X_Generic_Event + 1;
-
-      -- X modifier mask and its values
-      type Modifier_Mask is mod 2 ** Integer'Size;
-
-      Shift_Mask    : constant Modifier_Mask := 2#0000_0000_0000_0001#;
-      Lock_Mask     : constant Modifier_Mask := 2#0000_0000_0000_0010#;
-      Control_Mask  : constant Modifier_Mask := 2#0000_0000_0000_0100#;
-      Mod_1_Mask    : constant Modifier_Mask := 2#0000_0000_0000_1000#;
-      Mod_2_Mask    : constant Modifier_Mask := 2#0000_0000_0001_0000#;
-      Mod_3_Mask    : constant Modifier_Mask := 2#0000_0000_0010_0000#;
-      Mod_4_Mask    : constant Modifier_Mask := 2#0000_0000_0100_0000#;
-      Mod_5_Mask    : constant Modifier_Mask := 2#0000_0000_1000_0000#;
-      Button_1_Mask : constant Modifier_Mask := 2#0000_0001_0000_0000#;
-      Button_2_Mask : constant Modifier_Mask := 2#0000_0010_0000_0000#;
-      Button_3_Mask : constant Modifier_Mask := 2#0000_0100_0000_0000#;
-      Button_4_Mask : constant Modifier_Mask := 2#0000_1000_0000_0000#;
-      Button_5_Mask : constant Modifier_Mask := 2#0001_0000_0000_0000#;
-
-      type X_Event_Code is new Integer range X_First_Event .. X_Last_Event;
-
-      Bytes     : constant := Internal.Word_Bytes;
-      Bits      : constant := Internal.Word_Bits;
-      Atom_Bits : constant := Internal.Atom'Size - 1;
-      Base_1_32 : constant :=  8;
-      Base_2_32 : constant :=  5;
-      Base_3_32 : constant :=  6;
-      Base_4_32 : constant :=  7;
-      Base_1_64 : constant := 16;
-      Base_2_64 : constant := 10;
-      Base_3_64 : constant := 12;
-      Base_4_64 : constant := 14;
-      Base_1    : constant := (Base_1_32 * Internal.Is_32) + (Base_1_64 * Internal.Is_64);
-      Base_2    : constant := (Base_2_32 * Internal.Is_32) + (Base_2_64 * Internal.Is_64);
-      Base_3    : constant := (Base_3_32 * Internal.Is_32) + (Base_3_64 * Internal.Is_64);
-      Base_4    : constant := (Base_4_32 * Internal.Is_32) + (Base_4_64 * Internal.Is_64);
-      type X_Event_Data (X_Event_Type : X_Event_Code := X_Error) is record
-         case X_Event_Type is
-            when X_Key_Press | X_Key_Release =>
-               Key_X      : Natural;
-               Key_Y      : Natural;
-               Key_Root_X : Natural;
-               Key_Root_Y : Natural;
-               Key_State  : Modifier_Mask;
-               Key_Code   : Natural;
-            when X_Button_Press | X_Button_Release =>
-               Btn_X      : Natural;
-               Btn_Y      : Natural;
-               Btn_Root_X : Natural;
-               Btn_Root_Y : Natural;
-               Btn_State  : Modifier_Mask;
-               Btn_Code   : Natural;
-            when X_Motion_Notify =>
-               Mov_X      : Natural;
-               Mov_Y      : Natural;
-               Mov_Root_X : Natural;
-               Mov_Root_Y : Natural;
-               Mov_State  : Modifier_Mask;
-            when X_Enter_Notify | X_Leave_Notify =>
-               Xng_X      : Natural;
-               Xng_Y      : Natural;
-               Xng_Root_X : Natural;
-               Xng_Root_Y : Natural;
-            when X_Expose =>
-               Xps_X      : Natural;
-               Xps_Y      : Natural;
-               Xps_Width  : Natural;
-               Xps_Height : Natural;
-               Xps_Count  : Natural;
-            when X_Configure_Notify =>
-               Cfg_X      : Natural;
-               Cfg_Y      : Natural;
-               Cfg_Width  : Natural;
-               Cfg_Height : Natural;
-            when X_Client_Message =>
-               Msg_Value  : Internal.Atom;
-            when others =>
-               Pad        : Internal.Padding;
-         end case;
-      end record;
-      for X_Event_Data use record
-         X_Event_Type at  0 * Bytes range 0 .. Bits;
-
-         Key_X        at (Base_1 + 0) * Bytes range 0 .. Bits;
-         Key_Y        at (Base_1 + 1) * Bytes range 0 .. Bits;
-         Key_Root_X   at (Base_1 + 2) * Bytes range 0 .. Bits;
-         Key_Root_Y   at (Base_1 + 3) * Bytes range 0 .. Bits;
-         Key_State    at (Base_1 + 4) * Bytes range 0 .. Bits;
-         Key_Code     at (Base_1 + 5) * Bytes range 0 .. Bits;
-
-         Btn_X        at (Base_1 + 0) * Bytes range 0 .. Bits;
-         Btn_Y        at (Base_1 + 1) * Bytes range 0 .. Bits;
-         Btn_Root_X   at (Base_1 + 2) * Bytes range 0 .. Bits;
-         Btn_Root_Y   at (Base_1 + 3) * Bytes range 0 .. Bits;
-         Btn_State    at (Base_1 + 4) * Bytes range 0 .. Bits;
-         Btn_Code     at (Base_1 + 5) * Bytes range 0 .. Bits;
-
-         Mov_X        at (Base_1 + 0) * Bytes range 0 .. Bits;
-         Mov_Y        at (Base_1 + 1) * Bytes range 0 .. Bits;
-         Mov_Root_X   at (Base_1 + 2) * Bytes range 0 .. Bits;
-         Mov_Root_Y   at (Base_1 + 3) * Bytes range 0 .. Bits;
-         Mov_State    at (Base_1 + 4) * Bytes range 0 .. Bits;
-
-         Xng_X        at (Base_1 + 0) * Bytes range 0 .. Bits;
-         Xng_Y        at (Base_1 + 1) * Bytes range 0 .. Bits;
-         Xng_Root_X   at (Base_1 + 2) * Bytes range 0 .. Bits;
-         Xng_Root_Y   at (Base_1 + 3) * Bytes range 0 .. Bits;
-
-         Xps_X        at (Base_2 + 0) * Bytes range 0 .. Bits;
-         Xps_Y        at (Base_2 + 1) * Bytes range 0 .. Bits;
-         Xps_Width    at (Base_2 + 2) * Bytes range 0 .. Bits;
-         Xps_Height   at (Base_2 + 3) * Bytes range 0 .. Bits;
-
-         Cfg_X        at (Base_3 + 0) * Bytes range 0 .. Bits;
-         Cfg_Y        at (Base_3 + 1) * Bytes range 0 .. Bits;
-         Cfg_Width    at (Base_3 + 2) * Bytes range 0 .. Bits;
-         Cfg_Height   at (Base_3 + 3) * Bytes range 0 .. Bits;
-
-         Msg_Value    at (Base_4 + 0) * Bytes range 0 .. Atom_Bits;
-      end record;
+      XWin : X11Window_Handle:=X11Window_Handle(Win);
 
       ------------------------------------------------------------------------
 
@@ -284,7 +135,7 @@ package body Lumen.Events is
    begin  -- Next_Event
 
       -- Get the event from the X server
-      Internal.X_Next_Event (Win.Display, X_Event'Address);
+      X_Next_Event (XWin.Display, X_Event'Address);
 
       -- Guard against pathological X servers
       if not X_Event.X_Event_Type'Valid then
@@ -353,7 +204,7 @@ package body Lumen.Events is
                                      Abs_X     => X_Event.Btn_Root_X,
                                      Abs_Y     => X_Event.Btn_Root_Y,
                                      Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State),
-                                     Changed   => Button'Val (X_Event.Btn_Code - 1)));
+                                     Changed   => Button_Enum'Val (X_Event.Btn_Code - 1)));
 
          when X_Button_Release =>
             return (Which        => Button_Release,
@@ -362,7 +213,7 @@ package body Lumen.Events is
                                      Abs_X     => X_Event.Btn_Root_X,
                                      Abs_Y     => X_Event.Btn_Root_Y,
                                      Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State),
-                                     Changed   => Button'Val (X_Event.Btn_Code - 1)));
+                                     Changed   => Button_Enum'Val (X_Event.Btn_Code - 1)));
 
          when X_Motion_Notify =>
             return (Which       => Pointer_Motion,
@@ -431,9 +282,9 @@ package body Lumen.Events is
 
          when X_Client_Message =>
             declare
-               use type Internal.Atom;
+               use type Atom;
             begin
-               if X_Event.Msg_Value = Internal.Delete_Window_Atom then
+               if X_Event.Msg_Value = Delete_Window_Atom then
                   return (Which => Close_Window);
                else
                   return (Which => Unknown_Event);
@@ -450,7 +301,7 @@ package body Lumen.Events is
    ---------------------------------------------------------------------------
 
    -- Simple event loop with a single callback
-   procedure Receive_Events (Win       : in Window.Handle;
+   procedure Receive_Events (Win       : in Window_Handle;
                              Call      : in Event_Callback;
                              Translate : in Boolean := True) is
    begin  -- Receive_Events
@@ -465,7 +316,7 @@ package body Lumen.Events is
    ---------------------------------------------------------------------------
 
    -- Simple event loop with multiple callbacks based on event type
-   procedure Select_Events (Win       : in Window.Handle;
+   procedure Select_Events (Win       : in Window_Handle;
                             Calls     : in Event_Callback_Table;
                             Translate : in Boolean := True) is
 
@@ -487,10 +338,17 @@ package body Lumen.Events is
    ---------------------------------------------------------------------------
 
    -- Terminate internal event loops, causes Receive_Events and Select_Events to return
-   procedure End_Events (Win : in Window.Handle) is
+   procedure End_Events (Win : in Window_Handle) is
    begin  -- End_Events
       Win.Looping := False;  -- terminates internal event loop
    end End_Events;
+
+   ---------------------------------------------------------------------------
+
+   procedure Process (Win : in Window_Handle) is
+   begin
+      null;
+   end Process;
 
    ---------------------------------------------------------------------------
 

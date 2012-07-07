@@ -71,19 +71,6 @@ package Lumen.Internal is
 
    ---------------------------------------------------------------------------
 
-   -- Our "delete window" atom value
-   Delete_Window_Atom : Atom;
-
-   ---------------------------------------------------------------------------
-
-   -- Binding to XNextEvent, used by Window for mapping notify events, and by
-   -- Events for everything else
-   procedure X_Next_Event (Display : in Display_Pointer;
-                           Event   : in System.Address);
-   pragma Import (C, X_Next_Event, "XNextEvent");
-
-   ---------------------------------------------------------------------------
-
    -- Values used to compute record rep clause values that are portable
    -- between 32- and 64-bit systems
    Is_32      : constant := Boolean'Pos (System.Word_Size = 32);

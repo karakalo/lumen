@@ -25,9 +25,6 @@ package Lumen.Window is
    -- Null window; in X, this means the root window is the parent
    No_Window : constant Window_Handle := null;
 
-   -- Means "no GL context"; for Create, means create a new one
-   No_Context : constant Context_Handle := null;
-
    -- Types of events wanted, and a set listing them.
    type Wanted_Event is (Want_Key_Press, Want_Key_Release, Want_Button_Press,  Want_Button_Release,
                          Want_Window_Enter, Want_Window_Leave,
@@ -39,44 +36,6 @@ package Lumen.Window is
 
    -- Rendering context's color depth
    type Color_Depth is (Pseudo_Color, True_Color);
-
-   -- OpenGL context ("visual") attribute specifiers
-   type Context_Attribute_Name is
-      (
-       Attr_None,
-       Attr_Use_GL,             -- unused
-       Attr_Buffer_Size,        -- color index buffer size, ignored if TrueColor
-       Attr_Level,              -- buffer level for over/underlays
-       Attr_RGBA,               -- set by Depth => TrueColor
-       Attr_Doublebuffer,       -- set by Animate => True
-       Attr_Stereo,             -- wow, you have stereo visuals?
-       Attr_Aux_Buffers,        -- number of auxiliary buffers
-       Attr_Red_Size,           -- bit depth, red
-       Attr_Green_Size,         -- bit depth, green
-       Attr_Blue_Size,          -- bit depth, blue
-       Attr_Alpha_Size,         -- bit depth, alpha
-       Attr_Depth_Size,         -- depth buffer size
-       Attr_Stencil_Size,       -- stencil buffer size
-       Attr_Accum_Red_Size,     -- accumulation buffer bit depth, red
-       Attr_Accum_Green_Size,   -- accumulation buffer bit depth, green
-       Attr_Accum_Blue_Size,    -- accumulation buffer bit depth, blue
-       Attr_Accum_Alpha_Size    -- accumulation buffer bit depth, alpha
-      );
-
-   type Context_Attribute (Name  : Context_Attribute_Name := Attr_None) is record
-      case Name is
-         when Attr_None | Attr_Use_GL | Attr_RGBA | Attr_Doublebuffer | Attr_Stereo =>
-            null;  -- present or not, no value
-         when Attr_Level =>
-            Level : Integer := 0;
-         when Attr_Buffer_Size | Attr_Aux_Buffers | Attr_Depth_Size | Attr_Stencil_Size |
-              Attr_Red_Size | Attr_Green_Size | Attr_Blue_Size | Attr_Alpha_Size |
-              Attr_Accum_Red_Size | Attr_Accum_Green_Size | Attr_Accum_Blue_Size | Attr_Accum_Alpha_Size =>
-            Size : Natural := 0;
-      end case;
-   end record;
-
-   type Context_Attributes is array (Positive range <>) of Context_Attribute;
 
    -- These are what we normally use, but other values are also possible
    Default_Context_Attributes : constant Context_Attributes :=
@@ -140,7 +99,6 @@ package Lumen.Window is
                      Icon_Name     : in     String             := "";
                      Class_Name    : in     String             := "";
                      Instance_Name : in     String             := "";
-                     Context       : in     Context_Handle     := No_Context;
                      Depth         : in     Color_Depth        := True_Color;
                      Direct        : in     Boolean            := True;
                      Animated      : in     Boolean            := True;
@@ -157,23 +115,8 @@ package Lumen.Window is
                         Class_Name    : in String           := "";
                         Instance_Name : in String           := "");
 
-   -- Create an OpenGL rendering context; needed only when you want a second
-   -- or subsequent context for a window, since Create makes one to start
-   -- with
-   function Create_Context (Win    : in Window_Handle;
-                            Direct : in Boolean := True)
-   return Context_Handle;
-
-   -- Destroy a window's OpenGL rendering context; should be followed either
-   -- by a Make_Current or a Destroy_Window
-   procedure Destroy_Context (Win : in out Window_Handle);
-
    -- Select a window to use for subsequent OpenGL calls
    procedure Make_Current (Win : in Window_Handle);
-
-   -- Make a rendering context the current one for a window
-   procedure Set_Context (Win     : in out Window_Handle;
-                          Context : in     Context_Handle);
 
    -- Promotes the back buffer to front; only valid if the window is double
    -- buffered, meaning Animated was true when the window was created.  Useful

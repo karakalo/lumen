@@ -27,22 +27,46 @@ with System;
 
 package Lumen is
 
-   -- Values used to compute record rep clause values that are portable
-   -- between 32- and 64-bit systems
-   Is_32      : constant := Boolean'Pos (System.Word_Size = 32);
-   Is_64      : constant := 1 - Is_32;
-   Word_Bytes : constant := Integer'Size / System.Storage_Unit;
-   Word_Bits  : constant := Integer'Size - 1;
-   Long_Bytes : constant := Long_Integer'Size / System.Storage_Unit;
-   Long_Bits  : constant := Long_Integer'Size - 1;
+   -- OpenGL context ("visual") attribute specifiers
+   type Context_Attribute_Name is
+      (
+       Attr_None,
+       Attr_Use_GL,             -- unused
+       Attr_Buffer_Size,        -- color index buffer size, ignored if TrueColor
+       Attr_Level,              -- buffer level for over/underlays
+       Attr_RGBA,               -- set by Depth => TrueColor
+       Attr_Doublebuffer,       -- set by Animate => True
+       Attr_Stereo,             -- wow, you have stereo visuals?
+       Attr_Aux_Buffers,        -- number of auxiliary buffers
+       Attr_Red_Size,           -- bit depth, red
+       Attr_Green_Size,         -- bit depth, green
+       Attr_Blue_Size,          -- bit depth, blue
+       Attr_Alpha_Size,         -- bit depth, alpha
+       Attr_Depth_Size,         -- depth buffer size
+       Attr_Stencil_Size,       -- stencil buffer size
+       Attr_Accum_Red_Size,     -- accumulation buffer bit depth, red
+       Attr_Accum_Green_Size,   -- accumulation buffer bit depth, green
+       Attr_Accum_Blue_Size,    -- accumulation buffer bit depth, blue
+       Attr_Accum_Alpha_Size    -- accumulation buffer bit depth, alpha
+      );
 
-   ---------------------------------------------------------------------------
+   type Context_Attribute (Name  : Context_Attribute_Name := Attr_None) is record
+      case Name is
+         when Attr_None | Attr_Use_GL | Attr_RGBA | Attr_Doublebuffer | Attr_Stereo =>
+            null;  -- present or not, no value
+         when Attr_Level =>
+            Level : Integer := 0;
+         when Attr_Buffer_Size | Attr_Aux_Buffers | Attr_Depth_Size | Attr_Stencil_Size |
+              Attr_Red_Size | Attr_Green_Size | Attr_Blue_Size | Attr_Alpha_Size |
+              Attr_Accum_Red_Size | Attr_Accum_Green_Size | Attr_Accum_Blue_Size | Attr_Accum_Alpha_Size =>
+            Size : Natural := 0;
+      end case;
+   end record;
+
+   type Context_Attributes is array (Positive range <>) of Context_Attribute;
 
    type Window_Type is tagged private;
    type Window_Handle is access all Window_Type'Class;
-
-   type Context_Type is tagged private;
-   type Context_Handle is access all Context_Type'Class;
 
 private
    -- A time that won't ever happen during the execution of a Lumen app
@@ -50,11 +74,6 @@ private
                                                                Month => Ada.Calendar.Month_Number'First,
                                                                Day   => Ada.Calendar.Day_Number'First);
 
-
-   type Context_Type is tagged
-      record
-         null;
-      end record;
 
    type Window_Type is tagged
       record

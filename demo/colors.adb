@@ -1,13 +1,14 @@
 
 -- Simple Lumen demo/test program, using earliest incomplete library
 
+with Lumen;
 with Lumen.Window;
 with Lumen.Events;
 with Lumen.GL;
 
 procedure Colors is
 
-   Win     : Lumen.Window.Handle;
+   Win     : Lumen.Window_Handle;
    Event   : Lumen.Events.Event_Data;
 
 begin  -- Colors
