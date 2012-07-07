@@ -1,0 +1,7 @@
+abstract project Config is
+
+   type Os_Type is
+      ("Windows", "Linux", "MacOSX");
+   Os : Os_Type := external ("OS", "Linux");
+
+end Config;
