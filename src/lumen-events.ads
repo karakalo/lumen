@@ -47,8 +47,8 @@ package Lumen.Events is
    subtype Key_Symbol is Long_Integer;
 
    -- Pointer buttons
-   type Button is (Button_1, Button_2, Button_3, Button_4, Button_5);
-   type Button_Set is array (Button) of Boolean;
+   type Button_Enum is (Button_1, Button_2, Button_3, Button_4, Button_5);
+   type Button_Set is array (Button_Enum) of Boolean;
 
    -- The data associated with an event
    type Key_Event_Data is record
@@ -68,7 +68,7 @@ package Lumen.Events is
       Abs_X     : Natural;
       Abs_Y     : Natural;
       Modifiers : Modifier_Set;
-      Changed   : Button;
+      Changed   : Button_Enum;
    end record;
 
    type Motion_Event_Data is record
@@ -123,7 +123,7 @@ package Lumen.Events is
    No_Callback : constant Event_Callback := null;
 
    -- A table of callback procedures, used to select on event type
-   type Event_Callback_Table is array (Event_Type) of Event_Callback;
+   type Event_Callback_Table is array(Event_Type) of Event_CallBack;
 
    ---------------------------------------------------------------------------
 
@@ -145,27 +145,8 @@ package Lumen.Events is
 
    ---------------------------------------------------------------------------
 
-   -- Returns the number of events that are waiting in the event queue.
-   -- Useful for more complex event loops.
-   function Pending (Win : Window.Handle) return Natural;
-
-   -- Retrieve the next input event from the queue and return it.  Useful for
-   -- constructing event loops.
-   function Next_Event (Win       : in Window.Handle;
-                        Translate : in Boolean := True) return Event_Data;
-
-   -- Simple event loop with a single callback
-   procedure Receive_Events (Win       : in Window.Handle;
-                             Call      : in Event_Callback;
-                             Translate : in Boolean := True);
-
-   -- Simple event loop with multiple callbacks based on event type
-   procedure Select_Events (Win       : in Window.Handle;
-                            Calls     : in Event_Callback_Table;
-                            Translate : in Boolean := True);
-
-   -- Terminate internal event loops, causes Receive_Events and Select_Events to return
-   procedure End_Events (Win : in Window.Handle);
+   -- Call to process all messages in the loop
+   procedure Process (Win : Window_Handle);
 
    ---------------------------------------------------------------------------
 

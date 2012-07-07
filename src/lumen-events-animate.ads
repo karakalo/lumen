@@ -20,10 +20,6 @@
 -- in connection with the use or performance of this software.
 
 
--- Environment
-with Lumen.Internal;
-
-
 package Lumen.Events.Animate is
 
    ---------------------------------------------------------------------------
@@ -42,24 +38,8 @@ package Lumen.Events.Animate is
 
    ---------------------------------------------------------------------------
 
-   -- Simple event loop with a single event callback, plus an animate-frame
-   -- callback
-   procedure Receive_Events (Win       : in Window.Handle;
-                             Call      : in Event_Callback;
-                             FPS       : in Frame_Count;
-                             Frame     : in Animate_Callback;
-                             Translate : in Boolean := True);
-
-   -- Simple event loop with multiple event callbacks based on event type,
-   -- plus an animate-frame callback
-   procedure Select_Events (Win       : in Window.Handle;
-                            Calls     : in Event_Callback_Table;
-                            FPS       : in Frame_Count;
-                            Frame     : in Animate_Callback;
-                            Translate : in Boolean := True);
-
    -- Procedure to change FPS after window creation
-   procedure Set_FPS (Win : in Window.Handle;
+   procedure Set_FPS (Win : in Window_Handle;
                       FPS : in Frame_Count);
 
    -- Type of frames-per-second count to fetch.  "Overall" means since the app
@@ -67,7 +47,7 @@ package Lumen.Events.Animate is
    type FPS_Type is (FPS_Overall, FPS_Since_Prior);
 
    -- Function to fetch FPS (and reset rolling average if necessary)
-   function FPS (Win   : Window.Handle;
+   function FPS (Win   : Window_Handle;
                  Since : FPS_Type := FPS_Since_Prior)
    return Float;
 

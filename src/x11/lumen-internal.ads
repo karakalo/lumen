@@ -59,25 +59,14 @@ package Lumen.Internal is
 
    ---------------------------------------------------------------------------
 
-   -- A time that won't ever happen during the execution of a Lumen app
-   Never : constant Ada.Calendar.Time := Ada.Calendar.Time_Of (Year  => Ada.Calendar.Year_Number'First,
-                                                               Month => Ada.Calendar.Month_Number'First,
-                                                               Day   => Ada.Calendar.Day_Number'First);
    -- The native window type
-   type Window_Info is record
+   type Window_Internal is record
       Display     : Display_Pointer       := Null_Display_Pointer;
       Window      : Window_ID             := 0;
       Visual      : X_Visual_Info_Pointer := null;
       Width       : Natural               := 0;
       Height      : Natural               := 0;
-      Prior_Frame : Ada.Calendar.Time     := Never;
-      App_Start   : Ada.Calendar.Time     := Never;
-      Last_Start  : Ada.Calendar.Time     := Never;
-      App_Frames  : Long_Integer          := 0;
-      Last_Frames : Long_Integer          := 0;
-      SPF         : Duration              := 0.0;
       Context     : GLX_Context           := Null_Context;
-      Looping     : Boolean               := True;
    end record;
 
    ---------------------------------------------------------------------------

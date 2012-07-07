@@ -20,23 +20,13 @@
 -- action of contract, negligence or other tortious action, arising out of or
 -- in connection with the use or performance of this software.
 
--- Environment
-with Lumen.Internal;
-
-
 package Lumen.Window is
 
-   -- Handle for a Lumen window
-   type Handle is access Internal.Window_Info;
-
-   -- Handle for an OpenGL rendering context
-   subtype Context_Handle is Internal.GLX_Context;
-
    -- Null window; in X, this means the root window is the parent
-   No_Window : constant Handle := null;
+   No_Window : constant Window_Handle := null;
 
    -- Means "no GL context"; for Create, means create a new one
-   No_Context : constant Context_Handle := Internal.Null_Context;
+   No_Context : constant Context_Handle := null;
 
    -- Types of events wanted, and a set listing them.
    type Wanted_Event is (Want_Key_Press, Want_Key_Release, Want_Button_Press,  Want_Button_Release,
@@ -141,8 +131,8 @@ package Lumen.Window is
    --
    -- Attributes: The various graphic display ("visual") attributes which can
    -- be set.  The defaults work for most modern systems.
-   procedure Create (Win           : in out Handle;
-                     Parent        : in     Handle             := No_Window;
+   procedure Create (Win           : in out Window_Handle;
+                     Parent        : in     Window_Handle      := No_Window;
                      Width         : in     Natural            := 400;
                      Height        : in     Natural            := 400;
                      Events        : in     Wanted_Event_Set   := Want_No_Events;
@@ -157,11 +147,11 @@ package Lumen.Window is
                      Attributes    : in     Context_Attributes := Default_Context_Attributes);
 
    -- Destroy a native window, including its current rendering context.
-   procedure Destroy (Win : in out Handle);
+   procedure Destroy (Win : in out Window_Handle);
 
    -- Set various textual names associated with a window.  Null string means
    -- leave the current value unchanged;
-   procedure Set_Names (Win           : in Handle;
+   procedure Set_Names (Win           : in Window_Handle;
                         Name          : in String           := "";
                         Icon_Name     : in String           := "";
                         Class_Name    : in String           := "";
@@ -170,30 +160,30 @@ package Lumen.Window is
    -- Create an OpenGL rendering context; needed only when you want a second
    -- or subsequent context for a window, since Create makes one to start
    -- with
-   function Create_Context (Win    : in Handle;
+   function Create_Context (Win    : in Window_Handle;
                             Direct : in Boolean := True)
    return Context_Handle;
 
    -- Destroy a window's OpenGL rendering context; should be followed either
    -- by a Make_Current or a Destroy_Window
-   procedure Destroy_Context (Win : in out Handle);
+   procedure Destroy_Context (Win : in out Window_Handle);
 
    -- Select a window to use for subsequent OpenGL calls
-   procedure Make_Current (Win : in Handle);
+   procedure Make_Current (Win : in Window_Handle);
 
    -- Make a rendering context the current one for a window
-   procedure Set_Context (Win     : in out Handle;
+   procedure Set_Context (Win     : in out Window_Handle;
                           Context : in     Context_Handle);
 
    -- Promotes the back buffer to front; only valid if the window is double
    -- buffered, meaning Animated was true when the window was created.  Useful
    -- for smooth animation.
-   procedure Swap (Win : in Handle);
+   procedure Swap (Win : in Window_Handle);
 
    -- Return current window width
-   function Width (Win : in Handle) return Natural;
+   function Width (Win : in Window_Handle) return Natural;
 
    -- Return current window width
-   function Height (Win : in Handle) return Natural;
+   function Height (Win : in Window_Handle) return Natural;
 
 end Lumen.Window;

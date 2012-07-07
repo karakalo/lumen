@@ -79,7 +79,7 @@ package body Lumen.Events is
 
    -- Returns the number of events that are waiting in the event queue.
    -- Useful for more complex event loops.
-   function Pending (Win : Window.Handle) return Natural is
+   function Pending (Win : Window_Handle) return Natural is
 
       function X_Pending (Display : Internal.Display_Pointer) return Natural;
       pragma Import (C, X_Pending, "XPending");
