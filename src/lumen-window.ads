@@ -196,9 +196,4 @@ package Lumen.Window is
    -- Return current window width
    function Height (Win : in Handle) return Natural;
 
-private
-
-   pragma Linker_Options ("-lX11");
-   pragma Linker_Options ("-lGL");
-
 end Lumen.Window;

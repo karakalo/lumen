@@ -1708,6 +1708,4 @@ private
    pragma Import (C, Use_Program, "glUseProgram");
    pragma Import (C, Viewport, "glViewport");
 
-   pragma Linker_Options ("-lGL");
-
 end Lumen.GL;

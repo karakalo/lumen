@@ -3,6 +3,7 @@
 -- Updated May 2011 for new dir structure
 
 with "lumen.gpr";
+with "config";
 
 project Demos is
 
@@ -26,7 +27,12 @@ project Demos is
    end Compiler;
 
    package Linker is
-      for Default_Switches ("ada") use ("-lGLU");
+      case Config.oS is
+         when "Windows_NT" =>
+            for Default_Switches ("ada") use ("-lglu32");
+         when "Linux"|"MacOSX" =>
+            for Default_Switches ("ada") use ("-lGLU");
+      end case;
    end Linker;
 
 end Demos;

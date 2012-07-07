@@ -30,10 +30,10 @@ library project OpenGL is
             for Linker_Options use ("-lOpenGL32", "-lGdi32");
 
          when "Linux" =>
-            for Linker_Options use ("-lGL");
+            for Linker_Options use ("-lGL","-lX11");
 
          when "MacOSX" =>
-            for Linker_Options use ("-Wl,-framework,OpenGL");
+            for Linker_Options use ("-Wl,-framework,OpenGL","-lX11");
       end case;
    end Linker;
 

@@ -120,6 +120,4 @@ private
    pragma Import (C, Disk, "gluDisk");
    pragma Import (C, Partial_Disk, "gluPartialDisk");
 
-   pragma Linker_Options ("-lGLU");
-
 end Lumen.GLU;
