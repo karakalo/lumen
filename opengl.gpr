@@ -1,12 +1,10 @@
+with "config";
+
 library project OpenGL is
 
-   type Os_Type is
-      ("Windows", "Linux", "MacOSX");
-   Os : Os_Type := external ("OS", "Linux");
-
    for Library_Name use "AdaOpenGL";
-   case Os is
-      when "Windows" => for Source_Dirs use ("gl", "gl/wgl");
+   case Config.Os is
+      when "Windows_NT" => for Source_Dirs use ("gl", "gl/wgl");
       when "Linux" => for Source_Dirs use ("gl");
       when "MacOSX" => for Source_Dirs use ("gl", "gl/cgl");
    end case;
@@ -27,8 +25,8 @@ library project OpenGL is
    end Compiler;
 
    package Linker is
-      case Os is
-         when "Windows" =>
+      case Config.Os is
+         when "Windows_NT" =>
             for Linker_Options use ("-lOpenGL32", "-lGdi32");
 
          when "Linux" =>
