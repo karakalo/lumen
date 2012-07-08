@@ -112,8 +112,8 @@ procedure Spinner is
    procedure Expose_Handler
      (Top    : Integer;
       Left   : Integer;
-      Height : Integer;
-      Width  : Integer) is
+      Height : Natural;
+      Width  : Natural) is
    begin  -- Expose_Handler
       Draw;
    end Expose_Handler;
@@ -157,6 +157,9 @@ begin  -- Spinner
                         Width  => Wide,
                         Height => High);
 
+   Win.OnExposed := Expose_Handler'Unrestricted_Access;
+   Win.OnResize  := Resize_Handler'Unrestricted_Access;
+   Win.OnKeyPress := KeyPress_Handler'Unrestricted_Access;
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
 

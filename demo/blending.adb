@@ -25,17 +25,17 @@ with Lumen.GLU;
 procedure Blending is
 
    ---------------------------------------------------------------------------
-   
+
    type Enum_Array is array (Positive range <>) of Lumen.GL.Enum;
-   
+
    subtype Factors_Range   is Positive range 1 .. 15;
    subtype Equations_Range is Positive range 1 .. 5;
-   
+
    Win     : Lumen.Window.Handle;
    Event   : Lumen.Events.Event_Data;
    Wide    : Natural := 640;
    High    : Natural := 480;
-   
+
    Source_Factor : Factors_Range := Factors_Range'First;
    Dest_Factor   : Factors_Range := Factors_Range'First;
    Factors       : Enum_Array(Factors_Range) :=
@@ -86,53 +86,53 @@ procedure Blending is
 
    Bitmap1, Bitmap2 : Lumen.Image.Descriptor;
    Tx1, Tx2         : Lumen.GL.UInt;
-   
+
    ---------------------------------------------------------------------------
 
    Program_Exit : exception;
 
    ---------------------------------------------------------------------------
-   
+
    procedure Next_Factor(Factor : in out Factors_Range) is
    begin  -- Next_Factor
-      
+
       if Factor = Factors_Range'Last then
 	 Factor := Factors_Range'First;
       else
 	 Factor := Factor + 1;
       end if;
-      
+
    end Next_Factor;
-   
+
    procedure Set_Blend_Function(Source, Dest : in Factors_Range) is
    begin  -- Set_Blend_Function
-      
+
       Lumen.GL.Blend_Func(Factors(Source), Factors(Dest));
-      
+
    end Set_Blend_Function;
 
    procedure Next_Equation(Equation : in out Equations_Range) is
    begin  -- Next_Equation
-      
+
       if Equation = Equations_Range'Last then
 	 Equation := Equations_Range'First;
       else
 	 Equation := Equation + 1;
       end if;
-      
+
    end Next_Equation;
-   
+
    procedure Set_Equation_Function(Equation : in Equations_Range) is
    begin  -- Set_Equation_Function
-      
+
       Lumen.GL.Blend_Equation(Equations(Equation));
-      
+
    end Set_Equation_Function;
 
    -- Create a texture and bind a 2D image to it
    function Create_Texture(Bitmap : Lumen.Image.Descriptor) return Lumen.GL.UInt is
       use Lumen;
-      
+
       Result : aliased GL.UInt;
    begin  -- Create_Texture
 
@@ -157,11 +157,11 @@ procedure Blending is
       GL.Tex_Image (GL.GL_TEXTURE_2D, 0, GL.GL_RGBA,
 		   GL.SizeI (Bitmap.Width), GL.SizeI (Bitmap.Height), 0,
                    GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, Bitmap.Values.all'Address);
-      
+
       return Result;
-      
+
    end Create_Texture;
-   
+
    -- Set or reset the window view parameters
    procedure Set_View (W, H : in Natural) is
 
@@ -194,16 +194,16 @@ procedure Blending is
    procedure Draw is
 
       use Lumen;
-      
+
       use type GL.Bitfield;
 
    begin  -- Draw
-      
+
       GL.Clear_Color (0.0, 0.0, 0.0, 0.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT);
-       
+
       GL.Blend_Func(GL.GL_ONE, GL.GL_ZERO);
-      
+
       GL.Bind_Texture(GL.GL_TEXTURE_2D, Tx1);
 
       -- GL.Color (Float (1.0), 1.0, 1.0);
@@ -212,21 +212,21 @@ procedure Blending is
       begin
 	 GL.Tex_Coord (Float (0.0), 0.0);
          GL.Vertex (Float (-1.0), -1.0);
-	 
+
 	 GL.Tex_Coord (Float (0.0), 1.0);
          GL.Vertex (Float (-1.0),  1.0);
-	 
+
 	 GL.Tex_Coord (Float (1.0), 1.0);
          GL.Vertex (Float ( 1.0),  1.0);
-	 
+
 	 GL.Tex_Coord (Float (1.0), 0.0);
          GL.Vertex (Float ( 1.0), -1.0);
       end;
       GL.End_Primitive;
-      
+
       Set_Equation_Function(Equation);
       Set_Blend_Function(Source_Factor, Dest_Factor);
-      
+
       GL.Bind_Texture(GL.GL_TEXTURE_2D, Tx2);
 
       -- GL.Color (Float (1.0), 1.0, 1.0);
@@ -235,13 +235,13 @@ procedure Blending is
       begin
 	 GL.Tex_Coord (Float (0.0), 0.0);
          GL.Vertex (Float (-0.5), -0.5);
-	 
+
 	 GL.Tex_Coord (Float (0.0), 1.0);
          GL.Vertex (Float (-0.5),  1.5);
-	 
+
 	 GL.Tex_Coord (Float (1.0), 1.0);
          GL.Vertex (Float ( 1.5),  1.5);
-	 
+
 	 GL.Tex_Coord (Float (1.0), 0.0);
          GL.Vertex (Float ( 1.5), -0.5);
       end;
@@ -255,79 +255,57 @@ procedure Blending is
 
    ---------------------------------------------------------------------------
 
-   -- Simple event handler routine
-   procedure Handler (Event : in Lumen.Events.Event_Data) is
-      
-      use Lumen;
-      use type Events.Event_Type;
-      use type Events.Key_Category;
-
-   begin  -- Handler
-
-      -- Check if we need to quit
-      if Event.Which = Events.Close_Window then
-         raise Program_Exit;
-      end if;
-
-      -- If we were resized, adjust the viewport dimensions
-      if Event.Which = Events.Resized then
-         Wide := Event.Resize_Data.Width;
-         High := Event.Resize_Data.Height;
-         Set_View (Wide, High);
-      end if;
-      
-      if Event.Which = Events.Key_Release then
-	 case Event.Key_Data.Key is
-	    when others =>
-	       if Event.Key_Data.Key = Events.To_Symbol(Ada.Characters.Latin_1.ESC) then
-		  raise Program_Exit;
-	       end if;
-	       
-	       if Event.Key_Data.Key_Type = Events.Key_Graphic then
-		  declare
-		     Key_Char : constant Character := Events.To_Character(Event.Key_Data.Key);
-		  begin
-		     case Key_Char is
-			when 's' =>
-			   Next_Factor(Source_Factor);
-
-			when 'd' =>
-			   Next_Factor(Dest_Factor);
-
-			when 'e' =>
-			   Next_Equation(Equation);
-			
-			when others =>
-			   null;
-		     end case;
-		  end;
-	       end if;
-	       
-	       Ada.Text_IO.Put_Line
-		 ("Blend(" & Equation_Names(Equation) &
-		    ", " & Factor_Names(Source_Factor) &
-		    ", " & Factor_Names(Dest_Factor) & ")");
-	 end case;
-      end if;
-
-      -- Any other event just means "redraw" in this app
+   procedure WindowResize
+     (Height : Integer;
+      Width  : Integer) is
+   begin
+      Wide:=Width;
+      High:=Height;
+      set_View(Wide,High);
       Draw;
-   end Handler;
+   end WindowResize;
+
+   procedure KeyPress
+     (Category  : Key_Category;
+      Symbol    : Key_Symbol;
+      Modifiers : Modifier_Set) is
+   begin
+      if Symbol=Escape then
+         Terminated:=True;
+      end if;
+      Draw;
+   end KeyPress;
+
+   procedure KeyCharacter
+     (Character : Character) is
+   begin
+      case Character is
+         when 's' =>
+            Next_Factor(Source_Factor);
+         when 'd' =>
+            Next_Factor(Dest_Factor);
+         when 'e' =>
+            Next_Equation(Equation);
+         when others =>
+            null;
+      end case;
+      Draw;
+   end KeyCharacter;
 
    ---------------------------------------------------------------------------
 
 begin  -- Blending
-   
+
    if Ada.Command_Line.Argument_Count < 2 then
       raise Program_Error with "Usage: blending <texture 1> <texture 2>";
    end if;
-   
+
    Ada.Text_IO.Put_Line("Bitmap --> " & Ada.Command_Line.Argument(1));
    Ada.Text_IO.Put_Line("Bitmap --> " & Ada.Command_Line.Argument(2));
-   
+
    Bitmap1 := Lumen.Image.From_File(Ada.Command_Line.Argument(1));
    Bitmap2 := Lumen.Image.From_File(Ada.Command_Line.Argument(2));
-      
+
    -- Create Lumen window, accepting most defaults; turn double buffering off
    -- for simplicity
    Lumen.Window.Create (Win,
@@ -345,11 +323,11 @@ begin  -- Blending
 
    Tx1     := Create_Texture(Bitmap1);
    Tx2     := Create_Texture(Bitmap2);
-   
+
    Lumen.GL.Enable(Lumen.GL.GL_TEXTURE_2D);
    Lumen.GL.Enable(Lumen.GL.GL_BLEND);
    Lumen.GL.Blend_Color(0.0, 1.0, 0.0, 1.0);  -- Example green for blending with.
-   
+
    -- Enter the event loop
    Lumen.Events.Receive_Events (Win, Handler'Unrestricted_Access);
 

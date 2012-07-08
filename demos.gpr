@@ -16,7 +16,7 @@ project Demos is
                  "text1.adb",
                  "text2.adb",
                  "multi.adb"
---                 "blending",
+--                 "blending"
 --                 "fire"
 --		 "vertex_buffers", "shaders", "simple_2d", "simple_3d"
                 );
