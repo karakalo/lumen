@@ -45,7 +45,6 @@ package X11 is
    type Window_ID       is new Long_Integer;
 
    type Alloc_Mode               is (Alloc_None, Alloc_All);
-
    type Atom_Array               is array (Positive range <>) of Atom;
    type Colormap_ID              is new Long_Integer;
    type X_Window_Attributes_Mask is mod 2 ** Integer'Size;
@@ -90,6 +89,18 @@ package X11 is
       Bits_Per_RGB  : Natural;
    end record;
    type X_Visual_Info_Pointer is access all X_Visual_Info;
+
+   type X_Class_Hint is record
+      Instance_Name : System.Address;
+      Class_Name    : System.Address;
+   end record;
+
+   type X_Text_Property is record
+      Value    : System.Address;
+      Encoding : Atom;
+      Format   : Data_Format_Type;
+      NItems   : Long_Integer;
+   end record;
 
    ---------------------------------------------------------------------------
 
@@ -181,8 +192,6 @@ package X11 is
                                   Context : GLX_Context);
    pragma Import (C, GLX_Destroy_Context, "glXDestroyContext");
 
-   ---------------------------------------------------------------------------
-
    -- Binding needed locally to translate keycodes
    function X_Lookup_String (Event   : in System.Address;
                              Buffer  : in System.Address;
@@ -191,6 +200,9 @@ package X11 is
                              Compose : in System.Address)
                                 return Natural;
    pragma Import (C, X_Lookup_String, "XLookupString");
+
+   function X_Pending (Display : Display_Pointer) return Natural;
+   pragma Import (C, X_Pending, "XPending");
 
    ------------------------------------------------------------------------
 
@@ -339,18 +351,6 @@ package X11 is
 
    ---------------------------------------------------------------------------
 
-   type X_Class_Hint is record
-      Instance_Name : System.Address;
-      Class_Name    : System.Address;
-   end record;
-
-   type X_Text_Property is record
-      Value    : System.Address;
-      Encoding : Atom;
-      Format   : Data_Format_Type;
-      NItems   : Long_Integer;
-   end record;
-
    function X_Intern_Atom (Display        : Display_Pointer;
                            Name           : System.Address;
                            Only_If_Exists : Natural)
@@ -383,17 +383,6 @@ package X11 is
                                Attribute_List : GLX_Attribute_List_Ptr)
                                   return X_Visual_Info_Pointer;
    pragma Import (C, GLX_Choose_Visual, "glXChooseVisual");
-   ---------------------------------------------------------------------------
-
-   type X11Window_Type is new Window_Type with
-      record
-         Display : Display_Pointer       := Null_Display_Pointer;
-         Window  : Window_ID             := 0;
-         Visual  : X_Visual_Info_Pointer := null;
-         Context : GLX_Context           := Null_Context;
-      end record;
-   type X11Window_Handle is access all X11Window_Type;
-
    ---------------------------------------------------------------------------
 
    function GLX_Choose_FB_Config (Display        : Display_Pointer;

@@ -27,6 +27,8 @@ with System;
 
 package Lumen is
 
+   type Button_Enum is (Button_1, Button_2, Button_3, Button_4, Button_5);
+
    -- OpenGL context ("visual") attribute specifiers
    type Context_Attribute_Name is
       (
@@ -65,7 +67,46 @@ package Lumen is
 
    type Context_Attributes is array (Positive range <>) of Context_Attribute;
 
-   type Window_Type is tagged private;
+   type Event_MouseDown is
+     access procedure
+       (X      : Integer;
+        Y      : Integer;
+        Button : Button_Enum);
+
+   type Event_MouseUp is
+     access procedure
+       (X      : Integer;
+        Y      : Integer;
+        Button : Button_Enum);
+
+   type Event_MouseMove is
+     access procedure
+       (X      : Integer;
+        Y      : Integer);
+
+   type Event_KeyPress is
+     access procedure
+       (Key : Integer);
+
+   type Event_KeyRelease is
+     access procedure
+       (Key : Integer);
+
+   type Event_Character is
+     access procedure
+       (Char : String);
+
+   type Window_Public is tagged
+      record
+         OnMouseDown  : Event_MouseDown  := null;
+         OnMouseUp    : Event_MouseUp    := null;
+         OnMouseMove  : Event_MouseMove  := null;
+         OnKeyPress   : Event_KeyPress   := null;
+         OnKeyRelease : Event_KeyRelease := null;
+         OnCharacter  : Event_Character  := null;
+      end record;
+
+   type Window_Type is new Window_Public with private;
    type Window_Handle is access all Window_Type'Class;
 
 private
@@ -74,8 +115,7 @@ private
                                                                Month => Ada.Calendar.Month_Number'First,
                                                                Day   => Ada.Calendar.Day_Number'First);
 
-
-   type Window_Type is tagged
+   type Window_Type is new Window_Public with
       record
          Prior_Frame : Ada.Calendar.Time     := Never;
          SPF         : Duration              := 0.0;

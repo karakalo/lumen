@@ -3,35 +3,23 @@
 
 with Lumen;
 with Lumen.Window;
-with Lumen.Events;
 with Lumen.GL;
 
 procedure Colors is
 
    Win     : Lumen.Window_Handle;
-   Event   : Lumen.Events.Event_Data;
 
 begin  -- Colors
 
    -- Create Lumen window, accepting most defaults; turn double buffering off
    -- for simplicity
-   Lumen.Window.Create (Win, Name => "Ooh, Colors!", Animated => False,
-                        Events => (Lumen.Window.Want_Key_Press => True, others => False));
+   Lumen.Window.Create (Win, Name => "Ooh, Colors!", Animated => False);
 
    -- Loop until user hits a key or clicks the window's Close button
-   Outer: Loop
+   while Lumen.Window.ProcessEvents(Win) loop
 
-      -- Process events if there are any pending
-      while Lumen.Events.Pending (Win) > 0 loop
-         declare
-            use type Lumen.Events.Event_Type;
-         begin
-            Event := Lumen.Events.Next_Event (Win);
-
-            -- Exit when they destroy the window, or when they hit any key
-            exit Outer when Event.Which = Lumen.Events.Key_Press or Event.Which = Lumen.Events.Close_Window;
-         end;
-      end loop;
+      -- Exit when they destroy the window, or when they hit any key
+--    exit Outer when Event.Which = Lumen.Events.Key_Press or Event.Which = Lumen.Events.Close_Window;
 
       -- Do our drawing
       declare
@@ -53,6 +41,6 @@ begin  -- Colors
          Flush;
          delay 1.0;
       end;
-   end loop Outer;
+   end loop;
 
 end Colors;

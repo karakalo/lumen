@@ -20,7 +20,7 @@
 -- in connection with the use or performance of this software.
 
 
-private package Lumen.Events.Key_Translate is
+package Lumen.Events.Key_Translate is
 
    -- Translate an X11 keysym to a Lumen symbol and a category.  The keysym
    -- comes in as a Key_Symbol type, but it's not really one just yet

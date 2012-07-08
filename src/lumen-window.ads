@@ -20,19 +20,25 @@
 -- action of contract, negligence or other tortious action, arising out of or
 -- in connection with the use or performance of this software.
 
+with Lumen.Events; use Lumen.Events;
+with Lumen.Events.Key_Translate; use Lumen.Events.Key_Translate;
+
 package Lumen.Window is
+
+   -- Exceptions defined by this package
+   Not_Character : exception;  -- key symbol is not a Latin-1 character
+
+   -- The types of events that can be reported
+   type Event_Type is (Unknown_Event,
+                       Key_Press, Key_Release, Button_Press, Button_Release, Pointer_Motion,
+                       Enter_Window, Leave_Window, Focus_In, Focus_Out,
+                       Exposed, Hidden, Resized, Close_Window);
+
+   -- Raw keycode, not much use except at the very lowest level
+   type Raw_Keycode is mod 2 ** Integer'Size;
 
    -- Null window; in X, this means the root window is the parent
    No_Window : constant Window_Handle := null;
-
-   -- Types of events wanted, and a set listing them.
-   type Wanted_Event is (Want_Key_Press, Want_Key_Release, Want_Button_Press,  Want_Button_Release,
-                         Want_Window_Enter, Want_Window_Leave,
-                         Want_Pointer_Move, Want_Pointer_Drag,
-                         Want_Exposure, Want_Focus_Change);
-   type Wanted_Event_Set is array (Wanted_Event) of Boolean;
-   Want_No_Events  : Wanted_Event_Set := (others => False);
-   Want_All_Events : Wanted_Event_Set := (others => True);
 
    -- Rendering context's color depth
    type Color_Depth is (Pseudo_Color, True_Color);
@@ -94,7 +100,6 @@ package Lumen.Window is
                      Parent        : in     Window_Handle      := No_Window;
                      Width         : in     Natural            := 400;
                      Height        : in     Natural            := 400;
-                     Events        : in     Wanted_Event_Set   := Want_No_Events;
                      Name          : in     String             := "";
                      Icon_Name     : in     String             := "";
                      Class_Name    : in     String             := "";
@@ -128,5 +133,10 @@ package Lumen.Window is
 
    -- Return current window width
    function Height (Win : in Window_Handle) return Natural;
+
+   -- All event processing is done in this call
+   -- Events are reported by CallBacks (see Window_Type in lumen.ads)
+   function ProcessEvents (Win : in Window_Handle)
+     return Boolean;
 
 end Lumen.Window;
