@@ -8,7 +8,7 @@ with Lumen.Events; use Lumen.Events;
 procedure Colors is
 
    Win        : Lumen.Window.Window_Handle;
-   Terminated : Boolean;
+   Terminated : Boolean:=False;
 
    procedure KeyPress
      (Category  : Key_Category;
