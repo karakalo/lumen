@@ -32,7 +32,6 @@ package Lumen.Window is
                                                                Day   => Ada.Calendar.Day_Number'First);
 
    -- Exceptions defined by this package
-   Not_Character : exception;  -- key symbol is not a Latin-1 character
 
    -- The types of events that can be reported
    type Event_Type is (Unknown_Event,
