@@ -7,6 +7,7 @@ with Ada.Command_Line;
 with Ada.Strings.Fixed;
 with Ada.Float_Text_IO;
 
+with Lumen.Events; use Lumen.Events;
 with Lumen.Events.Animate;
 with Lumen.Events.Keys;
 with Lumen.Window;
@@ -51,10 +52,9 @@ procedure Multi is
 
    ---------------------------------------------------------------------------
 
-   Scene      : Window.Handle;
-   Data       : Window.Handle;
+   Scene      : Lumen.Window.Window_Handle;
+   Data       : Lumen.Window.Window_Handle;
    Direct     : Boolean := True;  -- want direct rendering by default
-   Event      : Events.Event_Data;
    Scene_Wide : Float := Float (Scene_Win_Width);
    Scene_High : Float := Float (Scene_Win_Height);
    Rotation   : Float := 0.0;
@@ -67,21 +67,9 @@ procedure Multi is
    Checks     : Image.Pixel_Matrix (1 .. 32, 1 .. 32);
    Check_Tx   : GL.UInt;
 
-   Attrs     : Window.Context_Attributes :=
-      (
-       (Window.Attr_Red_Size,     8),
-       (Window.Attr_Green_Size,   8),
-       (Window.Attr_Blue_Size,    8),
-       (Window.Attr_Alpha_Size,   8),
-       (Window.Attr_Depth_Size,  24),
-       (Window.Attr_Stencil_Size, 8)
-      );
+   Attrs     : Window.Context_Attributes := Lumen.Window.Default_Context_Attributes;
 
-   ---------------------------------------------------------------------------
-
-   Program_Error : exception;
-   Program_Exit  : exception;
-
+   Terminated : Boolean:=False;
    ---------------------------------------------------------------------------
 
    -- Return number blank-padded on the left out to Width; returns full
@@ -320,23 +308,16 @@ procedure Multi is
 
    ---------------------------------------------------------------------------
 
-   -- Simple event handler routine for close-window events
-   procedure Quit_Handler (Event : in Events.Event_Data) is
-   begin  -- Quit_Handler
-      raise Program_Exit;
-   end Quit_Handler;
-
-   ---------------------------------------------------------------------------
-
    -- Simple event handler routine for keypresses
-   procedure Key_Handler (Event : in Events.Event_Data) is
-
-      use type Events.Key_Symbol;
+   procedure Key_Handler
+     (Category  : Key_Category;
+      Symbol    : Key_Symbol;
+      Modifiers : Modifier_Set) is
 
    begin  -- Key_Handler
-      case Event.Key_Data.Key is
+      case Symbol is
          when Escape | Letter_q =>
-            raise Program_Exit;
+            Terminated:=True;
          when Space =>
             Rotating := not Rotating;
          when Equals =>
@@ -357,7 +338,11 @@ procedure Multi is
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for Exposed events
-   procedure Expose_Handler (Event : in Events.Event_Data) is
+   procedure Expose_Handler
+     (Top    : Integer;
+      Left   : Integer;
+      Height : Natural;
+      Width  : Natural) is
    begin  -- Expose_Handler
       Draw_Scene;
    end Expose_Handler;
@@ -365,39 +350,33 @@ procedure Multi is
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for Resized events
-   procedure Resize_Handler (Event : in Events.Event_Data) is
+   procedure SceneResize_Handler
+     (Height : Integer;
+      Width  : Integer) is
    begin  -- Resize_Handler
-      Set_Scene_View (Event.Resize_Data.Width, Event.Resize_Data.Height);
+      Set_Scene_View (Width, Height);
       Draw_Scene;
-   end Resize_Handler;
+   end SceneResize_Handler;
+
+   procedure DataResize_Handler
+     (Height : Integer;
+      Width  : Integer) is
+   begin
+      Set_Data_View(Width,Height);
+      Draw_Data;
+   end DataResize_Handler;
 
    ---------------------------------------------------------------------------
 
    -- Our draw-a-frame routine, should get called FPS times a second
-   procedure New_Frame (Frame_Delta : in Duration) is
-
-      use type Events.Event_Data;
-
-      Event_2 : Events.Event_Data;
+   function New_Frame (Frame_Delta : in Duration)
+     return Boolean is
 
    begin  -- New_Frame
 
-      -- Check for events from our data window
-      while Events.Pending (Data) > 0 loop
-         Event_2 := Events.Next_Event (Data);
-         case Event_2.Which is
-            when Events.Key_Press =>
-               Key_Handler (Event_2);  -- same keystrokes work in both windows
-            when Events.Exposed =>
-               Draw_Data;
-            when Events.Resized =>
-               Set_Data_View (Event_2.Resize_Data.Width, Event_2.Resize_Data.Height);
-            when Events.Close_Window =>
-               raise Program_Exit;  -- closing either terminates the app
-            when others =>
-               null;
-         end case;
-      end loop;
+      if not Lumen.Window.ProcessEvents(Data) then
+         Terminated:=True;
+      end if;
 
       -- Now update our "scene"
       if Rotating then
@@ -407,9 +386,12 @@ procedure Multi is
             Rotation := Rotation + Increment;
          end if;
       end if;
+
       Frame := Frame + 1;
       Draw_Scene;
       Draw_Data;
+
+      return not Terminated;
    end New_Frame;
 
    ---------------------------------------------------------------------------
@@ -451,15 +433,15 @@ begin  -- Multi
          case Arg (Arg'First) is
 
             when 'a' =>
-               Attrs (4) := (Attr_Alpha_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+               Attrs.Alpha_Size:=Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
 
             when 'c' =>
-               Attrs (1) := (Attr_Red_Size,   Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
-               Attrs (2) := (Attr_Blue_Size,  Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
-               Attrs (3) := (Attr_Green_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+               Attrs.Red_Size  :=Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
+               Attrs.Blue_Size :=Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
+               Attrs.Green_Size:=Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
 
             when 'd' =>
-               Attrs (5) := (Attr_Depth_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+               Attrs.Depth_Size:=Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
 
             when 'n' =>
                Direct := False;
@@ -478,20 +460,19 @@ begin  -- Multi
                   Width      => Scene_Win_Width,
                   Height     => Scene_Win_Height,
                   Direct     => Direct,
-                  Attributes => Attrs,
-                  Events     => (Window.Want_Key_Press => True,
-                                 Window.Want_Exposure  => True,
-                                 others => False));
+                  Attributes => Attrs);
    Window.Create (Data,
                   Name       => "Two-Window Demo, Data Window",
                   Width      => Data_Win_Width,
                   Height     => Data_Win_Height,
                   Direct     => Direct,
-                  Attributes => Attrs,
-                  Events     => (Window.Want_Key_Press => True,
-                                 Window.Want_Exposure  => True,
-                                 others => False));
+                  Attributes => Attrs);
 
+   Scene.OnResize   := SceneResize_Handler'Unrestricted_Access;
+   Scene.OnKeyPress := Key_Handler'Unrestricted_Access;
+
+   Data.OnResize   := DataResize_Handler'Unrestricted_Access;
+   Data.OnKeyPress := Key_Handler'Unrestricted_Access;
    -- Set up the viewport and scene parameters
    Window.Make_Current (Scene);
    Set_Scene_View (Scene_Win_Width, Scene_Win_Height);
@@ -533,21 +514,6 @@ begin  -- Multi
    Object := Font.Txf.Establish_Texture (Tx_Font, 0, True);
 
    -- Enter the event loop, which is hooked to the scene window
-   declare
-      use Events;
-   begin
-      Animate.Select_Events (Win   => Scene,
-                             Calls => (Key_Press    => Key_Handler'Unrestricted_Access,
-                                       Exposed      => Expose_Handler'Unrestricted_Access,
-                                       Resized      => Resize_Handler'Unrestricted_Access,
-                                       Close_Window => Quit_Handler'Unrestricted_Access,
-                                       others       => No_Callback),
-                             FPS   => Framerate,
-                             Frame => New_Frame'Unrestricted_Access);
-   end;
-
-exception
-   when Program_Exit =>
-      null;  -- just exit this block, which terminates the app
+   Lumen.Events.Animate.Run(Scene,New_Frame'Unrestricted_Access);
 
 end Multi;

@@ -2,11 +2,11 @@
 -- Simple Lumen demo/test program to illustrate how to display text, using the
 -- texture-mapped font facility.
 
-with Ada.Characters.Latin_1;
+with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
 with Ada.Command_Line;
 
 with Lumen.Window;
-with Lumen.Events;
+with Lumen.Events; use Lumen.Events;
 with Lumen.Font.Txf;
 with Lumen.GL;
 with Lumen.GLU;
@@ -21,8 +21,7 @@ procedure Text1 is
 
    ---------------------------------------------------------------------------
 
-   Win     : Window.Handle;
-   Event   : Events.Event_Data;
+   Win     : Lumen.Window.Window_Handle;
    Tx_Font : Font.Txf.Handle;
    Wide    : Natural := 400;
    High    : Natural := 400;
@@ -30,7 +29,7 @@ procedure Text1 is
 
    ---------------------------------------------------------------------------
 
-   Program_Exit  : exception;
+   Terminated : Boolean:=False;
    Program_Error : exception;
 
    ---------------------------------------------------------------------------
@@ -128,33 +127,26 @@ procedure Text1 is
 
    ---------------------------------------------------------------------------
 
-   -- Simple event handler routine
-   procedure Handler (Event : in Events.Event_Data) is
-
-      use Ada.Characters.Latin_1;
-      use Events;
-
-   begin  -- Handler
-
-      -- Check if we need to quit
-      if Event.Which = Close_Window then
-         raise Program_Exit;
+   procedure KeyPress
+     (Category  : Key_Category;
+      Symbol    : Key_Symbol;
+      Modifiers : Modifier_Set) is
+   begin
+      if Symbol=To_Symbol(Esc) or
+        Symbol=To_Symbol('q') then
+         Terminated:=True;
       end if;
-      if Event.Which = Key_Press and then
-         (Event.Key_Data.Key = To_Symbol (ESC) or Event.Key_Data.Key = To_Symbol ('q')) then
-         raise Program_Exit;
-      end if;
+   end KeyPress;
 
-      -- If we were resized, adjust the viewport dimensions
-      if Event.Which = Events.Resized then
-         Wide := Event.Resize_Data.Width;
-         High := Event.Resize_Data.Height;
-         Set_View (Wide, High);
-      end if;
-
-      -- Any other event just means "redraw" in this app
+   procedure WindowResize
+     (Height : Integer;
+      Width  : Integer) is
+   begin
+      Wide:=Width;
+      High:=Height;
+      Set_View(Width,Height);
       Draw;
-   end Handler;
+   end WindowResize;
 
    ---------------------------------------------------------------------------
 
@@ -189,20 +181,18 @@ begin  -- Text1
    -- for simplicity
    Window.Create (Win, Name   => "Text Demo #1",
                   Width  => Wide,
-                  Height => High,
-                  Events => (Window.Want_Key_Press => True,
-                             Window.Want_Exposure  => True,
-                             others => False));
+                  Height => High);
+   Win.OnKeyPress:=KeyPress'Unrestricted_Access;
+   Win.OnResize:=WindowResize'Unrestricted_Access;
 
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
    Object := Font.Txf.Establish_Texture (Tx_Font, 0, True);
+   Draw;
 
    -- Enter the event loop
-   Events.Receive_Events (Win, Handler'Unrestricted_Access);
-
-exception
-   when Program_Exit =>
-      null;  -- just exit this block, which terminates the app
+   while Lumen.Window.ProcessEvents(Win) loop
+      exit when Terminated;
+   end loop;
 
 end Text1;

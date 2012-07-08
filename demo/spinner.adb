@@ -1,6 +1,7 @@
 
 -- Simple Lumen demo/test program, using earliest incomplete library.
 
+with Lumen.Events; use Lumen.Events;
 with Lumen.Window;
 with Lumen.Events.Animate;
 with Lumen.GL;
@@ -18,15 +19,14 @@ procedure Spinner is
 
    ---------------------------------------------------------------------------
 
-   Win      : Lumen.Window.Handle;
-   Event    : Lumen.Events.Event_Data;
+   Win      : Lumen.Window.Window_Handle;
    Wide     : Natural := 400;
    High     : Natural := 400;
    Rotation : Natural := 0;
 
    ---------------------------------------------------------------------------
 
-   Program_Exit : exception;
+   Terminated : Boolean:=False;
 
    ---------------------------------------------------------------------------
 
@@ -98,15 +98,22 @@ procedure Spinner is
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for keypresses and close-window events
-   procedure Quit_Handler (Event : in Lumen.Events.Event_Data) is
+   procedure KeyPress_Handler
+     (Category  : Key_Category;
+      Symbol    : Key_Symbol;
+      Modifiers : Modifier_Set) is
    begin  -- Quit_Handler
-      raise Program_Exit;
-   end Quit_Handler;
+      Terminated:=True;
+   end KeyPress_Handler;
 
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for Exposed events
-   procedure Expose_Handler (Event : in Lumen.Events.Event_Data) is
+   procedure Expose_Handler
+     (Top    : Integer;
+      Left   : Integer;
+      Height : Integer;
+      Width  : Integer) is
    begin  -- Expose_Handler
       Draw;
    end Expose_Handler;
@@ -114,10 +121,12 @@ procedure Spinner is
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for Resized events
-   procedure Resize_Handler (Event : in Lumen.Events.Event_Data) is
+   procedure Resize_Handler
+     (Height : Integer;
+      Width  : Integer) is
    begin  -- Resize_Handler
-      Wide := Event.Resize_Data.Width;
-      High := Event.Resize_Data.Height;
+      Wide := Width;
+      High := Height;
       Set_View (Wide, High);
       Draw;
    end Resize_Handler;
@@ -125,7 +134,8 @@ procedure Spinner is
    ---------------------------------------------------------------------------
 
    -- Our draw-a-frame routine, should get called FPS times a second
-   procedure New_Frame (Frame_Delta : in Duration) is
+   function New_Frame (Frame_Delta : in Duration)
+     return Boolean is
    begin  -- New_Frame
       if Rotation >= Max_Rotation then
          Rotation := 0;
@@ -134,6 +144,7 @@ procedure Spinner is
       end if;
 
       Draw;
+      return not Terminated;
    end New_Frame;
 
    ---------------------------------------------------------------------------
@@ -150,17 +161,6 @@ begin  -- Spinner
    Set_View (Wide, High);
 
    -- Enter the event loop
-   declare
-      use Lumen.Events;
-   begin
-      Animate.Select_Events (Win   => Win,
-                             Calls => (Key_Press    => Quit_Handler'Unrestricted_Access,
-                                       Exposed      => Expose_Handler'Unrestricted_Access,
-                                       Resized      => Resize_Handler'Unrestricted_Access,
-                                       Close_Window => Quit_Handler'Unrestricted_Access,
-                                       others       => No_Callback),
-                             FPS   => Framerate,
-                             Frame => New_Frame'Unrestricted_Access);
-   end;
+   Lumen.Events.Animate.Run(Win,New_Frame'Unrestricted_Access);
 
 end Spinner;

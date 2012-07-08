@@ -107,6 +107,9 @@ package body Lumen.Events.Animate is
          begin
             exit when not Frame.all(Clock-Win.Prior_Frame);
          end;
+         Win.Prior_Frame := Ada.Calendar.Clock;
+         Win.App_Frames  := Win.App_Frames+1;
+         Win.Last_Frames := Win.Last_Frames+1;
       end loop;
    end Run;
 

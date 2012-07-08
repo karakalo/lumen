@@ -9,4 +9,9 @@ package Lumen.Events is
    type Modifier_Set is array (Modifier) of Boolean;
    No_Modifiers : Modifier_Set := (others => False);
 
+   Not_Character : exception;  -- key symbol is not a Latin-1 character
+
+   function To_UTF_8 (Symbol : in Key_Symbol) return String;
+   function To_Symbol (Char : in Character) return Key_Symbol;
+
 end Lumen.Events;

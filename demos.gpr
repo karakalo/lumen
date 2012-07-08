@@ -11,9 +11,13 @@ project Demos is
    for Object_Dir use "demo/obj";
    for Main use ("colors.adb",
                  "sgi_simple.adb",
-              -- "spinner.adb",
-                 "texture.adb"
---                 "text1.adb", "text2.adb", "multi.adb", "blending", "fire",
+                 "spinner.adb",
+                 "texture.adb",
+                 "text1.adb",
+                 "text2.adb",
+                 "multi.adb"
+--                 "blending",
+--                 "fire"
 --		 "vertex_buffers", "shaders", "simple_2d", "simple_3d"
                 );
    for Exec_Dir use "bin";

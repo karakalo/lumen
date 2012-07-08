@@ -7,6 +7,7 @@ with Ada.Command_Line;
 with Ada.Strings.Fixed;
 with Ada.Float_Text_IO;
 
+with Lumen.Events; use Lumen.Events;
 with Lumen.Events.Animate;
 with Lumen.Events.Keys;
 with Lumen.Window;
@@ -36,9 +37,8 @@ procedure Text2 is
 
    ---------------------------------------------------------------------------
 
-   Win       : Window.Handle;
+   Win       : Lumen.Window.Window_Handle;
    Direct    : Boolean := True;  -- want direct rendering by default
-   Event     : Events.Event_Data;
    Wide      : Natural := 400;
    High      : Natural := 400;
    Img_Wide  : Float;
@@ -50,20 +50,13 @@ procedure Text2 is
    Object    : GL.UInt;
    Frame     : Natural := 0;
 
-   Attrs     : Window.Context_Attributes :=
-      (
-       (Window.Attr_Red_Size,     8),
-       (Window.Attr_Green_Size,   8),
-       (Window.Attr_Blue_Size,    8),
-       (Window.Attr_Alpha_Size,   8),
-       (Window.Attr_Depth_Size,  24),
-       (Window.Attr_Stencil_Size, 8)
-      );
+   Attrs     : Window.Context_Attributes := Lumen.Window.Default_Context_Attributes;
+
+   Terminated : Boolean:=False;
 
    ---------------------------------------------------------------------------
 
    Program_Error : exception;
-   Program_Exit  : exception;
 
    ---------------------------------------------------------------------------
 
@@ -230,23 +223,16 @@ procedure Text2 is
 
    ---------------------------------------------------------------------------
 
-   -- Simple event handler routine for close-window events
-   procedure Quit_Handler (Event : in Events.Event_Data) is
-   begin  -- Quit_Handler
-      raise Program_Exit;
-   end Quit_Handler;
-
-   ---------------------------------------------------------------------------
-
    -- Simple event handler routine for keypresses
-   procedure Key_Handler (Event : in Events.Event_Data) is
-
-      use type Events.Key_Symbol;
+   procedure Key_Handler
+     (Category  : Key_Category;
+      Symbol    : Key_Symbol;
+      Modifiers : Modifier_Set) is
 
    begin  -- Key_Handler
-      case Event.Key_Data.Key is
+      case Symbol is
          when Escape | Letter_q =>
-            raise Program_Exit;
+            Terminated:=True;
          when Space =>
             Rotating := not Rotating;
          when Events.Keys.Up =>
@@ -265,7 +251,11 @@ procedure Text2 is
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for Exposed events
-   procedure Expose_Handler (Event : in Events.Event_Data) is
+   procedure Expose_Handler
+     (Top    : Integer;
+      Left   : Integer;
+      Height : Natural;
+      Width  : Natural) is
    begin  -- Expose_Handler
       Draw;
    end Expose_Handler;
@@ -273,10 +263,12 @@ procedure Text2 is
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for Resized events
-   procedure Resize_Handler (Event : in Events.Event_Data) is
+   procedure Resize_Handler
+     (Height : Integer;
+      Width  : Integer) is
    begin  -- Resize_Handler
-      Wide := Event.Resize_Data.Width;
-      High := Event.Resize_Data.Height;
+      Wide := Width;
+      High := Height;
       Set_View (Wide, High);
       Draw;
    end Resize_Handler;
@@ -284,7 +276,8 @@ procedure Text2 is
    ---------------------------------------------------------------------------
 
    -- Our draw-a-frame routine, should get called FPS times a second
-   procedure New_Frame (Frame_Delta : in Duration) is
+   function New_Frame (Frame_Delta : in Duration)
+                       return Boolean is
    begin  -- New_Frame
       if Rotating then
          if Rotation >= Max_Rotation then
@@ -297,6 +290,7 @@ procedure Text2 is
       Frame := Frame + 1;
 
       Draw;
+      return not Terminated;
    end New_Frame;
 
    ---------------------------------------------------------------------------
@@ -338,15 +332,15 @@ begin  -- Text2
          case Arg (Arg'First) is
 
             when 'a' =>
-               Attrs (4) := (Attr_Alpha_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+               Attrs.Alpha_Size := Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
 
             when 'c' =>
-               Attrs (1) := (Attr_Red_Size,   Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
-               Attrs (2) := (Attr_Blue_Size,  Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
-               Attrs (3) := (Attr_Green_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+               Attrs.Red_Size:=Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
+               Attrs.Blue_Size:=Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
+               Attrs.Green_Size:=Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
 
             when 'd' =>
-               Attrs (5) := (Attr_Depth_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+               Attrs.Depth_Size:=Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
 
             when 'n' =>
                Direct := False;
@@ -365,31 +359,17 @@ begin  -- Text2
                   Width      => Wide,
                   Height     => High,
                   Direct     => Direct,
-                  Attributes => Attrs,
-                  Events     => (Window.Want_Key_Press => True,
-                                 Window.Want_Exposure  => True,
-                                 others => False));
+                  Attributes => Attrs);
+
+   Win.OnResize   := Resize_Handler'Unrestricted_Access;
+   Win.OnKeyPress := Key_Handler'Unrestricted_Access;
+   Win.OnExposed  := Expose_Handler'Unrestricted_Access;
 
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
    Object := Font.Txf.Establish_Texture (Tx_Font, 0, True);
 
    -- Enter the event loop
-   declare
-      use Events;
-   begin
-      Animate.Select_Events (Win   => Win,
-                             Calls => (Key_Press    => Key_Handler'Unrestricted_Access,
-                                       Exposed      => Expose_Handler'Unrestricted_Access,
-                                       Resized      => Resize_Handler'Unrestricted_Access,
-                                       Close_Window => Quit_Handler'Unrestricted_Access,
-                                       others       => No_Callback),
-                             FPS   => Framerate,
-                             Frame => New_Frame'Unrestricted_Access);
-   end;
-
-exception
-   when Program_Exit =>
-      null;  -- just exit this block, which terminates the app
+   Lumen.Events.Animate.Run(Win,New_Frame'Unrestricted_Access);
 
 end Text2;
