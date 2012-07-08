@@ -97,4 +97,19 @@ package body Lumen.Events.Animate is
 
    ---------------------------------------------------------------------------
 
+   procedure Run (Win   : in Window_Handle;
+                  Frame : in Event_Frame) is
+   begin
+      while Lumen.Window.ProcessEvents(Win) loop
+         Wait_Frame(Win);
+         declare
+            use Ada.Calendar;
+         begin
+            exit when not Frame.all(Clock-Win.Prior_Frame);
+         end;
+      end loop;
+   end Run;
+
+   ---------------------------------------------------------------------------
+
 end Lumen.Events.Animate;

@@ -7,7 +7,7 @@
 -- ALL RIGHTS RESERVED
 
 with Lumen.Window;
-with Lumen.Events;
+with Lumen.Events; use Lumen.Events;
 with Lumen.GL;
 with Lumen.GLU;
 
@@ -15,14 +15,13 @@ procedure SGI_Simple is
 
    ---------------------------------------------------------------------------
 
-   Win     : Lumen.Window.Handle;
-   Event   : Lumen.Events.Event_Data;
+   Win     : Lumen.Window.Window_Handle;
    Wide    : Natural := 400;
    High    : Natural := 400;
 
    ---------------------------------------------------------------------------
 
-   Program_Exit : exception;
+   Terminated : Boolean:=False;
 
    ---------------------------------------------------------------------------
 
@@ -83,28 +82,31 @@ procedure SGI_Simple is
 
    ---------------------------------------------------------------------------
 
-   -- Simple event handler routine
-   procedure Handler (Event : in Lumen.Events.Event_Data) is
+   procedure WindowResize
+     (Height : Integer;
+      Width  : Integer) is
+   begin
+      Wide:=Width;
+      High:=Height;
+      Set_View(Wide,High);
+   end WindowResize;
 
-      use type Lumen.Events.Event_Type;
+   procedure KeyPress
+     (Category  : Key_Category;
+      Symbol    : Key_Symbol;
+      Modifiers : Modifier_Set) is
+   begin
+      Terminated:=True;
+   end KeyPress;
 
-   begin  -- Handler
-
-      -- Check if we need to quit
-      if Event.Which = Lumen.Events.Key_Press or Event.Which = Lumen.Events.Close_Window then
-         raise Program_Exit;
-      end if;
-
-      -- If we were resized, adjust the viewport dimensions
-      if Event.Which = Lumen.Events.Resized then
-         Wide := Event.Resize_Data.Width;
-         High := Event.Resize_Data.Height;
-         Set_View (Wide, High);
-      end if;
-
-      -- Any other event just means "redraw" in this app
+   procedure Exposed
+     (Top    : Integer;
+      Left   : Integer;
+      Height : Integer;
+      Width  : Integer) is
+   begin
       Draw;
-   end Handler;
+   end Exposed;
 
    ---------------------------------------------------------------------------
 
@@ -114,19 +116,15 @@ begin  -- SGI_Simple
    -- for simplicity
    Lumen.Window.Create (Win, Name   => "Simple Demo",
                         Width  => Wide,
-                        Height => High,
-                        Events => (Lumen.Window.Want_Key_Press => True,
-                                   Lumen.Window.Want_Exposure  => True,
-                                   others => False));
-
+                        Height => High);
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
 
-   -- Enter the event loop
-   Lumen.Events.Receive_Events (Win, Handler'Unrestricted_Access);
+   Win.OnResize   := WindowResize'Unrestricted_Access;
+   Win.OnKeyPress := KeyPress'Unrestricted_Access;
 
-exception
-   when Program_Exit =>
-      null;  -- just exit this block, which terminates the app
+   while Lumen.Window.ProcessEvents(Win) loop
+      exit when Terminated;
+   end loop;
 
 end SGI_Simple;

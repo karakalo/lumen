@@ -144,10 +144,7 @@ begin  -- Spinner
    -- for simplicity
    Lumen.Window.Create (Win, Name   => "Spinning Square Demo",
                         Width  => Wide,
-                        Height => High,
-                        Events => (Lumen.Window.Want_Key_Press => True,
-                                   Lumen.Window.Want_Exposure  => True,
-                                   others => False));
+                        Height => High);
 
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
@@ -165,9 +162,5 @@ begin  -- Spinner
                              FPS   => Framerate,
                              Frame => New_Frame'Unrestricted_Access);
    end;
-
-exception
-   when Program_Exit =>
-      null;  -- just exit this block, which terminates the app
 
 end Spinner;

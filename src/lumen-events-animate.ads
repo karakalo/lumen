@@ -53,4 +53,12 @@ package Lumen.Events.Animate is
 
    ---------------------------------------------------------------------------
 
+   type Event_Frame is
+     access function
+       (Frame_Delta : in Duration)
+        return Boolean;
+
+   procedure Run (Win   : in Window_Handle;
+                  Frame : in Event_Frame);
+
 end Lumen.Events.Animate;

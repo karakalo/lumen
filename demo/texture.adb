@@ -3,12 +3,14 @@
 
 with Ada.Command_Line;
 
+with Lumen.Events; use Lumen.Events;
 with Lumen.Events.Animate;
 with Lumen.Image;
 with Lumen.Window;
 with Lumen.GL;
 with Lumen.GLU;
 
+with Ada.Text_IO; use Ada.Text_IO;
 use Lumen;  -- so we can say "GL.Whatever" anyplace we want
 
 
@@ -24,9 +26,8 @@ procedure Texture is
 
    ---------------------------------------------------------------------------
 
-   Win      : Lumen.Window.Handle;
+   Win      : Lumen.Window.Window_Handle;
    Direct   : Boolean := True;  -- want direct rendering by default
-   Event    : Lumen.Events.Event_Data;
    Wide     : Natural;  -- no longer have default values since they're now set by the image size
    High     : Natural;
    Rotation : Natural := 0;
@@ -35,16 +36,9 @@ procedure Texture is
    Img_High : Float;
    Tx_Name  : aliased GL.UInt;
 
-   Attrs    : Lumen.Window.Context_Attributes :=
-      (
-       (Lumen.Window.Attr_Red_Size,     8),
-       (Lumen.Window.Attr_Green_Size,   8),
-       (Lumen.Window.Attr_Blue_Size,    8),
-       (Lumen.Window.Attr_Alpha_Size,   8),
-       (Lumen.Window.Attr_Depth_Size,  24),
-       (Lumen.Window.Attr_Stencil_Size, 8)
-      );
+   Terminated : Boolean:=False;
 
+   Attrs    : Lumen.Window.Context_Attributes :=Lumen.Window.Default_Context_Attributes;
    ---------------------------------------------------------------------------
 
    Program_Error : exception;
@@ -166,15 +160,22 @@ procedure Texture is
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for keypresses and close-window events
-   procedure Quit_Handler (Event : in Lumen.Events.Event_Data) is
+   procedure KeyDown_Handler
+     (Category  : Key_Category;
+      Symbol    : Key_Symbol;
+      Modifiers : Modifier_Set) is
    begin  -- Quit_Handler
-      Lumen.Events.End_Events (Win);
-   end Quit_Handler;
+      Terminated:=True;
+   end KeyDown_Handler;
 
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for Exposed events
-   procedure Expose_Handler (Event : in Lumen.Events.Event_Data) is
+   procedure Expose_Handler
+     (Top    : Integer;
+      Left   : Integer;
+      Height : Natural;
+      Width  : Natural) is
    begin  -- Expose_Handler
       Draw;
    end Expose_Handler;
@@ -182,10 +183,12 @@ procedure Texture is
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for Resized events
-   procedure Resize_Handler (Event : in Lumen.Events.Event_Data) is
+   procedure Resize_Handler
+     (Height : Integer;
+      Width  : Integer) is
    begin  -- Resize_Handler
-      Wide := Event.Resize_Data.Width;
-      High := Event.Resize_Data.Height;
+      Wide := Width;
+      High := Height;
       Set_View (Wide, High);
       Draw;
    end Resize_Handler;
@@ -193,7 +196,8 @@ procedure Texture is
    ---------------------------------------------------------------------------
 
    -- Our draw-a-frame routine, should get called FPS times a second
-   procedure New_Frame (Frame_Delta : in Duration) is
+   function New_Frame (Frame_Delta : in Duration)
+                       return Boolean is
    begin  -- New_Frame
       if Rotation >= Max_Rotation then
          Rotation := 0;
@@ -202,6 +206,9 @@ procedure Texture is
       end if;
 
       Draw;
+      -- Tell the animation procedure wether or not to continue
+      -- True => Continue
+      return not Terminated;
    end New_Frame;
 
    ---------------------------------------------------------------------------
@@ -223,15 +230,15 @@ begin  -- Texture
          case Arg (Arg'First) is
 
             when 'a' =>
-               Attrs (4) := (Attr_Alpha_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+               Attrs.Alpha_Size:=Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
 
             when 'c' =>
-               Attrs (1) := (Attr_Red_Size,   Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
-               Attrs (2) := (Attr_Blue_Size,  Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
-               Attrs (3) := (Attr_Green_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+               Attrs.Red_Size   := Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
+               Attrs.Blue_Size  := Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
+               Attrs.Green_Size := Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
 
             when 'd' =>
-               Attrs (5) := (Attr_Depth_Size, Integer'Value (Arg (Arg'First + 1 .. Arg'Last)));
+               Attrs.Depth_Size := Integer'Value (Arg (Arg'First + 1 .. Arg'Last));
 
             when 'n' =>
                Direct := False;
@@ -257,11 +264,11 @@ begin  -- Texture
                         Width      => Wide,
                         Height     => High,
                         Direct     => Direct,
-                        Attributes => Attrs,
-                        Events     => (Lumen.Window.Want_Key_Press => True,
-                                       Lumen.Window.Want_Exposure  => True,
-                                       others => False));
+                        Attributes => Attrs);
 
+   Win.OnExposed  := Expose_Handler'Unrestricted_Access;
+   Win.OnKeyPress := KeyDown_Handler'Unrestricted_Access;
+   Win.OnResize   := Resize_Handler'Unrestricted_Access;
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
 
@@ -271,21 +278,10 @@ begin  -- Texture
    GL.Bind_Texture (GL.GL_TEXTURE_2D, Tx_Name);
 
    -- Enter the event loop, which will terminate when the Quit_Handler calls End_Events
-   declare
-      use Lumen.Events;
-   begin
-      Animate.Select_Events (Win   => Win,
-                             Calls => (Key_Press    => Quit_Handler'Unrestricted_Access,
-                                       Exposed      => Expose_Handler'Unrestricted_Access,
-                                       Resized      => Resize_Handler'Unrestricted_Access,
-                                       Close_Window => Quit_Handler'Unrestricted_Access,
-                                       others       => No_Callback),
-                             FPS   => Framerate,
-                             Frame => New_Frame'Unrestricted_Access);
-   end;
+   Lumen.Events.Animate.Run(Win,New_Frame'Unrestricted_Access);
 
+   Put_Line("Ordinary Termination");
    -- Try these just to make sure they work
-   Lumen.Window.Destroy_Context (Win);
    Lumen.Window.Destroy (Win);
 
 end Texture;
