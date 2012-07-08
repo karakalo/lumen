@@ -100,7 +100,7 @@ package body Lumen.Events.Animate is
    procedure Run (Win   : in Window_Handle;
                   Frame : in Event_Frame) is
    begin
-      while Lumen.Window.ProcessEvents(Win) loop
+      while Lumen.Window.Process_Events(Win) loop
          Wait_Frame(Win);
          declare
             use Ada.Calendar;

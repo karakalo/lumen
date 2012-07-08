@@ -127,7 +127,7 @@ procedure Text1 is
 
    ---------------------------------------------------------------------------
 
-   procedure KeyPress
+   procedure Key_Press
      (Category  : Key_Category;
       Symbol    : Key_Symbol;
       Modifiers : Modifier_Set) is
@@ -136,9 +136,9 @@ procedure Text1 is
         Symbol=To_Symbol('q') then
          Terminated:=True;
       end if;
-   end KeyPress;
+   end Key_Press;
 
-   procedure WindowResize
+   procedure Window_Resize
      (Height : Integer;
       Width  : Integer) is
    begin
@@ -146,7 +146,7 @@ procedure Text1 is
       High:=Height;
       Set_View(Width,Height);
       Draw;
-   end WindowResize;
+   end Window_Resize;
 
    ---------------------------------------------------------------------------
 
@@ -182,8 +182,8 @@ begin  -- Text1
    Window.Create (Win, Name   => "Text Demo #1",
                   Width  => Wide,
                   Height => High);
-   Win.OnKeyPress:=KeyPress'Unrestricted_Access;
-   Win.OnResize:=WindowResize'Unrestricted_Access;
+   Win.Key_Press := Key_Press'Unrestricted_Access;
+   Win.Resize    := Window_Resize'Unrestricted_Access;
 
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
@@ -191,7 +191,7 @@ begin  -- Text1
    Draw;
 
    -- Enter the event loop
-   while Lumen.Window.ProcessEvents(Win) loop
+   while Lumen.Window.Process_Events(Win) loop
       exit when Terminated;
    end loop;
 

@@ -82,22 +82,22 @@ procedure SGI_Simple is
 
    ---------------------------------------------------------------------------
 
-   procedure WindowResize
+   procedure Window_Resize
      (Height : Integer;
       Width  : Integer) is
    begin
       Wide:=Width;
       High:=Height;
       Set_View(Wide,High);
-   end WindowResize;
+   end Window_Resize;
 
-   procedure KeyPress
+   procedure Key_Press
      (Category  : Key_Category;
       Symbol    : Key_Symbol;
       Modifiers : Modifier_Set) is
    begin
       Terminated:=True;
-   end KeyPress;
+   end Key_Press;
 
    procedure Exposed
      (Top    : Integer;
@@ -120,10 +120,10 @@ begin  -- SGI_Simple
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
 
-   Win.OnResize   := WindowResize'Unrestricted_Access;
-   Win.OnKeyPress := KeyPress'Unrestricted_Access;
+   Win.Resize    := Window_Resize'Unrestricted_Access;
+   Win.Key_Press := Key_Press'Unrestricted_Access;
 
-   while Lumen.Window.ProcessEvents(Win) loop
+   while Lumen.Window.Process_Events(Win) loop
       exit when Terminated;
    end loop;
 

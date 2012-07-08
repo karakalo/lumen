@@ -350,21 +350,21 @@ procedure Multi is
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for Resized events
-   procedure SceneResize_Handler
+   procedure Scene_Resize_Handler
      (Height : Integer;
       Width  : Integer) is
    begin  -- Resize_Handler
       Set_Scene_View (Width, Height);
       Draw_Scene;
-   end SceneResize_Handler;
+   end Scene_Resize_Handler;
 
-   procedure DataResize_Handler
+   procedure Data_Resize_Handler
      (Height : Integer;
       Width  : Integer) is
    begin
       Set_Data_View(Width,Height);
       Draw_Data;
-   end DataResize_Handler;
+   end Data_Resize_Handler;
 
    ---------------------------------------------------------------------------
 
@@ -374,7 +374,7 @@ procedure Multi is
 
    begin  -- New_Frame
 
-      if not Lumen.Window.ProcessEvents(Data) then
+      if not Lumen.Window.Process_Events(Data) then
          Terminated:=True;
       end if;
 
@@ -468,11 +468,11 @@ begin  -- Multi
                   Direct     => Direct,
                   Attributes => Attrs);
 
-   Scene.OnResize   := SceneResize_Handler'Unrestricted_Access;
-   Scene.OnKeyPress := Key_Handler'Unrestricted_Access;
+   Scene.Resize   := Scene_Resize_Handler'Unrestricted_Access;
+   Scene.Key_Press := Key_Handler'Unrestricted_Access;
 
-   Data.OnResize   := DataResize_Handler'Unrestricted_Access;
-   Data.OnKeyPress := Key_Handler'Unrestricted_Access;
+   Data.Resize   := Data_Resize_Handler'Unrestricted_Access;
+   Data.Key_Press := Key_Handler'Unrestricted_Access;
    -- Set up the viewport and scene parameters
    Window.Make_Current (Scene);
    Set_Scene_View (Scene_Win_Width, Scene_Win_Height);

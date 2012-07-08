@@ -98,13 +98,13 @@ procedure Spinner is
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for keypresses and close-window events
-   procedure KeyPress_Handler
+   procedure Key_Press_Handler
      (Category  : Key_Category;
       Symbol    : Key_Symbol;
       Modifiers : Modifier_Set) is
    begin  -- Quit_Handler
       Terminated:=True;
-   end KeyPress_Handler;
+   end Key_Press_Handler;
 
    ---------------------------------------------------------------------------
 
@@ -157,9 +157,9 @@ begin  -- Spinner
                         Width  => Wide,
                         Height => High);
 
-   Win.OnExposed := Expose_Handler'Unrestricted_Access;
-   Win.OnResize  := Resize_Handler'Unrestricted_Access;
-   Win.OnKeyPress := KeyPress_Handler'Unrestricted_Access;
+   Win.Exposed   := Expose_Handler'Unrestricted_Access;
+   Win.Resize    := Resize_Handler'Unrestricted_Access;
+   Win.Key_Press := Key_Press_Handler'Unrestricted_Access;
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
 

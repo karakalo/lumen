@@ -361,9 +361,9 @@ begin  -- Text2
                   Direct     => Direct,
                   Attributes => Attrs);
 
-   Win.OnResize   := Resize_Handler'Unrestricted_Access;
-   Win.OnKeyPress := Key_Handler'Unrestricted_Access;
-   Win.OnExposed  := Expose_Handler'Unrestricted_Access;
+   Win.Resize    := Resize_Handler'Unrestricted_Access;
+   Win.Key_Press := Key_Handler'Unrestricted_Access;
+   Win.Exposed   := Expose_Handler'Unrestricted_Access;
 
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);

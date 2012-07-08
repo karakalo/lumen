@@ -47,33 +47,33 @@ package Lumen.Window is
 
    type Button_Enum is (Button_1, Button_2, Button_3, Button_4, Button_5);
 
-   type Event_MouseDown is
+   type Event_Mouse_Down is
      access procedure
        (X         : Integer;
         Y         : Integer;
         Button    : Button_Enum;
         Modifiers : Modifier_Set);
 
-   type Event_MouseUp is
+   type Event_Mouse_Up is
      access procedure
        (X         : Integer;
         Y         : Integer;
         Button    : Button_Enum;
         Modifiers : Modifier_Set);
 
-   type Event_MouseMove is
+   type Event_Mouse_Move is
      access procedure
        (X         : Integer;
         Y         : Integer;
         Modifiers : Modifier_Set);
 
-   type Event_KeyPress is
+   type Event_Key_Press is
      access procedure
        (Category  : Key_Category;
         Symbol    : Key_Symbol;
         Modifiers : Modifier_Set);
 
-   type Event_KeyRelease is
+   type Event_Key_Release is
      access procedure
        (Category  : Key_Category;
         Symbol    : Key_Symbol;
@@ -110,14 +110,14 @@ package Lumen.Window is
 
          -- Really Public
 
-         OnMouseDown  : Event_MouseDown  := null;
-         OnMouseUp    : Event_MouseUp    := null;
-         OnMouseMove  : Event_MouseMove  := null;
-         OnKeyPress   : Event_KeyPress   := null;
-         OnKeyRelease : Event_KeyRelease := null;
-         OnCharacter  : Event_Character  := null;
-         OnExposed    : Event_Exposed    := null;
-         OnResize     : Event_Resize     := null;
+         Mouse_Down  : Event_Mouse_Down  := null;
+         Mouse_Up    : Event_Mouse_Up    := null;
+         Mouse_Move  : Event_Mouse_Move  := null;
+         Key_Press   : Event_Key_Press   := null;
+         Key_Release : Event_Key_Release := null;
+         Character   : Event_Character  := null;
+         Exposed     : Event_Exposed    := null;
+         Resize      : Event_Resize     := null;
       end record;
 
    type Window_Type is new Window_Public with private;
@@ -225,7 +225,7 @@ package Lumen.Window is
 
    -- All event processing is done in this call
    -- Events are reported by CallBacks (see Window_Type in lumen.ads)
-   function ProcessEvents (Win : in Window_Handle)
+   function Process_Events (Win : in Window_Handle)
                            return Boolean;
 
 private

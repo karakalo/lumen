@@ -562,18 +562,18 @@ package body Lumen.Window is
 
          -- Now decide whether it was a press or a release, and return the value
          if X_Event.X_Event_Type = X_Key_Press then
-            if Win.OnKeyPress/=null then
-               Win.OnKeyPress(Key_Type,Key_Value,Key_Mods);
+            if Win.Key_Press/=null then
+               Win.Key_Press(Key_Type,Key_Value,Key_Mods);
             end if;
          else
-            if Win.OnKeyRelease/=null then
-               Win.OnKeyRelease(Key_Type,Key_Value,Key_Mods);
+            if Win.Key_Release/=null then
+               Win.Key_Release(Key_Type,Key_Value,Key_Mods);
             end if;
          end if;
 
       when X_Button_Press =>
-         if Win.OnMouseDown/=null then
-            Win.OnMouseDown
+         if Win.Mouse_Down/=null then
+            Win.Mouse_Down
               (X         => X_Event.Btn_X,
                Y         => X_Event.Btn_Y,
                Button    => Button_Enum'Val(X_Event.Btn_Code-1),
@@ -581,8 +581,8 @@ package body Lumen.Window is
          end if;
 
       when X_Button_Release =>
-         if Win.OnMouseUp/=null then
-            Win.OnMouseUp
+         if Win.Mouse_Up/=null then
+            Win.Mouse_Up
               (X         => X_Event.Btn_X,
                Y         => X_Event.Btn_Y,
                Button    => Button_Enum'Val(X_Event.Btn_Code-1),
@@ -590,8 +590,8 @@ package body Lumen.Window is
          end if;
 
       when X_Motion_Notify =>
-         if Win.OnMouseMove/=null then
-            Win.OnMouseMove
+         if Win.Mouse_Move/=null then
+            Win.Mouse_Move
               (X         => X_Event.Mov_X,
                Y         => X_Event.Mov_Y,
                Modifiers => Modifier_Mask_To_Set(X_Event.Mov_State));
@@ -622,8 +622,8 @@ package body Lumen.Window is
          --            return (Which => Focus_Out);
 
       when X_Expose =>
-         if Win.OnExposed/=null then
-            Win.OnExposed
+         if Win.Exposed/=null then
+            Win.Exposed
               (Top => X_Event.Xps_X,
                Left => X_Event.Xng_Y,
                Height => X_Event.Xps_Height,
@@ -635,8 +635,8 @@ package body Lumen.Window is
          --         return (Which       => Hidden);
 
       when X_Map_Notify =>
-         if Win.OnExposed/=null then
-            Win.OnExposed
+         if Win.Exposed/=null then
+            Win.Exposed
               (Top    => 0,
                Left   => 0,
                Height => Win.Height,
@@ -647,14 +647,14 @@ package body Lumen.Window is
          if X_Event.Cfg_Width /= Win.Width or X_Event.Cfg_Height /= Win.Height then
             Win.Width  := X_Event.Cfg_Width;
             Win.Height := X_Event.Cfg_Height;
-            if Win.OnResize/=null then
-               Win.OnResize
+            if Win.Resize/=null then
+               Win.Resize
                  (Height => X_Event.Cfg_Height,
                   Width  => X_Event.Cfg_Width);
             end if;
          else
-            if Win.OnExposed/=null then
-               Win.OnExposed
+            if Win.Exposed/=null then
+               Win.Exposed
                  (Top    => 0,
                   Left   => 0,
                   Height => X_Event.Cfg_Height,
@@ -682,7 +682,7 @@ package body Lumen.Window is
 
    ---------------------------------------------------------------------------
 
-   function ProcessEvents (Win : in Window_Handle)
+   function Process_Events (Win : in Window_Handle)
                            return Boolean is
    begin
       -- Process all events currently in the queue
@@ -692,7 +692,7 @@ package body Lumen.Window is
          end if;
       end loop;
       return True;
-   end ProcessEvents;
+   end Process_Events;
    ---------------------------------------------------------------------------
 
 end Lumen.Window;
