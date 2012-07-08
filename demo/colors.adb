@@ -1,13 +1,12 @@
 
 -- Simple Lumen demo/test program, using earliest incomplete library
 
-with Lumen;
 with Lumen.Window;
 with Lumen.GL;
 
 procedure Colors is
 
-   Win     : Lumen.Window_Handle;
+   Win     : Lumen.Window.Window_Handle;
 
 begin  -- Colors
 

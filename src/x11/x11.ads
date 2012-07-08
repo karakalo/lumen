@@ -27,7 +27,45 @@ package X11 is
    type Int_Ptr is access all Integer;  -- used to simulate "out" param for C function
    type FB_Config_Ptr is access all System.Address;  -- actually an array, but only ever one element
 
-   Max_GLX_Attributes : constant := (Context_Attribute_Name'Pos (Context_Attribute_Name'Last) + 1) * 2 + 2;
+   -- OpenGL context ("visual") attribute specifiers
+   type X11Context_Attribute_Name is
+      (
+       Attr_None,
+       Attr_Use_GL,             -- unused
+       Attr_Buffer_Size,        -- color index buffer size, ignored if TrueColor
+       Attr_Level,              -- buffer level for over/underlays
+       Attr_RGBA,               -- set by Depth => TrueColor
+       Attr_Doublebuffer,       -- set by Animate => True
+       Attr_Stereo,             -- wow, you have stereo visuals?
+       Attr_Aux_Buffers,        -- number of auxiliary buffers
+       Attr_Red_Size,           -- bit depth, red
+       Attr_Green_Size,         -- bit depth, green
+       Attr_Blue_Size,          -- bit depth, blue
+       Attr_Alpha_Size,         -- bit depth, alpha
+       Attr_Depth_Size,         -- depth buffer size
+       Attr_Stencil_Size,       -- stencil buffer size
+       Attr_Accum_Red_Size,     -- accumulation buffer bit depth, red
+       Attr_Accum_Green_Size,   -- accumulation buffer bit depth, green
+       Attr_Accum_Blue_Size,    -- accumulation buffer bit depth, blue
+       Attr_Accum_Alpha_Size    -- accumulation buffer bit depth, alpha
+      );
+
+   type X11Context_Attribute (Name  : X11Context_Attribute_Name := Attr_None) is record
+      case Name is
+         when Attr_None | Attr_Use_GL | Attr_RGBA | Attr_Doublebuffer | Attr_Stereo =>
+            null;  -- present or not, no value
+         when Attr_Level =>
+            Level : Integer := 0;
+         when Attr_Buffer_Size | Attr_Aux_Buffers | Attr_Depth_Size | Attr_Stencil_Size |
+              Attr_Red_Size | Attr_Green_Size | Attr_Blue_Size | Attr_Alpha_Size |
+              Attr_Accum_Red_Size | Attr_Accum_Green_Size | Attr_Accum_Blue_Size | Attr_Accum_Alpha_Size =>
+            Size : Natural := 0;
+      end case;
+   end record;
+
+   type X11Context_Attributes is array (Positive range <>) of X11Context_Attribute;
+
+   Max_GLX_Attributes : constant := (X11Context_Attribute_Name'Pos (X11Context_Attribute_Name'Last) + 1) * 2 + 2;
 
    type GLX_Attribute_List     is array (1 .. Max_GLX_Attributes) of Integer;
    type GLX_Attribute_List_Ptr is new System.Address;
@@ -68,6 +106,7 @@ package X11 is
       Event_Mask  : X_Event_Mask := 0;
       Colormap    : Colormap_ID  := 0;
    end record;
+
    for X_Set_Window_Attributes use record
       Event_Mask  at (Start + 0) * Long_Bytes range 0 .. Long_Bits;
       Colormap    at (Start + 3) * Long_Bytes range 0 .. Long_Bits;
@@ -139,70 +178,6 @@ package X11 is
 
    -- Our "delete window" atom value
    Delete_Window_Atom : Atom;
-   ---------------------------------------------------------------------------
-
-   -- Xlib functions needed only by Create
-   function X_Create_Colormap (Display : Display_Pointer;
-                               Window  : Window_ID;
-                               Visual  : System.Address;
-                               Alloc   : Alloc_Mode)
-                                  return Colormap_ID;
-   pragma Import (C, X_Create_Colormap, "XCreateColormap");
-
-   function X_Create_Window (Display      : Display_Pointer;
-                             Parent       : Window_ID;
-                             X            : Position;
-                             Y            : Position;
-                             Width        : Dimension;
-                             Height       : Dimension;
-                             Border_Width : Natural;
-                             Depth        : Screen_Depth;
-                             Class        : Window_Class;
-                             Visual       : System.Address;
-                             Valuemask    : X_Window_Attributes_Mask;
-                             Attributes   : System.Address)
-                             return Window_ID;
-   pragma Import (C, X_Create_Window, "XCreateWindow");
-
-   function X_Default_Screen (Display : Display_Pointer) return Screen_Number;
-   pragma Import (C, X_Default_Screen, "XDefaultScreen");
-
-   procedure X_Map_Window (Display : in Display_Pointer;   Window : in Window_ID);
-   pragma Import (C, X_Map_Window, "XMapWindow");
-
-   function X_Open_Display (Display_Name : System.Address := System.Null_Address) return Display_Pointer;
-   pragma Import (C, X_Open_Display, "XOpenDisplay");
-
-   function X_Root_Window (Display : Display_Pointer;   Screen_Num : Screen_Number) return Window_ID;
-   pragma Import (C, X_Root_Window, "XRootWindow");
-
-   procedure X_Set_WM_Protocols (Display   : in Display_Pointer;
-                                 Window    : in Window_ID;
-                                 Protocols : in System.Address;
-                                 Count     : in Integer);
-   pragma Import (C, X_Set_WM_Protocols, "XSetWMProtocols");
-
-   -- Binding to XNextEvent, used by Window for mapping notify events, and by
-   -- Events for everything else
-   procedure X_Next_Event (Display : in Display_Pointer;
-                           Event   : in System.Address);
-   pragma Import (C, X_Next_Event, "XNextEvent");
-
-   procedure GLX_Destroy_Context (Display : in Display_Pointer;
-                                  Context : GLX_Context);
-   pragma Import (C, GLX_Destroy_Context, "glXDestroyContext");
-
-   -- Binding needed locally to translate keycodes
-   function X_Lookup_String (Event   : in System.Address;
-                             Buffer  : in System.Address;
-                             Limit   : in Natural;
-                             Keysym  : in System.Address;
-                             Compose : in System.Address)
-                                return Natural;
-   pragma Import (C, X_Lookup_String, "XLookupString");
-
-   function X_Pending (Display : Display_Pointer) return Natural;
-   pragma Import (C, X_Pending, "XPending");
 
    ------------------------------------------------------------------------
 
@@ -328,7 +303,10 @@ package X11 is
 
    GL_TRUE : constant Character := Character'Val (1);
 
-   -- GLX stuff needed by more than one of the routines below
+   -----------------------------
+   -- Imported Xlib functions --
+   -----------------------------
+
    function GLX_Create_Context (Display    : Display_Pointer;
                                 Visual     : X_Visual_Info_Pointer;
                                 Share_List : GLX_Context;
@@ -349,12 +327,10 @@ package X11 is
    return Character;
    pragma Import (C, GLX_Make_Context_Current, "glXMakeContextCurrent");
 
-   ---------------------------------------------------------------------------
-
    function X_Intern_Atom (Display        : Display_Pointer;
                            Name           : System.Address;
                            Only_If_Exists : Natural)
-   return Atom;
+                           return Atom;
    pragma Import (C, X_Intern_Atom, "XInternAtom");
 
    procedure X_Set_Class_Hint (Display : in Display_Pointer;
@@ -377,13 +353,11 @@ package X11 is
                             Text_Prop : in System.Address);
    pragma Import (C, X_Set_WM_Name, "XSetWMName");
 
-   -- GLX functions needed only by Create
    function GLX_Choose_Visual (Display        : Display_Pointer;
                                Screen         : Screen_Number;
                                Attribute_List : GLX_Attribute_List_Ptr)
-                                  return X_Visual_Info_Pointer;
+                               return X_Visual_Info_Pointer;
    pragma Import (C, GLX_Choose_Visual, "glXChooseVisual");
-   ---------------------------------------------------------------------------
 
    function GLX_Choose_FB_Config (Display        : Display_Pointer;
                                   Screen         : Screen_Number;
@@ -397,6 +371,63 @@ package X11 is
                                                  return X_Visual_Info_Pointer;
    pragma Import (C, GLX_Get_Visual_From_FB_Config, "glXGetVisualFromFBConfig");
 
-   ---------------------------------------------------------------------
+   procedure X_Next_Event (Display : in Display_Pointer;
+                           Event   : in System.Address);
+   pragma Import (C, X_Next_Event, "XNextEvent");
+
+   procedure GLX_Destroy_Context (Display : in Display_Pointer;
+                                  Context : GLX_Context);
+   pragma Import (C, GLX_Destroy_Context, "glXDestroyContext");
+
+   function X_Create_Colormap (Display : Display_Pointer;
+                               Window  : Window_ID;
+                               Visual  : System.Address;
+                               Alloc   : Alloc_Mode)
+                                  return Colormap_ID;
+   pragma Import (C, X_Create_Colormap, "XCreateColormap");
+
+   function X_Create_Window (Display      : Display_Pointer;
+                             Parent       : Window_ID;
+                             X            : Position;
+                             Y            : Position;
+                             Width        : Dimension;
+                             Height       : Dimension;
+                             Border_Width : Natural;
+                             Depth        : Screen_Depth;
+                             Class        : Window_Class;
+                             Visual       : System.Address;
+                             Valuemask    : X_Window_Attributes_Mask;
+                             Attributes   : System.Address)
+                             return Window_ID;
+   pragma Import (C, X_Create_Window, "XCreateWindow");
+
+   function X_Default_Screen (Display : Display_Pointer) return Screen_Number;
+   pragma Import (C, X_Default_Screen, "XDefaultScreen");
+
+   procedure X_Map_Window (Display : in Display_Pointer;   Window : in Window_ID);
+   pragma Import (C, X_Map_Window, "XMapWindow");
+
+   function X_Open_Display (Display_Name : System.Address := System.Null_Address) return Display_Pointer;
+   pragma Import (C, X_Open_Display, "XOpenDisplay");
+
+   function X_Root_Window (Display : Display_Pointer;   Screen_Num : Screen_Number) return Window_ID;
+   pragma Import (C, X_Root_Window, "XRootWindow");
+
+   procedure X_Set_WM_Protocols (Display   : in Display_Pointer;
+                                 Window    : in Window_ID;
+                                 Protocols : in System.Address;
+                                 Count     : in Integer);
+   pragma Import (C, X_Set_WM_Protocols, "XSetWMProtocols");
+
+   function X_Lookup_String (Event   : in System.Address;
+                             Buffer  : in System.Address;
+                             Limit   : in Natural;
+                             Keysym  : in System.Address;
+                             Compose : in System.Address)
+                                return Natural;
+   pragma Import (C, X_Lookup_String, "XLookupString");
+
+   function X_Pending (Display : Display_Pointer) return Natural;
+   pragma Import (C, X_Pending, "XPending");
 
 end X11;

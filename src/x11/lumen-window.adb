@@ -46,7 +46,7 @@ with X11; use X11;
 
 package body Lumen.Window is
 
-   type X11Window_Type is new Lumen.Window_Type with
+   type X11Window_Type is new Window_Type with
       record
          Display : Display_Pointer       := Null_Display_Pointer;
          Window  : Window_ID             := 0;
@@ -82,8 +82,6 @@ package body Lumen.Window is
       Structure_Notify_Mask : constant X_Event_Mask := 2#0000_0010_0000_0000_0000_0000#;  -- 17th bit, always want this one
 
       -- Variables used in Create
-      Con_Attributes : GLX_Attribute_List := (others => Context_Attribute_Name'Pos (Attr_None));
-      Con_Attr_Index : Positive := Con_Attributes'First;
       Our_Context    : GLX_Context;
       Did            : Character;
       Display        : Display_Pointer;
@@ -100,9 +98,12 @@ package body Lumen.Window is
       -- LUMEN_VISUAL_ID environment variable, or by asking GLX to pick one.
       procedure Choose_Visual is
 
+         use type System.Address;
+
          ---------------------------------------------------------------------
 
-         use type System.Address;
+         Con_Attributes : GLX_Attribute_List := (others => X11Context_Attribute_Name'Pos (Attr_None));
+         Con_Attr_Index : Positive := Con_Attributes'First;
 
          ---------------------------------------------------------------------
 
@@ -147,34 +148,57 @@ package body Lumen.Window is
             Visual := GLX_Get_Visual_From_FB_Config (Display, FB.all);
          else
 
+            declare
+
+               procedure PushAttr
+                 (Attr : Integer) is
+               begin
+                  Con_Attributes(Con_Attr_Index):=Attr;
+                  Con_Attr_Index:=Con_Attr_Index+1;
+               end PushAttr;
+               ---------------------------------------------------------------
+
+            begin
             -- No explicit ID given, so ask GLX to pick one.  Set up the
             -- attributes array (first putting in our separately-specified
             -- ones if given) and use it to get an appropriate visual.
-            if Depth = True_Color then
-               Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attr_RGBA);
-               Con_Attr_Index := Con_Attr_Index + 1;
-            end if;
-            if Animated then
-               Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attr_Doublebuffer);
-               Con_Attr_Index := Con_Attr_Index + 1;
-            end if;
-            for Attr in Attributes'Range loop
-               Con_Attributes (Con_Attr_Index) := Context_Attribute_Name'Pos (Attributes (Attr).Name);
-               Con_Attr_Index := Con_Attr_Index + 1;
-               case Attributes (Attr).Name is
-                  when Attr_None | Attr_Use_GL | Attr_RGBA | Attr_Doublebuffer | Attr_Stereo =>
-                     null;  -- present or not, no value
-                  when Attr_Level =>
-                     Con_Attributes (Con_Attr_Index) := Attributes (Attr).Level;
-                     Con_Attr_Index := Con_Attr_Index + 1;
-                  when Attr_Buffer_Size | Attr_Aux_Buffers | Attr_Depth_Size | Attr_Stencil_Size |
-                     Attr_Red_Size | Attr_Green_Size | Attr_Blue_Size | Attr_Alpha_Size |
-                     Attr_Accum_Red_Size | Attr_Accum_Green_Size | Attr_Accum_Blue_Size | Attr_Accum_Alpha_Size =>
-                     Con_Attributes (Con_Attr_Index) := Attributes (Attr).Size;
-                     Con_Attr_Index := Con_Attr_Index + 1;
-               end case;
-            end loop;
-            Visual := GLX_Choose_Visual (Display, X_Default_Screen (Display), GLX_Attribute_List_Ptr (Con_Attributes'Address));
+               if Depth = True_Color then
+                  PushAttr(X11Context_Attribute_Name'Pos (Attr_RGBA));
+               end if;
+               if Animated then
+                  PushAttr(X11Context_Attribute_Name'Pos (Attr_Doublebuffer));
+               end if;
+               PushAttr(X11Context_Attribute_Name'Pos(Attr_Red_Size));
+               PushAttr(Attributes.Red_Size);
+               PushAttr(X11Context_Attribute_Name'Pos(Attr_Green_size));
+               PushAttr(Attributes.Green_Size);
+               PushAttr(X11Context_Attribute_Name'Pos(Attr_Blue_Size));
+               PushAttr(Attributes.Blue_Size);
+               PushAttr(X11Context_Attribute_Name'Pos(Attr_Alpha_Size));
+               PushAttr(Attributes.Alpha_Size);
+               PushAttr(X11Context_Attribute_Name'Pos(Attr_Depth_Size));
+               PushAttr(Attributes.Depth_Size);
+               PushAttr(X11Context_Attribute_Name'Pos(Attr_Stencil_Size));
+               PushAttr(Attributes.Stencil_Size);
+               PushAttr(0);
+--            for Attr in Attributes'Range loop
+--               Con_Attributes (Con_Attr_Index) := X11Context_Attribute_Name'Pos (Attributes (Attr).Name);
+--               Con_Attr_Index := Con_Attr_Index + 1;
+--               case Attributes (Attr).Name is
+--                  when Attr_None | Attr_Use_GL | Attr_RGBA | Attr_Doublebuffer | Attr_Stereo =>
+--                     null;  -- present or not, no value
+--                  when Attr_Level =>
+--                     Con_Attributes (Con_Attr_Index) := Attributes (Attr).Level;
+--                     Con_Attr_Index := Con_Attr_Index + 1;
+--                  when Attr_Buffer_Size | Attr_Aux_Buffers | Attr_Depth_Size | Attr_Stencil_Size |
+--                     Attr_Red_Size | Attr_Green_Size | Attr_Blue_Size | Attr_Alpha_Size |
+--                     Attr_Accum_Red_Size | Attr_Accum_Green_Size | Attr_Accum_Blue_Size | Attr_Accum_Alpha_Size =>
+--                     Con_Attributes (Con_Attr_Index) := Attributes (Attr).Size;
+--                     Con_Attr_Index := Con_Attr_Index + 1;
+--               end case;
+--            end loop;
+               Visual := GLX_Choose_Visual (Display, X_Default_Screen (Display), GLX_Attribute_List_Ptr (Con_Attributes'Address));
+            end;
          end if;
       end Choose_Visual;
 
@@ -477,9 +501,6 @@ package body Lumen.Window is
 
       XWin : X11Window_Handle:=X11Window_Handle(Win);
 
-      function X_Pending (Display : Display_Pointer) return Natural;
-      pragma Import (C, X_Pending, "XPending");
-
    begin  -- Pending
       return X_Pending (XWin.Display);
    end Pending;
@@ -571,65 +592,40 @@ package body Lumen.Window is
 
          -- Now decide whether it was a press or a release, and return the value
          if X_Event.X_Event_Type = X_Key_Press then
-            Win.OnKeyPress(0);
-            --               return (Which     => Key_Press,
-            --                       Key_Data  => (X         => X_Event.Key_X,
-            --                                     Y         => X_Event.Key_Y,
-            --                                     Abs_X     => X_Event.Key_Root_X,
-            --                                     Abs_Y     => X_Event.Key_Root_Y,
-            --                                     Modifiers => Key_Mods,
-            --                                     Key_Code  => Raw_Keycode (X_Event.Key_Code),
-            --                                     Key_Type  => Key_Type,
-            --                                     Key       => Key_Value));
+            if Win.OnKeyPress/=null then
+               Win.OnKeyPress(Key_Type,Key_Value,Key_Mods);
+            end if;
          else
-            Win.OnKeyRelease(0);
-            --               return (Which     => Key_Release,
-            --                       Key_Data  => (X         => X_Event.Key_X,
-            --                                     Y         => X_Event.Key_Y,
-            --                                     Abs_X     => X_Event.Key_Root_X,
-            --                                     Abs_Y     => X_Event.Key_Root_Y,
-            --                                     Modifiers => Key_Mods,
-            --                                     Key_Code  => Raw_Keycode (X_Event.Key_Code),
-            --                                     Key_Type  => Key_Type,
-            --                                     Key       => Key_Value));
+            if Win.OnKeyRelease/=null then
+               Win.OnKeyRelease(Key_Type,Key_Value,Key_Mods);
+            end if;
          end if;
 
       when X_Button_Press =>
-         Win.OnMouseDown
-           (X => X_Event.Btn_X,
-            Y => X_Event.Btn_Y,
-            -- TODO : Trust? Thats just dangerous, use different translation method
-            Button => Button_Enum'Val(X_Event.Btn_Code-1));
-         --            return (Which        => Button_Press,
-         --                    Button_Data  => (X         => X_Event.Btn_X,
-         --                                     Y         => X_Event.Btn_Y,
-         --                                     Abs_X     => X_Event.Btn_Root_X,
-         --                                     Abs_Y     => X_Event.Btn_Root_Y,
-         --                                     Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State),
-         --                                     Changed   => Button_Enum'Val (X_Event.Btn_Code - 1)));
+         if Win.OnMouseDown/=null then
+            Win.OnMouseDown
+              (X         => X_Event.Btn_X,
+               Y         => X_Event.Btn_Y,
+               Button    => Button_Enum'Val(X_Event.Btn_Code-1),
+               Modifiers => Modifier_Mask_To_Set(X_Event.Btn_State));
+         end if;
 
       when X_Button_Release =>
-
-         Win.OnMouseUp
-           (X => X_Event.Btn_X,
-            Y => X_Event.Btn_Y,
-            Button => Button_Enum'Val(X_Event.Btn_Code-1));
-         --            return (Which        => Button_Release,
-         --                    Button_Data  => (X         => X_Event.Btn_X,
-         --                                     Y         => X_Event.Btn_Y,
-         --                                     Abs_X     => X_Event.Btn_Root_X,
-         --                                     Abs_Y     => X_Event.Btn_Root_Y,
-         --                                     Modifiers => Modifier_Mask_To_Set (X_Event.Btn_State),
-         --                                     Changed   => Button_Enum'Val (X_Event.Btn_Code - 1)));
+         if Win.OnMouseUp/=null then
+            Win.OnMouseUp
+              (X         => X_Event.Btn_X,
+               Y         => X_Event.Btn_Y,
+               Button    => Button_Enum'Val(X_Event.Btn_Code-1),
+               Modifiers => Modifier_Mask_To_Set(X_Event.Btn_State));
+         end if;
 
       when X_Motion_Notify =>
-         null;
-         --            return (Which       => Pointer_Motion,
-         --                    Motion_Data => (X         => X_Event.Mov_X,
-         --                                    Y         => X_Event.Mov_Y,
-         --                                    Abs_X     => X_Event.Mov_Root_X,
-         --                                    Abs_Y     => X_Event.Mov_Root_Y,
-         --                                    Modifiers => Modifier_Mask_To_Set (X_Event.Mov_State)));
+         if Win.OnMouseMove/=null then
+            Win.OnMouseMove
+              (X         => X_Event.Mov_X,
+               Y         => X_Event.Mov_Y,
+               Modifiers => Modifier_Mask_To_Set(X_Event.Mov_State));
+         end if;
 
       when X_Enter_Notify =>
          null;
@@ -656,44 +652,44 @@ package body Lumen.Window is
          --            return (Which => Focus_Out);
 
       when X_Expose =>
-         null;
-         --            return (Which       => Exposed,
-         --                    Expose_Data => (X         => X_Event.Xps_X,
-         --                                    Y         => X_Event.Xps_Y,
-         --                                    Width     => X_Event.Xps_Width,
-         --                                    Height    => X_Event.Xps_Height,
-         --                                    Count     => X_Event.Xps_Count));
+         if Win.OnExposed/=null then
+            Win.OnExposed
+              (Top => X_Event.Xps_X,
+               Left => X_Event.Xng_Y,
+               Height => X_Event.Xps_Height,
+               Width => X_Event.Xps_Width);
+         end if;
 
       when X_Unmap_Notify =>
          null;
          --         return (Which       => Hidden);
 
       when X_Map_Notify =>
-         null;
-         -- Fake up a "whole window exposed" event
-         --         return (Which       => Exposed,
-         --                    Expose_Data => (X         => 0,
-         --                                    Y         => 0,
-         --                                    Width     => Win.Width,
-         --                                    Height    => Win.Height,
-         --                                    Count     => 0));
+         if Win.OnExposed/=null then
+            Win.OnExposed
+              (Top    => 0,
+               Left   => 0,
+               Height => Win.Height,
+               Width  => Win.Width);
+         end if;
 
       when X_Configure_Notify =>
          if X_Event.Cfg_Width /= Win.Width or X_Event.Cfg_Height /= Win.Height then
             Win.Width  := X_Event.Cfg_Width;
             Win.Height := X_Event.Cfg_Height;
-            --               return (Which       => Resized,
-            --                       Resize_Data => (Width     => X_Event.Cfg_Width,
-            --                                       Height    => X_Event.Cfg_Height));
+            if Win.OnResize/=null then
+               Win.OnResize
+                 (Height => X_Event.Cfg_Height,
+                  Width  => X_Event.Cfg_Width);
+            end if;
          else
-            -- Fake up a "whole window exposed" event
-            --               return (Which       => Exposed,
-            --                       Expose_Data => (X         => 0,
-            --                                       Y         => 0,
-            --                                       Width     => X_Event.Cfg_Width,
-            --                                       Height    => X_Event.Cfg_Height,
-            --                                       Count     => 0));
-            null;
+            if Win.OnExposed/=null then
+               Win.OnExposed
+                 (Top    => 0,
+                  Left   => 0,
+                  Height => X_Event.Cfg_Height,
+                  Width  => X_Event.Cfg_Width);
+            end if;
          end if;
 
       when X_Client_Message =>
@@ -702,13 +698,11 @@ package body Lumen.Window is
          begin
             if X_Event.Msg_Value = Delete_Window_Atom then
                return False;
-               --               return (Which => Close_Window);
             end if;
          end;
 
       when others =>
          null;
---         return (Which => Unknown_Event);
 
       end case;
 

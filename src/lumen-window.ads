@@ -22,8 +22,14 @@
 
 with Lumen.Events; use Lumen.Events;
 with Lumen.Events.Key_Translate; use Lumen.Events.Key_Translate;
+with Ada.Calendar;
 
 package Lumen.Window is
+
+   -- A time that won't ever happen during the execution of a Lumen app
+   Never : constant Ada.Calendar.Time := Ada.Calendar.Time_Of (Year  => Ada.Calendar.Year_Number'First,
+                                                               Month => Ada.Calendar.Month_Number'First,
+                                                               Day   => Ada.Calendar.Day_Number'First);
 
    -- Exceptions defined by this package
    Not_Character : exception;  -- key symbol is not a Latin-1 character
@@ -37,28 +43,112 @@ package Lumen.Window is
    -- Raw keycode, not much use except at the very lowest level
    type Raw_Keycode is mod 2 ** Integer'Size;
 
-   -- Null window; in X, this means the root window is the parent
-   No_Window : constant Window_Handle := null;
-
    -- Rendering context's color depth
    type Color_Depth is (Pseudo_Color, True_Color);
 
-   -- These are what we normally use, but other values are also possible
-   Default_Context_Attributes : constant Context_Attributes :=
-      (
-       (Attr_Red_Size,     8),
-       (Attr_Green_Size,   8),
-       (Attr_Blue_Size,    8),
-       (Attr_Alpha_Size,   8),
-       (Attr_Depth_Size,  24),
-       (Attr_Stencil_Size, 8)
-      );
+   type Button_Enum is (Button_1, Button_2, Button_3, Button_4, Button_5);
+
+   type Event_MouseDown is
+     access procedure
+       (X         : Integer;
+        Y         : Integer;
+        Button    : Button_Enum;
+        Modifiers : Modifier_Set);
+
+   type Event_MouseUp is
+     access procedure
+       (X         : Integer;
+        Y         : Integer;
+        Button    : Button_Enum;
+        Modifiers : Modifier_Set);
+
+   type Event_MouseMove is
+     access procedure
+       (X         : Integer;
+        Y         : Integer;
+        Modifiers : Modifier_Set);
+
+   type Event_KeyPress is
+     access procedure
+       (Category  : Key_Category;
+        Symbol    : Key_Symbol;
+        Modifiers : Modifier_Set);
+
+   type Event_KeyRelease is
+     access procedure
+       (Category  : Key_Category;
+        Symbol    : Key_Symbol;
+        Modifiers : Modifier_Set);
+
+   type Event_Character is
+     access procedure
+       (Char      : String;
+        Modifiers : Modifier_Set);
+
+   type Event_Exposed is
+     access procedure
+       (Top    : Integer;
+        Left   : Integer;
+        Height : Natural;
+        Width  : Natural);
+
+   type Event_Resize is
+     access procedure
+       (Height : Integer;
+        Width  : Integer);
+
+   type Window_Public is tagged
+      record
+         -- Public for Lumen-Events-Animate
+
+         Prior_Frame : Ada.Calendar.Time     := Never;
+         SPF         : Duration              := 0.0;
+         App_Frames  : Long_Integer          := 0;
+         Last_Frames : Long_Integer          := 0;
+         Looping     : Boolean               := True;
+         App_Start   : Ada.Calendar.Time     := Never;
+         Last_Start  : Ada.Calendar.Time     := Never;
+
+         -- Really Public
+
+         OnMouseDown  : Event_MouseDown  := null;
+         OnMouseUp    : Event_MouseUp    := null;
+         OnMouseMove  : Event_MouseMove  := null;
+         OnKeyPress   : Event_KeyPress   := null;
+         OnKeyRelease : Event_KeyRelease := null;
+         OnCharacter  : Event_Character  := null;
+         OnExposed    : Event_Exposed    := null;
+         OnResize     : Event_Resize     := null;
+      end record;
+
+   type Window_Type is new Window_Public with private;
+   type Window_Handle is access all Window_Type'Class;
+
+   -- Null window; in X, this means the root window is the parent
+   No_Window : constant Window_Handle := null;
 
    -- Local exceptions raised by these procedures
    Connection_Failed : exception;  -- can't connect to X server
    Context_Failed    : exception;  -- can't create or attach OpenGL context
    Not_Available     : exception;  -- can't find a visual with given attributes
    Invalid_ID        : exception;  -- format of explicit visual ID (LUMEN_VISUAL_ID) is invalid
+
+   type Context_Attributes is
+      record
+         Red_Size     : Integer;
+         Green_Size   : Integer;
+         Blue_Size    : Integer;
+         Alpha_Size   : Integer;
+         Depth_Size   : Integer;
+         Stencil_Size : Integer;
+      end record;
+   Default_Context_Attributes : constant Context_Attributes:=
+     (Red_Size     => 8,
+      Green_Size   => 8,
+      Blue_Size    => 8,
+      Alpha_Size   => 8,
+      Depth_Size   => 24,
+      Stencil_Size => 8);
 
    -- Create a native window, with defaults for configuration intended to
    -- create a "usable" window.  Details about the parameters are:
@@ -137,6 +227,14 @@ package Lumen.Window is
    -- All event processing is done in this call
    -- Events are reported by CallBacks (see Window_Type in lumen.ads)
    function ProcessEvents (Win : in Window_Handle)
-     return Boolean;
+                           return Boolean;
+
+private
+
+   type Window_Type is new Window_Public with
+      record
+         Height      : Natural;
+         Width       : Natural;
+      end record;
 
 end Lumen.Window;

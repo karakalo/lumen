@@ -23,7 +23,6 @@
 -- Environment
 with Ada.Calendar;
 
-
 package body Lumen.Events.Animate is
 
    ---------------------------------------------------------------------------
