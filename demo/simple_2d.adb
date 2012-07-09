@@ -242,7 +242,7 @@ procedure Simple_2D is
 
       -- Record starting position and current rotation/scale
       StartX := GL.Double (X);
-      StartY := GL.Double (Curr_H - Y);
+      StartY := GL.Double (Y);
       Curr_RotC  := RotC;
       Curr_Scale := Scale;
       Curr_XPan  := XPan;
@@ -272,14 +272,14 @@ procedure Simple_2D is
       -- If it's a drag, update the figure parameters
       if Modifiers (Events.Mod_Button_1) then
          XPan := Curr_XPan + ((GL.Double (X) - StartX) / GL.Double (Curr_W));
-         YPan := Curr_YPan + ((GL.Double (Y) - StartY) / GL.Double (Curr_H));
+         YPan := Curr_YPan + ((GL.Double (Y_Prime) - StartY) / GL.Double (Curr_H));
          Display;
       elsif Modifiers (Events.Mod_Button_2) then
-         RotC := GL.Double (integer (Curr_RotC - ((GL.Double (X) - StartX) + (StartY - GL.Double (Y)))) mod 360);
+         RotC := GL.Double (Integer (Curr_RotC - ((GL.Double (X) - StartX) + (StartY - GL.Double (Y_Prime)))) mod 360);
          Display;
       elsif Modifiers (Events.Mod_Button_3) then
          Scale := Curr_Scale + ((GL.Double (X) - StartX) / GL.Double (Curr_W)) -
-                  ((GL.Double (Y) - StartY) / GL.Double (Curr_H));
+                  ((GL.Double (Y_Prime) - StartY) / GL.Double (Curr_H));
          Display;
       end if;
 
