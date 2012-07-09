@@ -17,6 +17,7 @@ with Ada.Characters.Latin_1;
 with Ada.Text_IO;
 with Lumen.Window;
 with Lumen.Events;
+with Lumen.Events.Animate;
 with Lumen.Events.Keys;
 with Lumen.Image;
 with Lumen.GL;
@@ -24,36 +25,45 @@ with Lumen.GLU;
 
 procedure Blending is
 
+   use Lumen;  -- we sure do!
+
    ---------------------------------------------------------------------------
 
-   type Enum_Array is array (Positive range <>) of Lumen.GL.Enum;
+   -- Keystrokes we care about
+   Escape    : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.ESC));
+   Letter_d  : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.LC_D));
+   Letter_e  : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.LC_E));
+   Letter_q  : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.LC_Q));
+   Letter_s  : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.LC_S));
+
+
+   type Enum_Array is array (Positive range <>) of GL.Enum;
 
    subtype Factors_Range   is Positive range 1 .. 15;
    subtype Equations_Range is Positive range 1 .. 5;
 
-   Win     : Lumen.Window.Handle;
-   Event   : Lumen.Events.Event_Data;
+   Win     : Window.Window_Handle;
    Wide    : Natural := 640;
    High    : Natural := 480;
 
    Source_Factor : Factors_Range := Factors_Range'First;
    Dest_Factor   : Factors_Range := Factors_Range'First;
    Factors       : Enum_Array(Factors_Range) :=
-     (Lumen.GL.GL_ZERO,
-      Lumen.GL.GL_ONE,
-      Lumen.GL.GL_SRC_COLOR,
-      Lumen.GL.GL_ONE_MINUS_SRC_COLOR,
-      Lumen.GL.GL_DST_COLOR,
-      Lumen.GL.GL_ONE_MINUS_DST_COLOR,
-      Lumen.GL.GL_SRC_ALPHA,
-      Lumen.GL.GL_ONE_MINUS_SRC_ALPHA,
-      Lumen.GL.GL_DST_ALPHA,
-      Lumen.GL.GL_ONE_MINUS_DST_ALPHA,
-      Lumen.GL.GL_CONSTANT_COLOR,
-      Lumen.GL.GL_ONE_MINUS_CONSTANT_COLOR,
-      Lumen.GL.GL_CONSTANT_ALPHA,
-      Lumen.GL.GL_ONE_MINUS_CONSTANT_ALPHA,
-      Lumen.GL.GL_SRC_ALPHA_SATURATE);
+     (GL.GL_ZERO,
+      GL.GL_ONE,
+      GL.GL_SRC_COLOR,
+      GL.GL_ONE_MINUS_SRC_COLOR,
+      GL.GL_DST_COLOR,
+      GL.GL_ONE_MINUS_DST_COLOR,
+      GL.GL_SRC_ALPHA,
+      GL.GL_ONE_MINUS_SRC_ALPHA,
+      GL.GL_DST_ALPHA,
+      GL.GL_ONE_MINUS_DST_ALPHA,
+      GL.GL_CONSTANT_COLOR,
+      GL.GL_ONE_MINUS_CONSTANT_COLOR,
+      GL.GL_CONSTANT_ALPHA,
+      GL.GL_ONE_MINUS_CONSTANT_ALPHA,
+      GL.GL_SRC_ALPHA_SATURATE);
    Factor_Names  : array (Factors_Range) of String(1 .. 27) :=
      ("GL_ZERO                    ",
       "GL_ONE                     ",
@@ -72,11 +82,11 @@ procedure Blending is
       "GL_SRC_ALPHA_SATURATE      ");
    Equation   : Equations_Range := Equations_Range'First;
    Equations  : Enum_Array(Equations_Range) :=
-     (Lumen.GL.GL_FUNC_ADD,
-      Lumen.GL.GL_FUNC_SUBTRACT,
-      Lumen.GL.GL_FUNC_REVERSE_SUBTRACT,
-      Lumen.GL.GL_MIN,
-      Lumen.GL.GL_MAX);
+     (GL.GL_FUNC_ADD,
+      GL.GL_FUNC_SUBTRACT,
+      GL.GL_FUNC_REVERSE_SUBTRACT,
+      GL.GL_MIN,
+      GL.GL_MAX);
    Equation_Names : array (Equations_Range) of String(1 .. 24) :=
      ("GL_FUNC_ADD             ",
       "GL_FUNC_SUBTRACT        ",
@@ -84,8 +94,9 @@ procedure Blending is
       "GL_MIN                  ",
       "GL_MAX                  ");
 
-   Bitmap1, Bitmap2 : Lumen.Image.Descriptor;
-   Tx1, Tx2         : Lumen.GL.UInt;
+   Bitmap1, Bitmap2 : Image.Descriptor;
+   Tx1, Tx2         : GL.UInt;
+   Terminated       : Boolean := False;
 
    ---------------------------------------------------------------------------
 
@@ -107,7 +118,7 @@ procedure Blending is
    procedure Set_Blend_Function(Source, Dest : in Factors_Range) is
    begin  -- Set_Blend_Function
 
-      Lumen.GL.Blend_Func(Factors(Source), Factors(Dest));
+      GL.Blend_Func(Factors(Source), Factors(Dest));
 
    end Set_Blend_Function;
 
@@ -125,15 +136,15 @@ procedure Blending is
    procedure Set_Equation_Function(Equation : in Equations_Range) is
    begin  -- Set_Equation_Function
 
-      Lumen.GL.Blend_Equation(Equations(Equation));
+      GL.Blend_Equation(Equations(Equation));
 
    end Set_Equation_Function;
 
    -- Create a texture and bind a 2D image to it
-   function Create_Texture(Bitmap : Lumen.Image.Descriptor) return Lumen.GL.UInt is
-      use Lumen;
+   function Create_Texture(Bitmap : Image.Descriptor) return GL.UInt is
 
       Result : aliased GL.UInt;
+
    begin  -- Create_Texture
 
       -- Allocate a texture name
@@ -165,8 +176,6 @@ procedure Blending is
    -- Set or reset the window view parameters
    procedure Set_View (W, H : in Natural) is
 
-      use Lumen;
-
       Aspect : GL.Double;
 
    begin  -- Set_View
@@ -192,8 +201,6 @@ procedure Blending is
 
    -- Draw our scene
    procedure Draw is
-
-      use Lumen;
 
       use type GL.Bitfield;
 
@@ -255,42 +262,44 @@ procedure Blending is
 
    ---------------------------------------------------------------------------
 
-   procedure WindowResize
-     (Height : Integer;
-      Width  : Integer) is
+   -- Called once per frame; just re-draws the scene
+   function New_Frame (Frame_Delta : in Duration) return Boolean is
+   begin  -- New_Frame
+      Draw;
+      return not Terminated;
+   end New_Frame;
+
+   ----------------------------------------------------------------------------
+
+   procedure Window_Resize (Height : in Integer;
+                            Width  : in Integer) is
    begin
       Wide:=Width;
       High:=Height;
       set_View(Wide,High);
       Draw;
-   end WindowResize;
+   end Window_Resize;
 
-   procedure KeyPress
-     (Category  : Key_Category;
-      Symbol    : Key_Symbol;
-      Modifiers : Modifier_Set) is
-   begin
-      if Symbol=Escape then
-         Terminated:=True;
-      end if;
-      Draw;
-   end KeyPress;
+   ----------------------------------------------------------------------------
 
-   procedure KeyCharacter
-     (Character : Character) is
+   procedure Key_Press (Category  : in Events.Key_Category;
+                        Symbol    : in Events.Key_Symbol;
+                        Modifiers : in Events.Modifier_Set) is
    begin
-      case Character is
-         when 's' =>
+      case Symbol is
+         when Letter_s =>
             Next_Factor(Source_Factor);
-         when 'd' =>
+         when Letter_d =>
             Next_Factor(Dest_Factor);
-         when 'e' =>
+         when Letter_e =>
             Next_Equation(Equation);
+         when Escape | Letter_q =>
+            Terminated := True;
          when others =>
             null;
       end case;
       Draw;
-   end KeyCharacter;
+   end Key_Press;
 
    ---------------------------------------------------------------------------
 
@@ -303,20 +312,19 @@ begin  -- Blending
    Ada.Text_IO.Put_Line("Bitmap --> " & Ada.Command_Line.Argument(1));
    Ada.Text_IO.Put_Line("Bitmap --> " & Ada.Command_Line.Argument(2));
 
-   Bitmap1 := Lumen.Image.From_File(Ada.Command_Line.Argument(1));
-   Bitmap2 := Lumen.Image.From_File(Ada.Command_Line.Argument(2));
+   Bitmap1 := Image.From_File(Ada.Command_Line.Argument(1));
+   Bitmap2 := Image.From_File(Ada.Command_Line.Argument(2));
 
    -- Create Lumen window, accepting most defaults; turn double buffering off
    -- for simplicity
-   Lumen.Window.Create (Win,
+   Window.Create (Win,
 			Name   => "Blending Demo",
                         Width  => Wide,
                         Height => High,
-			Direct => True,
-                        Events => (Lumen.Window.Want_Key_Press   => True,
-				   Lumen.Window.Want_Key_Release => True,
-                                   Lumen.Window.Want_Exposure    => True,
-                                   others => False));
+			Direct => True);
+
+   Win.Resize     := Window_Resize'Unrestricted_Access;
+   Win.Key_Press  := Key_Press'Unrestricted_Access;
 
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
@@ -324,12 +332,13 @@ begin  -- Blending
    Tx1     := Create_Texture(Bitmap1);
    Tx2     := Create_Texture(Bitmap2);
 
-   Lumen.GL.Enable(Lumen.GL.GL_TEXTURE_2D);
-   Lumen.GL.Enable(Lumen.GL.GL_BLEND);
-   Lumen.GL.Blend_Color(0.0, 1.0, 0.0, 1.0);  -- Example green for blending with.
+   GL.Enable(GL.GL_TEXTURE_2D);
+   GL.Enable(GL.GL_BLEND);
+   GL.Blend_Color(0.0, 1.0, 0.0, 1.0);  -- Example green for blending with.
 
-   -- Enter the event loop
-   Lumen.Events.Receive_Events (Win, Handler'Unrestricted_Access);
+   -- Enter the event loop; framerate assumed to be 24Hz
+   Events.Animate.Run (Win, 24, New_Frame'Unrestricted_Access);
+
 
 exception
    when Program_Exit =>
