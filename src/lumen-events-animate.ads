@@ -59,6 +59,7 @@ package Lumen.Events.Animate is
         return Boolean;
 
    procedure Run (Win   : in Window_Handle;
+                  FPS   : in Frame_Count;
                   Frame : in Event_Frame);
 
 end Lumen.Events.Animate;

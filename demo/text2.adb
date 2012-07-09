@@ -370,6 +370,6 @@ begin  -- Text2
    Object := Font.Txf.Establish_Texture (Tx_Font, 0, True);
 
    -- Enter the event loop
-   Lumen.Events.Animate.Run(Win,New_Frame'Unrestricted_Access);
+   Lumen.Events.Animate.Run(Win,FrameRate,New_Frame'Unrestricted_Access);
 
 end Text2;

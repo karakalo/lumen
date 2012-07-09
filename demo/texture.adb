@@ -278,7 +278,7 @@ begin  -- Texture
    GL.Bind_Texture (GL.GL_TEXTURE_2D, Tx_Name);
 
    -- Enter the event loop, which will terminate when the Quit_Handler calls End_Events
-   Lumen.Events.Animate.Run(Win,New_Frame'Unrestricted_Access);
+   Lumen.Events.Animate.Run(Win,FrameRate,New_Frame'Unrestricted_Access);
 
    Put_Line("Ordinary Termination");
    -- Try these just to make sure they work

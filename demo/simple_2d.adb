@@ -359,7 +359,8 @@ procedure Simple_2D is
 begin  -- Simple_2D
    Init;
 
-   Lumen.Events.Animate.Run (Win, New_Frame'Unrestricted_Access);
+   -- Framerate assumed to be 24Hz
+   Lumen.Events.Animate.Run (Win, 24,New_Frame'Unrestricted_Access);
 
 exception
    when Program_Exit =>

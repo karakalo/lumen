@@ -514,6 +514,6 @@ begin  -- Multi
    Object := Font.Txf.Establish_Texture (Tx_Font, 0, True);
 
    -- Enter the event loop, which is hooked to the scene window
-   Lumen.Events.Animate.Run(Scene,New_Frame'Unrestricted_Access);
+   Lumen.Events.Animate.Run(Scene,FrameRate,New_Frame'Unrestricted_Access);
 
 end Multi;

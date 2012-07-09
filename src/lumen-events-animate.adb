@@ -98,8 +98,16 @@ package body Lumen.Events.Animate is
    ---------------------------------------------------------------------------
 
    procedure Run (Win   : in Window_Handle;
+                  FPS   : in Frame_Count;
                   Frame : in Event_Frame) is
    begin
+
+      if FPS=Flat_Out then
+         Win.SPF := 0.0;
+      else
+         Win.SPF := Duration(1.0) / Duration(FPS);
+      end if;
+
       while Lumen.Window.Process_Events(Win) loop
          Wait_Frame(Win);
          declare

@@ -164,6 +164,6 @@ begin  -- Spinner
    Set_View (Wide, High);
 
    -- Enter the event loop
-   Lumen.Events.Animate.Run(Win,New_Frame'Unrestricted_Access);
+   Lumen.Events.Animate.Run(Win,FrameRate,New_Frame'Unrestricted_Access);
 
 end Spinner;
