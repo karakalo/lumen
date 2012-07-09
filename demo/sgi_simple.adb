@@ -59,6 +59,8 @@ procedure SGI_Simple is
       use Lumen;
 
    begin  -- Draw
+      GL.Matrix_Mode(GL.GL_MODELVIEW);
+      GL.Load_Identity;
 
       GL.Clear_Color (0.0, 0.0, 0.0, 0.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT);
@@ -89,6 +91,7 @@ procedure SGI_Simple is
       Wide:=Width;
       High:=Height;
       Set_View(Wide,High);
+      Draw;
    end Window_Resize;
 
    procedure Key_Press
@@ -102,8 +105,8 @@ procedure SGI_Simple is
    procedure Exposed
      (Top    : Integer;
       Left   : Integer;
-      Height : Integer;
-      Width  : Integer) is
+      Height : Natural;
+      Width  : Natural) is
    begin
       Draw;
    end Exposed;
@@ -122,6 +125,9 @@ begin  -- SGI_Simple
 
    Win.Resize    := Window_Resize'Unrestricted_Access;
    Win.Key_Press := Key_Press'Unrestricted_Access;
+   Win.Exposed   := Exposed'Unrestricted_Access;
+
+   Draw;
 
    while Lumen.Window.Process_Events(Win) loop
       exit when Terminated;
