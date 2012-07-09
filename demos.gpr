@@ -17,9 +17,9 @@ project Demos is
                  "text2.adb",
                  "multi.adb",
                  "simple_2d",
-                 "simple_3d"
+                 "simple_3d",
+                 "fire"
 --                 "blending"
---                 "fire"
 --		 "vertex_buffers", "shaders"
                 );
    for Exec_Dir use "bin";

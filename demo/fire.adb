@@ -30,10 +30,10 @@ with Lumen.Events;
 with Lumen.GL;
 
 procedure Fire is
-   
+
    ------------------------------------------------------------------------
    --
-   --  These are the system parameters. 
+   --  These are the system parameters.
    --
    --  The maximum age of a particle:
    Particle_Lifetime    : constant	:= 2.0;
@@ -55,7 +55,7 @@ procedure Fire is
    --
    --  The blue component of the particle color:
    Particle_Blue        : constant      := 0.1;
-   
+
    ------------------------------------------------------------------------
    --
    --  A very simple 2D vector implementation. This is just to make
@@ -93,14 +93,14 @@ procedure Fire is
    --  The particle system has a fixed number of particles.
    --
    Particles : array (1 .. Particle_Count) of Particle;
-   
+
    ------------------------------------------------------------------------
    --
    --  The random number generator is needed for the system noise,
    --  which is added to the particles velocity on respawn.
    --
    RNG : Ada.Numerics.Float_Random.Generator;
-   
+
    ------------------------------------------------------------------------
    --
    --  This sets the age of the particles so that the global particle
@@ -122,7 +122,7 @@ procedure Fire is
    				      - Particle_Spread / 2.0);
       end loop;
    end Initialize_Particles;
-   
+
    ------------------------------------------------------------------------
    --
    --  If a particle has reached the maximum lifetime, it is reset,
@@ -179,8 +179,8 @@ procedure Fire is
    --
    --  This is all that is needed to run a Lumen GL window.
    --
-   Window	: Lumen.Window.Handle;
-   Event	: Lumen.Events.Event_Data;
+   Win        : Lumen.Window.Window_Handle;
+   Terminated : Boolean := False;
 
    ------------------------------------------------------------------------
    --
@@ -189,25 +189,34 @@ procedure Fire is
    Start_Time	: Ada.Real_Time.Time    := Ada.Real_Time.Clock;
    End_Time	: Ada.Real_Time.Time;
    Delta_Time	: Duration;
-   
+
    ------------------------------------------------------------------------
    --
    --  This is for computing the frame rate every second.
    --
    FPS_Base_Time	: Ada.Real_Time.Time	:= Start_Time;
    FPS_Counter		: Integer		:= 0;
-   
+
+   ------------------------------------------------------------------------
+   --
+   --  Callback for the key-pressed event
+   --
+   procedure Key_Press (Category  : in Lumen.Events.Key_Category;
+                        Symbol    : in Lumen.Events.Key_Symbol;
+                        Modifiers : in Lumen.Events.Modifier_Set) is
+   begin
+      Terminated := True;
+   end Key_Press;
+
 begin
-   
+
    ------------------------------------------------------------------------
    --
    --  Creates the window using reasonable defaults and creates and
    --  activates the OpenGL context.
    --
-   Lumen.Window.Create (Window,
-                        Name => "FPS: 0",
-   			Events => (Lumen.Window.Want_Key_Press
-   				     => True, others => False));
+   Lumen.Window.Create (Win, Name => "FPS: 0");
+   Win.Key_Press := Key_Press'Unrestricted_Access;
 
    Initialize_Particles;
 
@@ -223,7 +232,7 @@ begin
       --  We need large point size for the point sprites.
       --
       GL.Point_Size (32.0);
-      
+
       ---------------------------------------------------------------------
       --
       --  This creates a 32 by 32 texture data. The color is white (as
@@ -246,7 +255,7 @@ begin
 	    end;
 	 end loop;
       end loop;
-	       
+
       ---------------------------------------------------------------------
       --
       --  This enables additive blending. It is essential to use
@@ -254,7 +263,7 @@ begin
       --
       GL.Enable (GL.GL_BLEND);
       GL.Blend_Func (GL.GL_SRC_ALPHA, GL.GL_ONE);
-      
+
       ---------------------------------------------------------------------
       --
       --  This creates the point sprite texture.
@@ -262,15 +271,15 @@ begin
       GL.Enable (GL.GL_TEXTURE_2D);
       GL.Gen_Textures (1, Texture'Address);
       GL.Bind_Texture (GL.GL_TEXTURE_2D, Texture);
-      
+
       GL.Tex_Parameter (GL.GL_TEXTURE_2D,
 		       GL.GL_TEXTURE_MAG_FILTER,
 		       GL.GL_NEAREST);
-      
+
       GL.Tex_Parameter (GL.GL_TEXTURE_2D,
 		       GL.GL_TEXTURE_MIN_FILTER,
 		       GL.GL_NEAREST);
-      
+
       GL.Tex_Image (GL.GL_TEXTURE_2D,
 		   0,
 		   GL.GL_RGBA,
@@ -278,10 +287,10 @@ begin
 		   0,
 		   GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
 		   Texture_Data'Address);
-      
+
       ---------------------------------------------------------------------
       --
-      --  This enables the actual 
+      --  This enables the actual
       GL.Enable (GL.GL_POINT_SPRITE);
       GL.Tex_Env (GL.GL_POINT_SPRITE, GL.GL_COORD_REPLACE, 1);
    end;
@@ -290,29 +299,13 @@ begin
    --
    --  This is the main application loop.
    --
-Outer:
-   loop
-      
-      ---------------------------------------------------------------------
-      --
-      --  This checks for key press or window close events and exits
-      --  the main loop accordingly.
-      --
-      while Lumen.Events.Pending (Window) > 0 loop
-         declare
-            use type Lumen.Events.Event_Type;
-         begin
-            Event := Lumen.Events.Next_Event (Window);
-            exit Outer when
-              Event.Which = Lumen.Events.Key_Press
-              or Event.Which = Lumen.Events.Close_Window;
-         end;
-      end loop;
+   while Lumen.Window.Process_Events (Win) loop
+      exit when Terminated;
 
       declare
 	 use Ada.Real_Time;
       begin
-	 
+
          ------------------------------------------------------------------
          --
          --  This computes the delta time, i.e. the time the last frame
@@ -321,7 +314,7 @@ Outer:
 	 End_Time := Clock;
 	 Delta_Time := To_Duration (End_Time - Start_Time);
 	 Start_Time := End_Time;
-      
+
          ------------------------------------------------------------------
          --
 	 --  This counts how many frames are rendered in one
@@ -330,16 +323,14 @@ Outer:
 	 --  title bar) and the counter is reset.
          --
 	 if To_Duration (Start_Time - FPS_Base_Time) >= 1.0 then
-	    Lumen.Window.Set_Names (Window,
-				    Name => "FPS: "
-				      & Integer'Image (FPS_Counter));
+	    Lumen.Window.Set_Names (Win, Name => "FPS: " & Integer'Image (FPS_Counter));
 	    FPS_Base_Time := Start_Time;
 	    FPS_Counter := 0;
 	 else
 	    FPS_Counter := FPS_Counter + 1;
 	 end if;
       end;
-      
+
       ---------------------------------------------------------------------
       --
       --  This is our 'physics update'.
@@ -359,12 +350,12 @@ Outer:
          Render_Particles;
          GL.Flush;
       end;
-      
+
       ---------------------------------------------------------------------
       --
       --  This swaps the double buffer and is usually the last thing
       --  in an animation loop.
       --
-      Lumen.Window.Swap (Window);
-   end loop Outer;
+      Lumen.Window.Swap (Win);
+   end loop;
 end Fire;
