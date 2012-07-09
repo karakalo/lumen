@@ -696,7 +696,7 @@ package body Lumen.GL is
    -- Texture images
    procedure Tex_Image (Target          : in Enum;
                        Level           : in Int;
-                       Internal_Format : in Int;
+                       Internal_Format : in Enum;
                        Width           : in SizeI;
                        Border          : in Int;
                        Format          : in Enum;
@@ -704,7 +704,7 @@ package body Lumen.GL is
                        Pixels          : in System.Address) is
       procedure glTexImage1D (Target          : in Enum;
                               Level           : in Int;
-                              Internal_Format : in Int;
+                              Internal_Format : in Enum;
                               Width           : in SizeI;
                               Border          : in Int;
                               Format          : in Enum;
@@ -717,7 +717,7 @@ package body Lumen.GL is
 
    procedure Tex_Image (Target          : in Enum;
                        Level           : in Int;
-                       Internal_Format : in Int;
+                       Internal_Format : in Enum;
                        Width           : in SizeI;
                        Height          : in SizeI;
                        Border          : in Int;
@@ -726,7 +726,7 @@ package body Lumen.GL is
                        Pixels          : in System.Address) is
       procedure glTexImage2D (Target          : in Enum;
                               Level           : in Int;
-                              Internal_Format : in Int;
+                              Internal_Format : in Enum;
                               Width           : in SizeI;
                               Height          : in SizeI;
                               Border          : in Int;

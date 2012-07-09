@@ -575,11 +575,11 @@ package Lumen.GL is
    GL_LUMINANCE12_ALPHA4                       : constant Enum := 16#8046#;
    GL_LUMINANCE12_ALPHA12                      : constant Enum := 16#8047#;
    GL_LUMINANCE16_ALPHA16                      : constant Enum := 16#8048#;
-   GL_INTENSITY                                : constant Int := 16#8049#;
-   GL_INTENSITY4                               : constant Int := 16#804A#;
-   GL_INTENSITY8                               : constant Int := 16#804B#;
-   GL_INTENSITY12                              : constant Int := 16#804C#;
-   GL_INTENSITY16                              : constant Int := 16#804D#;
+   GL_INTENSITY                                : constant Enum := 16#8049#;
+   GL_INTENSITY4                               : constant Enum := 16#804A#;
+   GL_INTENSITY8                               : constant Enum := 16#804B#;
+   GL_INTENSITY12                              : constant Enum := 16#804C#;
+   GL_INTENSITY16                              : constant Enum := 16#804D#;
    GL_R3_G3_B2                                 : constant Enum := 16#2A10#;
    GL_RGB4                                     : constant Enum := 16#804F#;
    GL_RGB5                                     : constant Enum := 16#8050#;
@@ -1225,7 +1225,7 @@ package Lumen.GL is
    -- Texture images
    procedure Tex_Image (Target          : in Enum;
                        Level           : in Int;
-                       Internal_Format : in Int;
+                       Internal_Format : in Enum;
                        Width           : in SizeI;
                        Border          : in Int;
                        Format          : in Enum;
@@ -1234,7 +1234,7 @@ package Lumen.GL is
 
    procedure Tex_Image (Target          : in Enum;
                        Level           : in Int;
-                       Internal_Format : in Int;
+                       Internal_Format : in Enum;
                        Width           : in SizeI;
                        Height          : in SizeI;
                        Border          : in Int;
