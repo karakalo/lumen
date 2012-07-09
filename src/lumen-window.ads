@@ -32,6 +32,7 @@ package Lumen.Window is
                                                                Day   => Ada.Calendar.Day_Number'First);
 
    -- Exceptions defined by this package
+   FailedToCreateContext : Exception;
 
    -- The types of events that can be reported
    type Event_Type is (Unknown_Event,
@@ -46,6 +47,8 @@ package Lumen.Window is
    type Color_Depth is (Pseudo_Color, True_Color);
 
    type Button_Enum is (Button_1, Button_2, Button_3, Button_4, Button_5);
+   type Button_Set is array(Button_Enum) of Boolean;
+   NoButtons : constant Button_Set:=(others => False);
 
    type Event_Mouse_Down is
      access procedure

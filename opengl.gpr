@@ -27,7 +27,7 @@ library project OpenGL is
    package Linker is
       case Config.Os is
          when "Windows_NT" =>
-            for Linker_Options use ("-lOpenGL32", "-lGdi32");
+            for Linker_Options use ("-lopengl32","-lgdi32");
 
          when "Linux" =>
             for Linker_Options use ("-lGL","-lX11");

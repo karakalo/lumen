@@ -105,19 +105,19 @@ package Lumen.GLU is
 
 private
    -- These can be bound directly
-   pragma Import (C, Build_1D_Mipmaps, "gluBuild1DMipmaps");
-   pragma Import (C, Build_2D_Mipmaps, "gluBuild2DMipmaps");
-   pragma Import (C, Ortho_2D, "gluOrtho2D");
-   pragma Import (C, Perspective, "gluPerspective");
-   pragma Import (C, New_Quadric, "gluNewQuadric");
-   pragma Import (C, Delete_Quadric, "gluDeleteQuadric");
-   pragma Import (C, Quadric_Draw_Style, "gluQuadricDrawStyle");
-   pragma Import (C, Quadric_Orientation, "gluQuadricOrientation");
-   pragma Import (C, Quadric_Normals, "gluQuadricNormals");
-   pragma Import (C, Quadric_Texture, "gluQuadricTexture");
-   pragma Import (C, Cylinder, "gluCylinder");
-   pragma Import (C, Sphere, "gluSphere");
-   pragma Import (C, Disk, "gluDisk");
-   pragma Import (C, Partial_Disk, "gluPartialDisk");
+   pragma Import (StdCall, Build_1D_Mipmaps, "gluBuild1DMipmaps");
+   pragma Import (StdCall, Build_2D_Mipmaps, "gluBuild2DMipmaps");
+   pragma Import (StdCall, Ortho_2D, "gluOrtho2D");
+   pragma Import (StdCall, Perspective, "gluPerspective");
+   pragma Import (StdCall, New_Quadric, "gluNewQuadric");
+   pragma Import (StdCall, Delete_Quadric, "gluDeleteQuadric");
+   pragma Import (StdCall, Quadric_Draw_Style, "gluQuadricDrawStyle");
+   pragma Import (StdCall, Quadric_Orientation, "gluQuadricOrientation");
+   pragma Import (StdCall, Quadric_Normals, "gluQuadricNormals");
+   pragma Import (StdCall, Quadric_Texture, "gluQuadricTexture");
+   pragma Import (StdCall, Cylinder, "gluCylinder");
+   pragma Import (StdCall, Sphere, "gluSphere");
+   pragma Import (StdCall, Disk, "gluDisk");
+   pragma Import (StdCall, Partial_Disk, "gluPartialDisk");
 
 end Lumen.GLU;

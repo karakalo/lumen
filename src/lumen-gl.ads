@@ -575,11 +575,11 @@ package Lumen.GL is
    GL_LUMINANCE12_ALPHA4                       : constant Enum := 16#8046#;
    GL_LUMINANCE12_ALPHA12                      : constant Enum := 16#8047#;
    GL_LUMINANCE16_ALPHA16                      : constant Enum := 16#8048#;
-   GL_INTENSITY                                : constant Enum := 16#8049#;
-   GL_INTENSITY4                               : constant Enum := 16#804A#;
-   GL_INTENSITY8                               : constant Enum := 16#804B#;
-   GL_INTENSITY12                              : constant Enum := 16#804C#;
-   GL_INTENSITY16                              : constant Enum := 16#804D#;
+   GL_INTENSITY                                : constant Int := 16#8049#;
+   GL_INTENSITY4                               : constant Int := 16#804A#;
+   GL_INTENSITY8                               : constant Int := 16#804B#;
+   GL_INTENSITY12                              : constant Int := 16#804C#;
+   GL_INTENSITY16                              : constant Int := 16#804D#;
    GL_R3_G3_B2                                 : constant Enum := 16#2A10#;
    GL_RGB4                                     : constant Enum := 16#804F#;
    GL_RGB5                                     : constant Enum := 16#8050#;
@@ -1192,137 +1192,6 @@ package Lumen.GL is
    procedure Gen_Textures (N        : in SizeI;
                           Textures : in Pointer);
 
-   -- MultiTexCoord v1.3
-   -- 1D
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            S      : in Double);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Doubles_1);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            S      : in Float);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Floats_1);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            S      : in Int);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Ints_1);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            S      : in Short);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Shorts_1);
-   pragma Inline(Multi_Tex_Coord);
-
-   -- 2D
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            S, T   : in Double);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Doubles_2);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            S, T   : in Float);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Floats_2);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            S, T   : in Int);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Ints_2);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            S, T   : in Short);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Shorts_2);
-   pragma Inline(Multi_Tex_Coord);
-
-   -- 3D
-   procedure Multi_Tex_Coord (Target  : in Enum;
-                            S, T, R : in Double);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Doubles_3);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target  : in Enum;
-                            S, T, R : in Float);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Floats_3);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target  : in Enum;
-                            S, T, R : in Int);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Ints_3);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target  : in Enum;
-                            S, T, R : in Short);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Shorts_3);
-
-   -- 4D
-   procedure Multi_Tex_Coord (Target     : in Enum;
-                            S, T, R, Q : in Double);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Doubles_4);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target     : in Enum;
-                            S, T, R, Q : in Float);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Floats_4);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target     : in Enum;
-                            S, T, R, Q : in Int);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Ints_4);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target     : in Enum;
-                            S, T, R, Q : in Short);
-   pragma Inline(Multi_Tex_Coord);
-
-   procedure Multi_Tex_Coord (Target : in Enum;
-                            V      : in Shorts_4);
-   pragma Inline(Multi_Tex_Coord);
 
    procedure Tex_Env (Coord : in Enum;
                      PName : in Enum;
@@ -1356,7 +1225,7 @@ package Lumen.GL is
    -- Texture images
    procedure Tex_Image (Target          : in Enum;
                        Level           : in Int;
-                       Internal_Format : in Enum;
+                       Internal_Format : in Int;
                        Width           : in SizeI;
                        Border          : in Int;
                        Format          : in Enum;
@@ -1365,7 +1234,7 @@ package Lumen.GL is
 
    procedure Tex_Image (Target          : in Enum;
                        Level           : in Int;
-                       Internal_Format : in Enum;
+                       Internal_Format : in Int;
                        Width           : in SizeI;
                        Height          : in SizeI;
                        Border          : in Int;
@@ -1373,17 +1242,17 @@ package Lumen.GL is
                        Pixel_Type      : in Enum;
                        Pixels          : in Pointer);
 
-   procedure Tex_Image (Target          : in Enum;
-                       Level           : in Int;
-                       Internal_Format : in Enum;
-                       Width           : in SizeI;
-                       Height          : in SizeI;
-                       Depth           : in SizeI;
-                       Border          : in Int;
-                       Format          : in Enum;
-                       Pixel_Type      : in Enum;
-                       Pixels          : in Pointer);
-   pragma Inline (Tex_Image);
+--   procedure Tex_Image (Target          : in Enum;
+--                       Level           : in Int;
+--                       Internal_Format : in Int;
+--                       Width           : in SizeI;
+--                       Height          : in SizeI;
+--                       Depth           : in SizeI;
+--                       Border          : in Int;
+--                       Format          : in Enum;
+--                       Pixel_Type      : in Enum;
+--                       Pixels          : in Pointer);
+--   pragma Inline (Tex_Image);
 
    -- Texture coordinates
    procedure Tex_Coord (S : in Short);
@@ -1647,65 +1516,65 @@ package Lumen.GL is
 
 private
    -- These can be bound directly
-   pragma Import (C, Active_Texture, "glActiveTexture");
-   pragma Import (C, Alpha_Func, "glAlphaFunc");
-   pragma Import (C, Attach_Shader, "glAttachShader");
-   pragma Import (C, Begin_Primitive, "glBegin");
-   pragma Import (C, Bind_Buffer, "glBindBuffer");
-   pragma Import (C, Bind_Framebuffer, "glBindFramebuffer");
-   pragma Import (C, Bind_Texture, "glBindTexture");
-   pragma Import (C, Blend_Color, "glBlendColor");
-   pragma Import (C, Blend_Equation, "glBlendEquation");
-   pragma Import (C, Blend_Func, "glBlendFunc");
-   pragma Import (C, Buffer_Data, "glBufferData");
-   pragma Import (C, Clear, "glClear");
-   pragma Import (C, Clear_Accum, "glClearAccum");
-   pragma Import (C, Clear_Color, "glClearColor");
-   pragma Import (C, Clear_Depth, "glClearDepth");
-   pragma Import (C, Clear_Index, "glClearIndex");
-   pragma Import (C, Compile_Shader, "glCompileShader");
-   pragma Import (C, Create_Program, "glCreateProgram");
-   pragma Import (C, Create_Shader, "glCreateShader");
-   pragma Import (C, Cull_Face, "glCullFace");
-   pragma Import (C, Depth_Func, "glDepthFunc");
-   pragma Import (C, Disable, "glDisable");
-   pragma Import (C, Draw_Arrays, "glDrawArrays");
-   pragma Import (C, Edge_Flag, "glEdgeFlag");
-   pragma Import (C, Edge_Flagv, "glEdgeFlagv");
-   pragma Import (C, Enable, "glEnable");
-   pragma Import (C, Enable_Client_State, "glEnableClientState");
-   pragma Import (C, End_Primitive, "glEnd");
-   pragma Import (C, Finish, "glFinish");
-   pragma Import (C, Flush, "glFlush");
-   pragma Import (C, Front_Face, "glFrontFace");
-   pragma Import (C, Frustum, "glFrustum");
-   pragma Import (C, Gen_Buffers, "glGenBuffers");
-   pragma Import (C, Gen_Framebuffers, "glGenFramebuffers");
-   pragma Import (C, Gen_Textures, "glGenTextures");
-   pragma Import (C, Get_Error, "glGetError");
-   pragma Import (C, Get_Polygon_Stipple, "glGetPolygonStipple");
-   pragma Import (C, Hint, "glHint");
-   pragma Import (C, Is_Enabled, "glIsEnabled");
-   pragma Import (C, Line_Stipple, "glLineStipple");
-   pragma Import (C, Line_Width, "glLineWidth");
-   pragma Import (C, Link_Program, "glLinkProgram");
-   pragma Import (C, Load_Identity, "glLoadIdentity");
-   pragma Import (C, Matrix_Mode, "glMatrixMode");
-   pragma Import (C, Ortho, "glOrtho");
-   pragma Import (C, Point_Size, "glPointSize");
-   pragma Import (C, Polygon_Mode, "glPolygonMode");
-   pragma Import (C, Polygon_Offset, "glPolygonOffset");
-   pragma Import (C, Polygon_Stipple, "glPolygonStipple");
-   pragma Import (C, Pop_Attrib, "glPopAttrib");
-   pragma Import (C, Pop_Matrix, "glPopMatrix");
-   pragma Import (C, Push_Attrib, "glPushAttrib");
-   pragma Import (C, Push_Matrix, "glPushMatrix");
-   pragma Import (C, Scissor, "glScissor");
-   pragma Import (C, Shade_Model, "glShadeModel");
-   pragma Import (C, Shader_Source, "glShaderSource");
-   pragma Import (C, Stencil_Func, "glStencilFunc");
-   pragma Import (C, Tex_Env, "glTexEnvi");
-   pragma Import (C, Use_Program, "glUseProgram");
-   pragma Import (C, Viewport, "glViewport");
+   pragma Import (StdCall, Active_Texture, "glActiveTexture");
+   pragma Import (StdCall, Alpha_Func, "glAlphaFunc");
+   pragma Import (StdCall, Attach_Shader, "glAttachShader");
+   pragma Import (StdCall, Begin_Primitive, "glBegin");
+   pragma Import (StdCall, Bind_Buffer, "glBindBuffer");
+   pragma Import (StdCall, Bind_Framebuffer, "glBindFramebuffer");
+   pragma Import (StdCall, Bind_Texture, "glBindTexture");
+   pragma Import (StdCall, Blend_Color, "glBlendColor");
+   pragma Import (StdCall, Blend_Equation, "glBlendEquation");
+   pragma Import (StdCall, Blend_Func, "glBlendFunc");
+   pragma Import (StdCall, Buffer_Data, "glBufferData");
+   pragma Import (StdCall, Clear, "glClear");
+   pragma Import (StdCall, Clear_Accum, "glClearAccum");
+   pragma Import (StdCall, Clear_Color, "glClearColor");
+   pragma Import (StdCall, Clear_Depth, "glClearDepth");
+   pragma Import (StdCall, Clear_Index, "glClearIndex");
+   pragma Import (StdCall, Compile_Shader, "glCompileShader");
+   pragma Import (StdCall, Create_Program, "glCreateProgram");
+   pragma Import (StdCall, Create_Shader, "glCreateShader");
+   pragma Import (StdCall, Cull_Face, "glCullFace");
+   pragma Import (StdCall, Depth_Func, "glDepthFunc");
+   pragma Import (StdCall, Disable, "glDisable");
+   pragma Import (StdCall, Draw_Arrays, "glDrawArrays");
+   pragma Import (StdCall, Edge_Flag, "glEdgeFlag");
+   pragma Import (StdCall, Edge_Flagv, "glEdgeFlagv");
+   pragma Import (StdCall, Enable, "glEnable");
+   pragma Import (StdCall, Enable_Client_State, "glEnableClientState");
+   pragma Import (StdCall, End_Primitive, "glEnd");
+   pragma Import (StdCall, Finish, "glFinish");
+   pragma Import (StdCall, Flush, "glFlush");
+   pragma Import (StdCall, Front_Face, "glFrontFace");
+   pragma Import (StdCall, Frustum, "glFrustum");
+   pragma Import (StdCall, Gen_Buffers, "glGenBuffers");
+   pragma Import (StdCall, Gen_Framebuffers, "glGenFramebuffers");
+   pragma Import (StdCall, Gen_Textures, "glGenTextures");
+   pragma Import (StdCall, Get_Error, "glGetError");
+   pragma Import (StdCall, Get_Polygon_Stipple, "glGetPolygonStipple");
+   pragma Import (StdCall, Hint, "glHint");
+   pragma Import (StdCall, Is_Enabled, "glIsEnabled");
+   pragma Import (StdCall, Line_Stipple, "glLineStipple");
+   pragma Import (StdCall, Line_Width, "glLineWidth");
+   pragma Import (StdCall, Link_Program, "glLinkProgram");
+   pragma Import (StdCall, Load_Identity, "glLoadIdentity");
+   pragma Import (StdCall, Matrix_Mode, "glMatrixMode");
+   pragma Import (StdCall, Ortho, "glOrtho");
+   pragma Import (StdCall, Point_Size, "glPointSize");
+   pragma Import (StdCall, Polygon_Mode, "glPolygonMode");
+   pragma Import (StdCall, Polygon_Offset, "glPolygonOffset");
+   pragma Import (StdCall, Polygon_Stipple, "glPolygonStipple");
+   pragma Import (StdCall, Pop_Attrib, "glPopAttrib");
+   pragma Import (StdCall, Pop_Matrix, "glPopMatrix");
+   pragma Import (StdCall, Push_Attrib, "glPushAttrib");
+   pragma Import (StdCall, Push_Matrix, "glPushMatrix");
+   pragma Import (StdCall, Scissor, "glScissor");
+   pragma Import (StdCall, Shade_Model, "glShadeModel");
+   pragma Import (StdCall, Shader_Source, "glShaderSource");
+   pragma Import (StdCall, Stencil_Func, "glStencilFunc");
+   pragma Import (StdCall, Tex_Env, "glTexEnvi");
+   pragma Import (StdCall, Use_Program, "glUseProgram");
+   pragma Import (StdCall, Viewport, "glViewport");
 
 end Lumen.GL;
