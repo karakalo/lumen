@@ -17,6 +17,7 @@
 with Ada.Characters.Latin_1;
 with Ada.Text_IO;
 
+with Lumen.Events;
 with Lumen.Events.Animate;
 with Lumen.Events.Keys;
 with Lumen.Font.Txf;
@@ -48,11 +49,10 @@ procedure Simple_2D is
    Program_Error : exception;
    Program_Exit  : exception;
 
-
    ----------------------------------------------------------------------------
 
    -- Program variables
-   Win          : Window.Handle;
+   Win          : Window.Window_Handle;
    Curr_W       : Natural   := Win_Start;
    Curr_H       : Natural   := Win_Start;
    Aspect       : GL.Double := GL.Double (Win_Start) / GL.Double (Win_Start);
@@ -66,6 +66,7 @@ procedure Simple_2D is
    Curr_Scale   : GL.Double := 1.0;
    Curr_XPan    : GL.Double := 0.0;
    Curr_YPan    : GL.Double := 0.0;
+   Terminated   : Boolean := False;
 
 
    ----------------------------------------------------------------------------
@@ -77,7 +78,7 @@ procedure Simple_2D is
    -- Drop out of the main Gtk loop
    procedure Finish is
    begin  -- Finish
-      Events.End_Events (Win);
+      Terminated := True;
    end Finish;
 
    ----------------------------------------------------------------------------
@@ -189,21 +190,14 @@ procedure Simple_2D is
    -----                                                                  -----
    ----------------------------------------------------------------------------
 
-   -- Callback triggered by the Close_Window event
-   procedure Quit_Handler (Event : in Events.Event_Data) is
-   begin  -- Quit_Handler
-      Finish;
-   end Quit_Handler;
-
-   ----------------------------------------------------------------------------
-
    -- Callback triggered by the Resized event; tell OpenGL that the
    -- user has resized the window
-   procedure Resize_Handler (Event : in Events.Event_Data) is
+   procedure Resize_Handler (Height : in Integer;
+                             Width  : in Integer) is
    begin  -- Resize_Handler
 
       -- Set the new view parameters and redraw the scene
-      Set_View (Event.Resize_Data.Width, Event.Resize_Data.Height);
+      Set_View (Width, Height);
       Display;
 
    end Resize_Handler;
@@ -211,12 +205,14 @@ procedure Simple_2D is
    ---------------------------------------------------------------------------
 
    -- Simple event handler routine for keypresses
-   procedure Key_Handler (Event : in Events.Event_Data) is
+   procedure Key_Handler (Category  : in Events.Key_Category;
+                          Symbol    : in Events.Key_Symbol;
+                          Modifiers : in Events.Modifier_Set) is
 
       use type Events.Key_Symbol;
 
    begin  -- Key_Handler
-      case Event.Key_Data.Key is
+      case Symbol is
          when Escape | Letter_q =>
             Finish;
 
@@ -235,25 +231,28 @@ procedure Simple_2D is
    ----------------------------------------------------------------------------
 
    -- Mouse button has been pressed
-   procedure Button_Handler (Event : in Events.Event_Data) is
+   procedure Button_Handler (X         : in Integer;
+                             Y         : in Integer;
+                             Button    : in Window.Button_Enum;
+                             Modifiers : in Events.Modifier_Set) is
 
-      use type Events.Button;
+      use type Window.Button_Enum;
 
    begin  -- Button_Handler
 
       -- Record starting position and current rotation/scale
-      StartX := GL.Double (Event.Button_Data.X);
-      StartY := GL.Double (Curr_H - Event.Button_Data.Y);
+      StartX := GL.Double (X);
+      StartY := GL.Double (Curr_H - Y);
       Curr_RotC  := RotC;
       Curr_Scale := Scale;
       Curr_XPan  := XPan;
       Curr_YPan  := YPan;
 
       -- Handle mouse wheel events
-      if Event.Button_Data.Changed = Events.Button_4 then
+      if Button = Window.Button_4 then
          Scale := Curr_Scale - 0.1;
          Display;
-      elsif Event.Button_Data.Changed = Events.Button_5 then
+      elsif Button = Window.Button_5 then
          Scale := Curr_Scale + 0.1;
          Display;
       end if;
@@ -262,25 +261,23 @@ procedure Simple_2D is
    ----------------------------------------------------------------------------
 
    -- Mouse movement
-   procedure Drag_Handler (Event : in Events.Event_Data) is
+   procedure Drag_Handler (X         : in Integer;
+                           Y         : in Integer;
+                           Modifiers : in Events.Modifier_Set) is
 
-      X, Y  : Natural;
+      Y_Prime : Integer := Curr_H - Y;
 
    begin  -- Drag_Handler
 
-      -- Get the event data
-      X := Event.Motion_Data.X;
-      Y := Curr_H - Event.Motion_Data.Y;
-
       -- If it's a drag, update the figure parameters
-      if Event.Motion_Data.Modifiers (Events.Mod_Button_1) then
+      if Modifiers (Events.Mod_Button_1) then
          XPan := Curr_XPan + ((GL.Double (X) - StartX) / GL.Double (Curr_W));
          YPan := Curr_YPan + ((GL.Double (Y) - StartY) / GL.Double (Curr_H));
          Display;
-      elsif Event.Motion_Data.Modifiers (Events.Mod_Button_2) then
+      elsif Modifiers (Events.Mod_Button_2) then
          RotC := GL.Double (integer (Curr_RotC - ((GL.Double (X) - StartX) + (StartY - GL.Double (Y)))) mod 360);
          Display;
-      elsif Event.Motion_Data.Modifiers (Events.Mod_Button_3) then
+      elsif Modifiers (Events.Mod_Button_3) then
          Scale := Curr_Scale + ((GL.Double (X) - StartX) / GL.Double (Curr_W)) -
                   ((GL.Double (Y) - StartY) / GL.Double (Curr_H));
          Display;
@@ -291,10 +288,22 @@ procedure Simple_2D is
    ----------------------------------------------------------------------------
 
    -- Re-draw the view
-   procedure Expose_Handler (Event : in Events.Event_Data) is
+   procedure Expose_Handler (Top    : in Integer;
+                             Left   : in Integer;
+                             Height : in Natural;
+                             Width  : in Natural) is
    begin  -- Expose_Handler
       Display;
    end Expose_Handler;
+
+   ----------------------------------------------------------------------------
+
+   -- Called once per frame; just re-draws the scene
+   function New_Frame (Frame_Delta : in Duration) return Boolean is
+   begin  -- New_Frame
+      Display;
+      return not Terminated;
+   end New_Frame;
 
 
    ----------------------------------------------------------------------------
@@ -311,12 +320,14 @@ procedure Simple_2D is
       Window.Create (Win,
                      Name       => "2D Object Viewer",
                      Width      => Win_Start,
-                     Height     => Win_Start,
-                     Events     => (Window.Want_Key_Press     => True,
-                                    Window.Want_Button_Press  => True,
-                                    Window.Want_Pointer_Drag  => True,
-                                    Window.Want_Exposure      => True,
-                                    others => False));
+                     Height     => Win_Start);
+
+      Win.Exposed    := Expose_Handler'Unrestricted_Access;
+      Win.Resize     := Resize_Handler'Unrestricted_Access;
+      Win.Key_Press  := Key_Handler'Unrestricted_Access;
+      Win.Mouse_Down := Button_Handler'Unrestricted_Access;
+      Win.Mouse_Move := Drag_Handler'Unrestricted_Access;
+
       Set_View (Win_Start, Win_Start);
       Display;
 
@@ -348,18 +359,7 @@ procedure Simple_2D is
 begin  -- Simple_2D
    Init;
 
-   declare
-      use Events;
-   begin
-      Select_Events (Win   => Win,
-                     Calls => (Key_Press      => Key_Handler'Unrestricted_Access,
-                               Button_Press   => Button_Handler'Unrestricted_Access,
-                               Pointer_Motion => Drag_Handler'Unrestricted_Access,
-                               Exposed        => Expose_Handler'Unrestricted_Access,
-                               Resized        => Resize_Handler'Unrestricted_Access,
-                               Close_Window   => Quit_Handler'Unrestricted_Access,
-                               others         => No_Callback));
-   end;
+   Lumen.Events.Animate.Run (Win, New_Frame'Unrestricted_Access);
 
 exception
    when Program_Exit =>

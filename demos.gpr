@@ -15,7 +15,8 @@ project Demos is
                  "texture.adb",
                  "text1.adb",
                  "text2.adb",
-                 "multi.adb"
+                 "multi.adb",
+                 "simple_2d"
 --                 "blending"
 --                 "fire"
 --		 "vertex_buffers", "shaders", "simple_2d", "simple_3d"
