@@ -683,15 +683,22 @@ package body Lumen.Window is
    ---------------------------------------------------------------------------
 
    function Process_Events (Win : in Window_Handle)
-                           return Boolean is
+                            return Boolean is
+      Pend : Integer;
    begin
-      -- Process all events currently in the queue
-      for i in 1..Pending(Win) loop
-         if not Next_Event(Win,Translate=> True) then
-            return False;
+      loop
+         Pend:=Pending(Win);
+         if Pend=0 then
+            return True;
          end if;
+
+         -- Process all events currently in the queue
+         for i in 1..Pend loop
+            if not Next_Event(Win,Translate=> True) then
+               return False;
+            end if;
+         end loop;
       end loop;
-      return True;
    end Process_Events;
    ---------------------------------------------------------------------------
 
