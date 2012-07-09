@@ -16,10 +16,11 @@ project Demos is
                  "text1.adb",
                  "text2.adb",
                  "multi.adb",
-                 "simple_2d"
+                 "simple_2d",
+                 "simple_3d"
 --                 "blending"
 --                 "fire"
---		 "vertex_buffers", "shaders", "simple_2d", "simple_3d"
+--		 "vertex_buffers", "shaders"
                 );
    for Exec_Dir use "bin";
 
