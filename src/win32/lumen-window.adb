@@ -29,6 +29,8 @@ package body Lumen.Window is
            := Interfaces.C.Strings.Null_Ptr;
          CSTR_Title     : Interfaces.C.Strings.chars_ptr
            := Interfaces.C.Strings.Null_Ptr;
+         CurrentModifiers    : Modifier_Set:=No_Modifiers;
+         DestroySignalSend   : Boolean           := False;
       end record;
    type Win32Window_Handle is access all Win32Window_Type;
 
@@ -74,7 +76,13 @@ package body Lumen.Window is
                lParam => lParam);
 
          when WM_PAINT =>
---            Paint(Context.all);
+            if Win.Exposed/=null then
+               Win.Exposed
+                 (Top => 0,
+                  Left => 0,
+                  Height => Win.Height,
+                  Width => Win.Width);
+            end if;
             return DefWindowProc
               (hWnd => hWnd,
                uMsg => uMsg,
@@ -112,11 +120,11 @@ package body Lumen.Window is
             end;
             return 0;
          when WM_SIZE =>
-            -- TODO : Extract Resize
---            GUI.PropagateContextResize
---              (Context => Context_ClassAccess(Context),
---               Width   => Integer(LOWORD(lParam)),
---               Height  => Integer(HIWORD(lParam)));
+            if Win.Resize/=null then
+               Win.Resize
+                 (Height => Integer(HIWORD(lParam)),
+                  Width  => Integer(LOWORD(lParam)));
+            end if;
             return 0;
          when WM_SIZING =>
             return 0;
@@ -134,11 +142,14 @@ package body Lumen.Window is
                lParam => lParam);
 
          when WM_LBUTTONDOWN =>
---            MouseDown
---              (Context     => Context,
---               MouseButton => LeftButton,
---               AbsX        => GET_X_LPARAM(lParam),
---               AbsY        => GET_Y_LPARAM(lParam));
+            if Win.Mouse_Down/=null then
+               Win.Mouse_Down
+                 (X => GET_X_LPARAM(lParam),
+                  Y => GET_Y_LPARAM(lParam),
+                  Button => Button_1,
+                  Modifiers => Win.CurrentModifiers);
+            end if;
+
             return DefWindowProc
               (hWnd => hWnd,
                uMsg => uMsg,
@@ -146,11 +157,14 @@ package body Lumen.Window is
                lParam => lParam);
 
          when WM_LBUTTONUP =>
---            MouseUp
---              (Context     => Context,
---               MouseButton => LeftButton,
---               AbsX        => GET_X_LPARAM(lParam),
---               AbsY        => GET_Y_LPARAM(lParam));
+            if Win.Mouse_Up/=null then
+               Win.Mouse_Up
+                 (X => GET_X_LPARAM(lParam),
+                  Y => GET_Y_LPARAM(lParam),
+                  Button => Button_1,
+                  Modifiers => Win.CurrentModifiers);
+            end if;
+
             return DefWindowProc
               (hWnd => hWnd,
                uMsg => uMsg,
@@ -158,11 +172,14 @@ package body Lumen.Window is
                lParam => lParam);
 
          when WM_RBUTTONDOWN =>
---            MouseDown
---              (Context     => Context,
---               MouseButton => RightButton,
---               AbsX        => GET_X_LPARAM(lParam),
---               AbsY        => GET_Y_LPARAM(lParam));
+            if Win.Mouse_Down/=null then
+               Win.Mouse_Down
+                 (X         => GET_X_LPARAM(lParam),
+                  Y         => GET_Y_LPARAM(lParam),
+                  Button    => Button_2,
+                  Modifiers => Win.CurrentModifiers);
+            end if;
+
             return DefWindowProc
               (hWnd => hWnd,
                uMsg => uMsg,
@@ -170,11 +187,14 @@ package body Lumen.Window is
                lParam => lParam);
 
          when WM_RBUTTONUP =>
---            MouseUp
---              (Context     => Context,
---               MouseButton => RightButton,
---               AbsX        => GET_X_LPARAM(lParam),
---               AbsY        => GET_Y_LPARAM(lParam));
+            if Win.Mouse_Up/=null then
+               Win.Mouse_Up
+                 (X         => GET_X_LPARAM(lParam),
+                  Y         => GET_Y_LPARAM(lParam),
+                  Button    => Button_2,
+                  Modifiers => Win.CurrentModifiers);
+            end if;
+
             return DefWindowProc
               (hWnd => hWnd,
                uMsg => uMsg,
@@ -182,10 +202,14 @@ package body Lumen.Window is
                lParam => lParam);
 
          when WM_MOUSEMOVE =>
---            ContextMouseMove
---              (Context     => Context_ClassAccess(Context),
---               AbsX        => GET_X_LPARAM(lParam),
---               AbsY        => GET_Y_LPARAM(lParam));
+
+            if Win.Mouse_Move/=null then
+               Win.Mouse_Move
+                 (X         => GET_X_LPARAM(lParam),
+                  Y         => GET_Y_LPARAM(lParam),
+                  Modifiers => Win.CurrentModifiers);
+            end if;
+
             return DefWindowProc
               (hWnd => hWnd,
                uMsg => uMsg,
@@ -203,7 +227,7 @@ package body Lumen.Window is
                   wParam => 0,
                   lParam => System.Null_Address);
             end;
---            Context.DestroySignalSend:=True;
+            Win.DestroySignalSend:=True;
             return 0;
 
          when WM_TIMER =>
@@ -555,12 +579,8 @@ package body Lumen.Window is
       end loop MessageLoop;
       ---------------------------------------------------------------------
 
---      if Context.DestroySignalSend
---        and Context.OnClose/=null then
---         Context.OnClose(Context.CallBackObject);
---      end if;
+      return not Win32Win.DestroySignalSend;
 
-      return True;
    end Process_Events;
 
    ---------------------------------------------------------------------------
