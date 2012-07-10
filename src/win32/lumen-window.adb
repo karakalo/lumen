@@ -8,8 +8,144 @@ with Ada.Unchecked_Deallocation;
 with Interfaces.C.Strings;
 with Ada.Unchecked_Conversion;
 with System;
+with Lumen.Events; use Lumen.Events;
+with Lumen.Events.Keys; use Lumen.Events.Keys;
 
 package body Lumen.Window is
+
+   KeyUnknown : constant := 0;
+
+   KeySymbols : constant array(0..255) of Key_Symbol:=
+     (KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 0..3
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 4..7
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 8..11
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 12..15
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 16..19
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 20..23
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 24..27
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 28..31
+      KeyUnknown,KeyUnknown,KeyUnknown,End_Key,     -- 32..35
+      Home      ,Left      ,KeyUnknown,Right,       -- 36..39
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 40..43
+      KeyUnknown,KeyUnknown,KP_Delete ,KeyUnknown,  -- 44..47
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 48..51
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 52..55
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 56..59
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 60..63
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 64..67
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 68..71
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 72..75
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 76..79
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 80..83
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 84..87
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 88..91
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 92..95
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 96..99
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 100..103
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 104..107
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 108..111
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 112..115
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 116..119
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 120..123
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 124..127
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 128..131
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 132..135
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 136..139
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 140..143
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 144..147
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 148..151
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 152..155
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 156..159
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 160..163
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 164..167
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 168..171
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 172..175
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 176..179
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 180..183
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 184..187
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 188..191
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 192..195
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 196..199
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 200..203
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 204..207
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 208..211
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 212..215
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 216..219
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 220..223
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 224..227
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 228..231
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 232..235
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 236..239
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 240..243
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 244..247
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown,  -- 248..251
+      KeyUnknown,KeyUnknown,KeyUnknown,KeyUnknown); -- 252..255
+
+   KeyCategory : constant array(0..255) of Key_Category:=
+     (Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 0..3
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 4..7
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 8..11
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 12..15
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 16..19
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 20..23
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 24..27
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 28..31
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Control,      -- 32..35
+      Key_Control,Key_Control,Key_Unknown,Key_Control,  -- 36..39
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 40..43
+      Key_Unknown,Key_Unknown,Key_Control, Key_Unknown,   -- 44..47
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 48..51
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 52..55
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 56..59
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 60..63
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 64..67
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 68..71
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 72..75
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 76..79
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 80..83
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 84..87
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 88..91
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 92..95
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 96..99
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 100..103
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 104..107
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 108..111
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 112..115
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 116..119
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 120..123
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 124..127
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 128..131
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 132..135
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 136..139
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 140..143
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 144..147
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 148..151
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 152..155
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 156..159
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 160..163
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 164..167
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 168..171
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 172..175
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 176..179
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 180..183
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 184..187
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 188..191
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 192..195
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 196..199
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 200..203
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 204..207
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 208..211
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 212..215
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 216..219
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 220..223
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 224..227
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 228..231
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 232..235
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 236..239
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 240..243
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 244..247
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown,  -- 248..251
+      Key_Unknown,Key_Unknown,Key_Unknown,Key_Unknown); -- 252..255
 
    function GetModuleHandle
      (lpModuleName : LPCTSTR_Type)
@@ -269,21 +405,18 @@ package body Lumen.Window is
                pragma Warnings(Off);
                function Convert is new Ada.Unchecked_Conversion
                  (Source => WPARAM_Type,
-                  Target => Wide_Character);
+                  Target => Character);
                pragma Warnings(On);
             begin
                if wParam>=32 then
-                  null;
---                  GUI.ContextCharacterInput
---                    (Context => Context_ClassAccess(Context),
---                     Chars   => UCS2ToUTF8(Convert(wParam)));
+                  if Win.Character/=null then
+                     Win.Character(Character'Image(Convert(wParam)),
+                                   Modifiers => Win.CurrentModifiers);
+                  end if;
+
                end if;
             end;
-            return DefWindowProc
-              (hWnd => hWnd,
-               uMsg => uMsg,
-               wParam => wParam,
-               lParam => lParam);
+            return 0;
          when others =>
             return DefWindowProc
               (hWnd   => hWnd,
