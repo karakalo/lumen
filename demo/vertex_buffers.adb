@@ -21,6 +21,7 @@
 --  NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 --  CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+with Ada.Characters.Latin_1;
 with Ada.Real_Time;
 
 with Lumen.Window;
@@ -28,6 +29,12 @@ with Lumen.Events;
 with Lumen.GL;
 
 procedure Vertex_Buffers is
+
+   use Lumen;
+
+   -- Keystrokes we care about
+   Escape    : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.ESC));
+   Letter_q  : constant Events.Key_Symbol := Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.LC_Q));
 
    ------------------------------------------------------------------------
    --
@@ -78,8 +85,8 @@ procedure Vertex_Buffers is
    --
    --  This is all that is needed to run a Lumen GL window.
    --
-   Window       : Lumen.Window.Handle;
-   Event        : Lumen.Events.Event_Data;
+   Win        : Window.Window_Handle;
+   Terminated : Boolean := False;
 
    ------------------------------------------------------------------------
    --
@@ -87,7 +94,7 @@ procedure Vertex_Buffers is
    --  dimensions of the window and sets up a simple orthographic
    --  projection for scene.
    --
-   procedure Resize_Scene (Width, Height : Natural) is
+   procedure Resize_Scene (Width, Height : in Integer) is
       use Lumen.GL;
       Aspect : Long_Float := Long_Float (Width) / Long_Float (Height);
    begin
@@ -96,6 +103,21 @@ procedure Vertex_Buffers is
       Load_Identity;
       Ortho (-2.0 * Aspect, 2.0 * Aspect, -2.0, 2.0, -1.0, 1.0);
    end Resize_Scene;
+
+   ---------------------------------------------------------------------------
+
+   -- Simple event handler routine for keypresses
+   procedure Key_Handler (Category  : in Events.Key_Category;
+                          Symbol    : in Events.Key_Symbol;
+                          Modifiers : in Events.Modifier_Set) is
+
+      use type Events.Key_Symbol;
+
+   begin  -- Key_Handler
+      if Symbol = Escape or Symbol = Letter_q then
+         Terminated := True;
+      end if;
+   end Key_Handler;
 
    ------------------------------------------------------------------------
    --
@@ -119,18 +141,17 @@ begin
    --  Creates the window using reasonable defaults and creates and
    --  activates the OpenGL context.
    --
-   Lumen.Window.Create (Window,
-                        Name => "FPS: 0",
-                        Events => (Lumen.Window.Want_Key_Press
-                                     => True, others => False));
+   Lumen.Window.Create (Win, Name => "FPS: 0");
+   Win.Resize    := Resize_Scene'Unrestricted_Access;
+   Win.Key_Press := Key_Handler'Unrestricted_Access;
 
    ------------------------------------------------------------------------
    --
    --  This triggers a resize event which doesn't happen automatically
    --  on start-up.
    --
-   Resize_Scene (Lumen.Window.Width (Window),
-                 Lumen.Window.Height (Window));
+   Resize_Scene (Window.Width (Win),
+                 Window.Height (Win));
 
 
    ------------------------------------------------------------------------
@@ -189,27 +210,8 @@ begin
    --
    --  This is the main application loop.
    --
-Outer:
-   loop
-
-      ---------------------------------------------------------------------
-      --
-      --  This checks for key press or window close events and exits
-      --  the main loop accordingly.
-      --
-      while Lumen.Events.Pending (Window) > 0 loop
-         declare
-            use type Lumen.Events.Event_Type;
-         begin
-            Event := Lumen.Events.Next_Event (Window);
-            exit Outer when
-              Event.Which = Lumen.Events.Key_Press
-              or Event.Which = Lumen.Events.Close_Window;
-            if Event.Which = Lumen.Events.Resized then
-               Resize_Scene (Event.Resize_Data.Width, Event.Resize_Data.Height);
-            end if;
-         end;
-      end loop;
+   while Lumen.Window.Process_Events (Win) loop
+      exit when Terminated;
 
       declare
          use Ada.Real_Time;
@@ -232,7 +234,7 @@ Outer:
          --  title bar) and the counter is reset.
          --
          if To_Duration (Start_Time - FPS_Base_Time) >= 1.0 then
-            Lumen.Window.Set_Names (Window,
+            Lumen.Window.Set_Names (Win,
                                     Name => "FPS: "
                                       & Integer'Image (FPS_Counter));
             FPS_Base_Time := Start_Time;
@@ -260,6 +262,6 @@ Outer:
       --  This swaps the double buffer and is usually the last thing
       --  in an animation loop.
       --
-      Lumen.Window.Swap (Window);
-   end loop Outer;
+      Lumen.Window.Swap (Win);
+   end loop;
 end Vertex_Buffers;

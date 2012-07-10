@@ -20,8 +20,8 @@ project Demos is
                  "simple_3d",
                  "fire",
                  "blending",
-                 "shaders"
---		 "vertex_buffers"
+                 "shaders",
+		 "vertex_buffers"
                 );
    for Exec_Dir use "bin";
 
