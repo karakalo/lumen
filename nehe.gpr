@@ -3,6 +3,7 @@
 -- fit in with the new dir layout
 
 with "lumen.gpr";
+with "config.gpr";
 
 project Lessons is
 
@@ -32,7 +33,12 @@ project Lessons is
    end Compiler;
 
    package Linker is
-      for Default_Switches ("ada") use ("-lGLU");
+      case Config.OS is
+         when "Windows_NT" =>
+            for Default_Switches ("ada") use ("-lglu32");
+         when "Linux"|"MacOSX" =>
+            for Default_Switches ("ada") use ("-lGLU");
+      end case;
    end Linker;
 
 end Lessons;
