@@ -97,22 +97,11 @@ procedure Shaders is
    --  This sets the viewport and re-renders the scene. We don't touch
    --  the projection matrix so it is left as identity.
    --
-   procedure Resize_Scene (Width, Height : Natural) is
+   procedure Resize_Scene (Width, Height : in Integer) is
    begin
       Lumen.GL.Viewport (0, 0, Width, Height);
       Render_Scene;
    end Resize_Scene;
-
-   ----------------------------------------------------------------------------
-   -- Callback triggered by the Resized event; tell OpenGL that the
-   -- user has resized the window
-   procedure Resize_Handler (Height : in Integer;
-                             Width  : in Integer) is
-   begin  -- Resize_Handler
-
-      -- Set the new view parameters and redraw the scene
-      Resize_Scene (Width, Height);
-   end Resize_Handler;
 
    ---------------------------------------------------------------------------
 
@@ -141,7 +130,7 @@ procedure Shaders is
 begin
    Lumen.Window.Create (Win, Name => "Minimal Shader Demo");
 
-   Win.Resize     := Resize_Handler'Unrestricted_Access;
+   Win.Resize     := Resize_Scene'Unrestricted_Access;
    Win.Key_Press  := Key_Handler'Unrestricted_Access;
 
    declare
