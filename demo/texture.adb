@@ -67,8 +67,8 @@ procedure Texture is
       GL.Tex_Parameter (GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
 
       -- Build our texture from the image we loaded earlier
-      GL.Tex_Image (GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, GL.SizeI (Image.Width), GL.SizeI (Image.Height), 0,
-                   GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, Image.Values.all'Address);
+      GL.Tex_Image (GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, GL.SizeI (Image.Width), GL.SizeI (Image.Height),0,
+                    GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, Image.Values.all'Address);
 
    end Create_Texture;
 

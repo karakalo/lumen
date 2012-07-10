@@ -18,9 +18,10 @@ project Demos is
                  "multi.adb",
                  "simple_2d",
                  "simple_3d",
-                 "fire"
---                 "blending"
---		 "vertex_buffers", "shaders"
+                 "fire",
+                 "blending",
+                 "shaders",
+		 "vertex_buffers"
                 );
    for Exec_Dir use "bin";
 

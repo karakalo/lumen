@@ -35,13 +35,19 @@
 ---------------------------------------------------------------------------
 
 with System;
+with Ada.Characters.Latin_1;
 
 with Lumen.Window;
 with Lumen.Events;
+with Lumen.Events.Animate;
 with Lumen.GL;
 with Lumen.Binary;
 
 procedure Shaders is
+
+   -- Keystrokes we care about
+   Escape    : constant Lumen.Events.Key_Symbol := Lumen.Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.ESC));
+   Letter_q  : constant Lumen.Events.Key_Symbol := Lumen.Events.Key_Symbol (Character'Pos (Ada.Characters.Latin_1.LC_Q));
 
    ------------------------------------------------------------------------
    --
@@ -57,7 +63,10 @@ procedure Shaders is
    --
    --  This is the window handle of our application window.
    --
-   Window               : Lumen.Window.Handle;
+   Win : Lumen.Window.Window_Handle;
+
+   -- The master event-loop flag
+   Terminated : Boolean := False;
 
    ------------------------------------------------------------------------
    --
@@ -80,7 +89,7 @@ procedure Shaders is
       Vertex (Float (1.0), 1.0);
       Vertex (Float (-1.0), 1.0);
       End_Primitive;
-      Lumen.Window.Swap (Window);
+      Lumen.Window.Swap (Win);
    end Render_Scene;
 
    ------------------------------------------------------------------------
@@ -88,35 +97,41 @@ procedure Shaders is
    --  This sets the viewport and re-renders the scene. We don't touch
    --  the projection matrix so it is left as identity.
    --
-   procedure Resize_Scene (Width, Height : Natural) is
+   procedure Resize_Scene (Width, Height : in Integer) is
    begin
       Lumen.GL.Viewport (0, 0, Width, Height);
       Render_Scene;
    end Resize_Scene;
 
-   ------------------------------------------------------------------------
-   --
-   --  This is the event handler for the main loop. The loop is exited
-   --  when the window is closed or a key is pressed, which terminates
-   --  the program.
-   --
-   procedure Event_Handler (Event : Lumen.Events.Event_Data) is
-      use Lumen.Window;
-      use Lumen.Events;
-      use type Lumen.Events.Event_Type;
-   begin
-      if Event.Which = Close_Window or Event.Which = Key_Press then
-         End_Events (Window);
-      elsif Event.Which = Resized then
-         Resize_Scene (Event.Resize_Data.Width,
-                       Event.Resize_Data.Height);
+   ---------------------------------------------------------------------------
+
+   -- Simple event handler routine for keypresses
+   procedure Key_Handler (Category  : in Lumen.Events.Key_Category;
+                          Symbol    : in Lumen.Events.Key_Symbol;
+                          Modifiers : in Lumen.Events.Modifier_Set) is
+
+      use type Lumen.Events.Key_Symbol;
+
+   begin  -- Key_Handler
+      if Symbol = Escape or Symbol = Letter_q then
+         Terminated := True;
       end if;
-   end Event_Handler;
+   end Key_Handler;
+
+   ----------------------------------------------------------------------------
+   -- Called once per frame; just re-draws the scene
+   function New_Frame (Frame_Delta : in Duration) return Boolean is
+   begin  -- New_Frame
+      Render_Scene;
+      return not Terminated;
+   end New_Frame;
+
+
 begin
-   Lumen.Window.Create (Window,
-                        Name => "Minimal Shader Demo",
-                        Events => (Lumen.Window.Want_Key_Press => True,
-                                   Others => False));
+   Lumen.Window.Create (Win, Name => "Minimal Shader Demo");
+
+   Win.Resize     := Resize_Scene'Unrestricted_Access;
+   Win.Key_Press  := Key_Handler'Unrestricted_Access;
 
    declare
       use Lumen.GL;
@@ -205,14 +220,14 @@ begin
       Use_Program (Shader_Program);
    end;
 
-   Resize_Scene (Lumen.Window.Width (Window),
-                 Lumen.Window.Height (Window));
+   Resize_Scene (Lumen.Window.Width (Win),
+                 Lumen.Window.Height (Win));
 
    ------------------------------------------------------------------------
    --
-   --  This enters the main loop, using the event handler procedure
-   --  defined above as event callback.
+   --  This enters the main loop, using the resize handler and frame procedures
+   --  defined above as event callbacks.
    --
-   Lumen.Events.Receive_Events (Window,
-                                Event_Handler'Unrestricted_Access);
+   Lumen.Events.Animate.Run (Win, 24, New_Frame'Unrestricted_Access);
+
 end Shaders;
