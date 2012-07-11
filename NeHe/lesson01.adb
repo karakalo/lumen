@@ -29,7 +29,7 @@ procedure Lesson01 is
    Program_Exit : Exception;
 
    -- Resize the scene
-   procedure Resize_Scene (Width, Height : in Integer) is
+   procedure Resize_Scene (Width, Height : in Natural) is
       use Lumen.GL;
       use Lumen.GLU;
    begin

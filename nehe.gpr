@@ -9,9 +9,9 @@ project Lessons is
 
    for Source_Dirs use ("NeHe");
    for Object_Dir use "NeHe/obj";
-   for Main use ("lesson01.adb"
---                 "lesson02.adb",
---                 "lesson03.adb",
+   for Main use ("lesson01.adb",
+                 "lesson02.adb",
+                 "lesson03.adb"
 --                 "lesson04.adb",
 --                 "lesson05.adb",
 --                 "lesson06.adb",
