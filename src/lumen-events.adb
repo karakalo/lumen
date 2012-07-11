@@ -1,5 +1,18 @@
 package body Lumen.Events is
 
+   ---------------------------------------------------------------------------
+
+   function To_Character (Symbol : in Key_Symbol) return Character is
+   begin  -- To_Character
+      if Symbol not in Key_Symbol (Character'Pos (Character'First)) .. Key_Symbol (Character'Pos (Character'Last)) then
+         raise Not_Character;
+      end if;
+
+      return Character'Val (Natural (Symbol));
+   end To_Character;
+
+   ---------------------------------------------------------------------------
+
    function To_UTF_8 (Symbol : in Key_Symbol) return String is
 
       Result : String (1 .. 2);  -- as big as we can encode

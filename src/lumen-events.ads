@@ -11,7 +11,20 @@ package Lumen.Events is
 
    Not_Character : exception;  -- key symbol is not a Latin-1 character
 
+   ---------------------------------------------------------------------------
+
+   -- Key translation helpers
+
+   -- Convert a Key_Symbol into a Latin-1 character; raises Not_Character if
+   -- it's not possible.  Character'Val is simpler.
+   function To_Character (Symbol : in Key_Symbol) return Character;
+
+   -- Convert a Key_Symbol into a UTF-8 encoded string; raises Not_Character
+   -- if it's not possible.  Really only useful for Latin-1 hibit chars, but
+   -- works for all Latin-1 chars.
    function To_UTF_8 (Symbol : in Key_Symbol) return String;
+
+   -- Convert a normal Latin-1 character to a Key_Symbol
    function To_Symbol (Char : in Character) return Key_Symbol;
 
 end Lumen.Events;
