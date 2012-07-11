@@ -22,19 +22,14 @@ with Lumen.GLU;
 
 procedure Lesson04 is
 
-   The_Window : Lumen.Window.Handle;
-   Framerate : constant := 24;
+   The_Window : Lumen.Window.Window_Handle;
+   Framerate  : constant := 24;
+   Terminated : Boolean := False;
 
    Triangle_Rotation : Float := 0.0;
    Quad_Rotation     : Float := 0.0;
 
    Program_Exit : Exception;
-
-   -- simply exit this program
-   procedure Quit_Handler (Event : in Lumen.Events.Event_Data) is
-   begin
-      raise Program_Exit;
-   end;
 
    -- Resize the scene
    procedure Resize_Scene (Width, Height : in Natural) is
@@ -78,16 +73,18 @@ procedure Lesson04 is
   end Init_GL;
 
    -- Resize and Initialize the GL window
-   procedure Resize_Handler (Event : in Lumen.Events.Event_Data) is
-      Height : Natural := Event.Resize_Data.Height;
-      Width  : constant Natural := Event.Resize_Data.Width;
+   procedure Resize_Handler (Height : in Integer;
+                             Width  : in Integer) is
+
+      H : Natural := Height;
+
    begin
       -- prevent div by zero
       if Height = 0 then
-         Height := 1;
+         H := 1;
       end if;
 
-      Resize_Scene (Width, Height);
+      Resize_Scene (Width, H);
    end;
 
    procedure Draw is
@@ -135,20 +132,24 @@ procedure Lesson04 is
       Quad_Rotation := Quad_Rotation - 7.5;
    end Draw;
 
-   procedure Frame_Handler (Frame_Delta : in Duration) is
+   -- Called once per frame; just re-draws the scene
+   function Frame_Handler (Frame_Delta : in Duration) return Boolean is
       pragma Unreferenced (Frame_Delta);
    begin
       Draw;
       Lumen.Window.Swap (The_Window);
+      return not Terminated;
    end Frame_Handler;
 
-   procedure Key_Handler (Event : in Lumen.Events.Event_Data) is
+   procedure Key_Handler (Category  : in Lumen.Events.Key_Category;
+                          Symbol    : in Lumen.Events.Key_Symbol;
+                          Modifiers : in Lumen.Events.Modifier_Set) is
+      pragma Unreferenced (Category, Modifiers);
       use Lumen.Events;
-      Key_Data : Key_Event_Data renames Event.Key_Data;
    begin
-      if Key_Data.Key = To_Symbol (Ada.Characters.Latin_1.ESC) then
-               -- Escape: quit
-         End_Events (The_Window);
+      if Symbol = To_Symbol (Ada.Characters.Latin_1.ESC) then
+         -- Escape: quit
+         Terminated := True;
       end if;
    end Key_Handler;
 
@@ -157,24 +158,12 @@ begin
      (Win    => The_Window,
       Name   => "NeHe Lesson 4",
       Width  => 640,
-      Height => 480,
-      Events => (Lumen.Window.Want_Key_Press => True,
-                 Lumen.Window.Want_Exposure  => True,
-                 others                      => False));
+      Height => 480);
+   The_Window.Resize    := Resize_Handler'Unrestricted_Access;
+   The_Window.Key_Press := Key_Handler'Unrestricted_Access;
 
    Resize_Scene (640, 480);
    Init_GL;
 
-   Lumen.Events.Animate.Select_Events
-     (Win   => The_Window,
-      FPS   => Framerate,
-      Frame => Frame_Handler'Unrestricted_Access,
-      Calls =>
-        (Lumen.Events.Resized      => Resize_Handler'Unrestricted_Access,
-         Lumen.Events.Close_Window => Quit_Handler'Unrestricted_Access,
-         Lumen.Events.Key_Press    => Key_Handler'Unrestricted_Access,
-         others                    => Lumen.Events.No_Callback));
-
-   Lumen.Window.Destroy_Context (The_Window);
-   Lumen.Window.Destroy (The_Window);
+  Lumen.Events.Animate.Run (The_Window, 24, Frame_Handler'Unrestricted_Access);
 end Lesson04;

@@ -11,12 +11,12 @@ project Lessons is
    for Object_Dir use "NeHe/obj";
    for Main use ("lesson01.adb",
                  "lesson02.adb",
-                 "lesson03.adb"
---                 "lesson04.adb",
---                 "lesson05.adb",
---                 "lesson06.adb",
---                 "lesson07.adb",
---                 "lesson08.adb"
+                 "lesson03.adb",
+                 "lesson04.adb",
+                 "lesson05.adb",
+                 "lesson06.adb",
+                 "lesson07.adb",
+                 "lesson08.adb"
                 );
    for Exec_Dir use "bin";
 
