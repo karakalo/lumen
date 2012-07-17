@@ -45,11 +45,23 @@ begin  -- Colors
          Clear_Color (0.0, 1.0, 0.0, 1.0);
          Clear (GL_COLOR_BUFFER_BIT);
          Flush;
+         if not Lumen.Window.Process_Events(Win) then
+            exit;
+         end if;
+         if Terminated then
+            exit;
+         end if;
          delay 1.0;
           -- Blue
          Clear_Color (0.0, 0.0, 1.0, 1.0);
          Clear (GL_COLOR_BUFFER_BIT);
          Flush;
+         if not Lumen.Window.Process_Events(Win) then
+            exit;
+         end if;
+         if Terminated then
+            exit;
+         end if;
          delay 1.0;
       end;
    end loop;

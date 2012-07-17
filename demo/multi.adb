@@ -18,6 +18,8 @@ with Lumen.Image;
 
 use Lumen;
 
+with Ada.Text_IO; use Ada.Text_IO;
+
 procedure Multi is
 
    ---------------------------------------------------------------------------
@@ -98,6 +100,7 @@ procedure Multi is
 
    begin  -- Set_Scene_View
 
+      Put_Line("Set_Scene_View");
       -- Set the scene window
       Window.Make_Current (Scene);
 
@@ -251,6 +254,7 @@ procedure Multi is
       GL.Pop_Matrix;
 
       -- Now show it
+      GL.Finish;
       Window.Swap (Data);
 
    end Draw_Data;
@@ -302,6 +306,7 @@ procedure Multi is
       GL.Rotate (Rotation, 0.0, -1.0, 0.0);
 
       -- Now show it
+      GL.Finish;
       Window.Swap (Scene);
 
    end Draw_Scene;

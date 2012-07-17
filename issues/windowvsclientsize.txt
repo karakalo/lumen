@@ -1,0 +1,4 @@
+The size given in the Lumen Window.Create parameters is for the size of the entire window,
+not the size of its client area.
+The program should not rely on the client area having a certain size but rather wait
+for a callback which yet has to be implemented.

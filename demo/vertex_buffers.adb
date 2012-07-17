@@ -28,6 +28,8 @@ with Lumen.Window;
 with Lumen.Events;
 with Lumen.GL;
 
+with Ada.Text_IO; use Ada.Text_IO;
+
 procedure Vertex_Buffers is
 
    use Lumen;
@@ -94,7 +96,7 @@ procedure Vertex_Buffers is
    --  dimensions of the window and sets up a simple orthographic
    --  projection for scene.
    --
-   procedure Resize_Scene (Width, Height : in Integer) is
+   procedure Resize_Scene (Height,Width : in Integer) is
       use Lumen.GL;
       Aspect : Long_Float := Long_Float (Width) / Long_Float (Height);
    begin
@@ -145,13 +147,17 @@ begin
    Win.Resize    := Resize_Scene'Unrestricted_Access;
    Win.Key_Press := Key_Handler'Unrestricted_Access;
 
+   if not Lumen.GL.Load_GL_1_5 then
+      Put_Line("Missing OpenGL 1.5 functions");
+   end if;
+
    ------------------------------------------------------------------------
    --
    --  This triggers a resize event which doesn't happen automatically
    --  on start-up.
    --
-   Resize_Scene (Window.Width (Win),
-                 Window.Height (Win));
+   Resize_Scene (Window.Height (Win),
+                 Window.Width (Win));
 
 
    ------------------------------------------------------------------------

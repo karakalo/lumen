@@ -6,6 +6,7 @@ with Lumen.Window;
 with Lumen.Events.Animate;
 with Lumen.GL;
 with Lumen.GLU;
+with Ada.Text_IO; use Ada.Text_IO;
 
 procedure Spinner is
 

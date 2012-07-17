@@ -5,7 +5,7 @@
 with "lumen.gpr";
 with "config.gpr";
 
-project Lessons is
+project Nehe is
 
    for Source_Dirs use ("NeHe");
    for Object_Dir use "NeHe/obj";
@@ -35,10 +35,10 @@ project Lessons is
    package Linker is
       case Config.OS is
          when "Windows_NT" =>
-            for Default_Switches ("ada") use ("-lglu32");
+            for Default_Switches ("ada") use ("-lglu32","-lGDI32","-lopengl32");
          when "Linux"|"MacOSX" =>
             for Default_Switches ("ada") use ("-lGLU");
       end case;
    end Linker;
 
-end Lessons;
+end Nehe;

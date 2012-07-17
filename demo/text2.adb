@@ -217,6 +217,7 @@ procedure Text2 is
       GL.Rotate (GL.Double (Rotation), 0.0, 0.0, 1.0);
 
       -- Now show it
+      GL.Finish;
       Window.Swap (Win);
 
    end Draw;

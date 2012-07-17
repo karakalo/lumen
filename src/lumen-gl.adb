@@ -19,8 +19,27 @@
 -- action of contract, negligence or other tortious action, arising out of or
 -- in connection with the use or performance of this software.
 
+with Ada.Unchecked_Conversion;
+
+with Lumen.GL.GetProc; use Lumen.GL.GetProc;
 
 package body Lumen.GL is
+
+   -- Conversion System->Access for OpenGL extensions
+
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glBlendColor_Access);
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glBlendEquation_Access);
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glCreateShader_Access);
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glShaderSource_Access);
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glCompileShader_Access);
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glAttachShader_Access);
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glLinkProgram_Access);
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glUseProgram_Access);
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glCreateProgram_Access);
+
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glBindBuffer_Access);
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glGenBuffers_Access);
+   function Conv is new Ada.Unchecked_Conversion(System.Address,glBufferData_Access);
 
    ---------------------------------------------------------------------------
 
@@ -1467,5 +1486,90 @@ package body Lumen.GL is
    end Vertex_Pointer;
 
    ---------------------------------------------------------------------------
+
+   function Load_GL_1_2
+     return Boolean is
+   begin
+
+      Blend_Color:=Conv(GetProcAddress("glBlendColor"));
+      if Blend_Color=null then
+         return False;
+      end if;
+      Blend_Equation:=Conv(GetProcAddress("glBlendEquation"));
+      if Blend_Equation=null then
+         return False;
+      end if;
+
+      return True;
+
+   end Load_GL_1_2;
+
+   ---------------------------------------------------------------------------
+
+   function Load_GL_1_5
+     return Boolean is
+   begin
+
+      Bind_Buffer:=Conv(GetProcAddress("glBindBuffer"));
+      if Bind_Buffer=null then
+         return False;
+      end if;
+      Gen_Buffers:=Conv(GetProcAddress("glGenBuffers"));
+      if Gen_Buffers=null then
+         return False;
+      end if;
+      Buffer_Data:=Conv(GetProcAddress("glBufferData"));
+      if Buffer_Data=null then
+         return False;
+      end if;
+
+      return Load_GL_1_2;
+
+   end Load_GL_1_5;
+
+   ---------------------------------------------------------------------------
+
+   function Load_GL_2_0
+     return Boolean is
+   begin
+
+      Create_Shader:=Conv(GetProcAddress("glCreateShader"));
+      if Create_Shader=null then
+         return False;
+      end if;
+
+      Shader_Source:=Conv(GetProcAddress("glShaderSource"));
+      if Shader_Source=null then
+         return False;
+      end if;
+
+      Compile_Shader:=Conv(GetProcAddress("glCompileShader"));
+      if Compile_Shader=null then
+         return False;
+      end if;
+
+      Attach_Shader:=Conv(GetProcAddress("glAttachShader"));
+      if Attach_Shader=null then
+         return False;
+      end if;
+
+      Link_Program:=Conv(GetProcAddress("glLinkProgram"));
+      if Link_Program=null then
+         return False;
+      end if;
+
+      Use_Program:=Conv(GetProcAddress("glUseProgram"));
+      if Use_Program=null then
+         return False;
+      end if;
+
+      Create_Program:=Conv(GetProcAddress("glCreateProgram"));
+      if Create_Program=null then
+         return False;
+      end if;
+
+      return Load_GL_1_5;
+
+   end Load_GL_2_0;
 
 end Lumen.GL;

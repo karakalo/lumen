@@ -326,6 +326,11 @@ begin  -- Blending
    Win.Resize     := Window_Resize'Unrestricted_Access;
    Win.Key_Press  := Key_Press'Unrestricted_Access;
 
+   if not GL.Load_GL_1_2 then
+      Ada.Text_IO.Put_Line("Missing OpenGL 1.2 functions, please check OpenGL installation.");
+      return;
+   end if;
+
    -- Set up the viewport and scene parameters
    Set_View (Wide, High);
 

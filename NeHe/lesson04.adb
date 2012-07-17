@@ -137,6 +137,7 @@ procedure Lesson04 is
       pragma Unreferenced (Frame_Delta);
    begin
       Draw;
+      Lumen.Gl.Finish;
       Lumen.Window.Swap (The_Window);
       return not Terminated;
    end Frame_Handler;
@@ -162,7 +163,7 @@ begin
    The_Window.Resize    := Resize_Handler'Unrestricted_Access;
    The_Window.Key_Press := Key_Handler'Unrestricted_Access;
 
-   Resize_Scene (640, 480);
+   Resize_Scene (Width => 640,Height => 480);
    Init_GL;
 
   Lumen.Events.Animate.Run (The_Window, 24, Frame_Handler'Unrestricted_Access);

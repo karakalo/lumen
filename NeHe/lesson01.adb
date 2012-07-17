@@ -29,7 +29,7 @@ procedure Lesson01 is
    Program_Exit : Exception;
 
    -- Resize the scene
-   procedure Resize_Scene (Width, Height : in Natural) is
+   procedure Resize_Scene (Height,Width : in Natural) is
       use Lumen.GL;
       use Lumen.GLU;
    begin
@@ -98,6 +98,7 @@ procedure Lesson01 is
       pragma Unreferenced (Frame_Delta);
    begin  -- New_Frame
       Draw;
+      Lumen.GL.Finish;
       Lumen.Window.Swap (The_Window);
       return not Terminated;
    end Frame_Handler;
@@ -122,7 +123,7 @@ begin
    The_Window.Resize    := Resize_Handler'Unrestricted_Access;
    The_Window.Key_Press := Key_Handler'Unrestricted_Access;
 
-   Resize_Scene (640, 480);
+   Resize_Scene (Height => 480,Width => 640);
    Init_GL;
 
    Lumen.Events.Animate.Run (The_Window, 24, Frame_Handler'Unrestricted_Access);

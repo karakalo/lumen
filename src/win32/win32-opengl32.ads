@@ -34,6 +34,11 @@ package Win32.OpenGL32 is
       return BOOL_Type;
    pragma Import(StdCall,wglMakeCurrent,"wglMakeCurrent");
 
+   function wglGetProcAddress
+     (ProcName : Interfaces.C.Strings.chars_ptr)
+      return System.Address;
+   pragma Import(StdCall,wglGetProcAddress,"wglGetProcAddress");
+
    function SwapBuffers
      (hdc : HDC_Type)
       return BOOL_Type;

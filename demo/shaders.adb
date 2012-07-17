@@ -43,6 +43,8 @@ with Lumen.Events.Animate;
 with Lumen.GL;
 with Lumen.Binary;
 
+with Ada.Text_IO; use Ada.Text_IO;
+
 procedure Shaders is
 
    -- Keystrokes we care about
@@ -89,6 +91,7 @@ procedure Shaders is
       Vertex (Float (1.0), 1.0);
       Vertex (Float (-1.0), 1.0);
       End_Primitive;
+      Lumen.GL.Finish;
       Lumen.Window.Swap (Win);
    end Render_Scene;
 
@@ -97,7 +100,7 @@ procedure Shaders is
    --  This sets the viewport and re-renders the scene. We don't touch
    --  the projection matrix so it is left as identity.
    --
-   procedure Resize_Scene (Width, Height : in Integer) is
+   procedure Resize_Scene (Height,Width : in Integer) is
    begin
       Lumen.GL.Viewport (0, 0, Width, Height);
       Render_Scene;
@@ -132,6 +135,11 @@ begin
 
    Win.Resize     := Resize_Scene'Unrestricted_Access;
    Win.Key_Press  := Key_Handler'Unrestricted_Access;
+
+   if not Lumen.GL.Load_GL_2_0 then
+      Put_Line("OpenGL 2.0 functions missing");
+      return;
+   end if;
 
    declare
       use Lumen.GL;
@@ -196,7 +204,7 @@ begin
       --
       --  This creates the program object.
       --
-      Shader_Program    := Create_Program;
+      Shader_Program    := Create_Program.all;
 
       ---------------------------------------------------------------------
       --
@@ -220,8 +228,8 @@ begin
       Use_Program (Shader_Program);
    end;
 
-   Resize_Scene (Lumen.Window.Width (Win),
-                 Lumen.Window.Height (Win));
+   Resize_Scene (Lumen.Window.Height (Win),
+                 Lumen.Window.Width (Win));
 
    ------------------------------------------------------------------------
    --

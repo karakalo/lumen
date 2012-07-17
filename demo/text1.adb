@@ -88,7 +88,7 @@ procedure Text1 is
    begin  -- Draw
 
       -- Draw the white square
-      GL.Clear_Color (0.0, 0.0, 0.0, 0.0);
+      GL.Clear_Color (0.0, 0.0, 0.0, 1.0);
       GL.Clear (GL.GL_COLOR_BUFFER_BIT);
 
       GL.Disable (GL.GL_TEXTURE_2D);
@@ -121,6 +121,7 @@ procedure Text1 is
       GL.Pop_Matrix;
 
       -- Now show it
+      GL.Flush;
       Window.Swap (Win);
 
    end Draw;

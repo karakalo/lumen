@@ -464,10 +464,15 @@ package body Lumen.Window is
       HInstance:=GetModuleHandle
         (lpModuleName => Interfaces.C.Strings.Null_Ptr);
 
-      NWin.CSTR_ClassName
-        := Interfaces.C.Strings.New_String("OpenGLWindow");
+      if Class_Name="" then
+         NWin.CSTR_ClassName
+           := Interfaces.C.Strings.New_String("DefaultLumenClassName");
+      else
+         NWin.CSTR_ClassName
+           := Interfaces.C.Strings.New_String(Class_Name);
+      end if;
       NWin.CSTR_Title
-        := Interfaces.C.Strings.New_String("ParallelSim");
+        := Interfaces.C.Strings.New_String(Name);
 
       -- Create and Register a window class for an ordinary window
       WndClass.Style
@@ -489,10 +494,11 @@ package body Lumen.Window is
       if RegisterClass
         (lpWndClass => WndClass'Access)=0 then
 
-         Destroy(Window_Handle(NWin));
-         raise FailedToCreateContext
-           with "RegisterClass failed with "
-             &DWORD_Type'Image(GetLastError);
+         null; -- Ignore failed RegisterClass, it just needs to exist.
+--         Destroy(Window_Handle(NWin));
+--         raise FailedToCreateContext
+--           with "RegisterClass failed with "
+--             &DWORD_Type'Image(GetLastError);
 
       end if;
 
@@ -511,12 +517,15 @@ package body Lumen.Window is
            dwStyle      => dwStyle,
            x            => 100,
            y            => 100,
-           nwidth       => 1024,
-           nheight      => 768,
+           nwidth       => Interfaces.C.int(Width),
+           nheight      => Interfaces.C.int(Height),
            hWndParent   => NULLHANDLE,
            hMenu        => NULLHANDLE,
            hInstance    => HInstance,
            lpParam      => NWin.all'Address);
+
+      NWin.Height:=Height;
+      NWin.Width:=Width;
 
       if NWin.WindowHandle=NULLHANDLE then
          Destroy(Window_Handle(NWin));
@@ -650,8 +659,15 @@ package body Lumen.Window is
    ---------------------------------------------------------------------------
 
    procedure Make_Current (Win : in Window_Handle) is
+      Win32Win : Win32Window_Handle:=Win32Window_Handle(Win);
+
+      Result : Win32.BOOL_Type;
+      Pragma Unreferenced(Result);
+
    begin  -- Make_Current
-      null;
+
+      Result:=Win32.OpenGL32.wglMakeCurrent(Win32Win.DeviceContext,Win32Win.RenderContext);
+
    end Make_Current;
 
    ---------------------------------------------------------------------------
@@ -660,9 +676,11 @@ package body Lumen.Window is
    -- buffered, meaning Animated was true when the window was created.  Useful
    -- for smooth animation.
    procedure Swap (Win : in Window_Handle) is
-
+      Win32Win : Win32Window_Handle:=Win32Window_Handle(Win);
+      Result : BOOL_Type;
+      pragma Unreferenced(Result);
    begin  -- Swap
-      null;
+      Result:=Win32.OpenGL32.SwapBuffers(Win32Win.DeviceContext);
    end Swap;
 
    ---------------------------------------------------------------------------
