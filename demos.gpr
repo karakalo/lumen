@@ -42,7 +42,7 @@ project Demos is
          when "Windows_NT" =>
             for Default_Switches ("ada") use ("-lglu32","-lopengl32","-lGDI32");
          when "Linux"|"MacOSX" =>
-            for Default_Switches ("ada") use ("-lGLU","-lGL");
+            for Default_Switches ("ada") use ("-lGLU","-lGL","-lX11","-ldl");
       end case;
    end Linker;
 
