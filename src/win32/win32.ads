@@ -30,9 +30,6 @@ with System;
 with Ada.Unchecked_Conversion;
 
 package Win32 is
-   pragma Linker_Options ("-lgdi32");
-   pragma Linker_Options ("-lopengl32");
-   pragma Linker_Options ("-lglu32");
 
    type UINT_Type is new Interfaces.Unsigned_32;
    type DWORD_Type is new Interfaces.Unsigned_32;
