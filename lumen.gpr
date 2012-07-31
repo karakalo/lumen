@@ -14,6 +14,8 @@ project Lumen is
    for Library_Name use "lumen";
    for Library_Dir use "lib";
 
+   for Languages use ("Ada");
+
    package Ide is
       for Vcs_Kind use "Git";
    end Ide;
