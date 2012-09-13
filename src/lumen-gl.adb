@@ -757,6 +757,29 @@ package body Lumen.GL is
       glTexImage2D (Target, Level, Internal_Format, Width, Height, Border, Format, Pixel_Type, Pixels);
    end Tex_Image;
 
+   procedure Tex_Sub_Image (Target      : in Enum;
+                            Level      : in Int;
+                            X_Offset   : in Int;
+                            Y_Offset   : in Int;
+                            Width      : in SizeI;
+                            Height     : in SizeI;
+                            Format     : in Enum;
+                            Pixel_Type : in Enum;
+                            Pixels     : in GL.Pointer) is
+      procedure glTexSubImage2D (Target      : in Enum;
+                                 Level      : in Int;
+                                 X_Offset   : in Int;
+                                 Y_Offset   : in Int;
+                                 Width      : in SizeI;
+                                 Height     : in SizeI;
+                                 Format     : in Enum;
+                                 Pixel_Type : in Enum;
+                                 Pixels     : in GL.Pointer);
+      pragma Import (StdCall, glTexSubImage2D, "glTexSubImage2D");
+   begin
+      glTexSubImage2D (Target, Level, X_Offset, Y_Offset, Width, Height, Format, Pixel_Type, Pixels);
+   end Tex_Sub_Image;
+
 --   procedure Tex_Image (Target          : in Enum;
 --                       Level           : in Int;
 --                       Internal_Format : in Int;

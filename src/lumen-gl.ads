@@ -1331,6 +1331,17 @@ package Lumen.GL is
                        Pixel_Type      : in Enum;
                        Pixels          : in Pointer);
 
+   procedure Tex_Sub_Image (Target : in Enum;
+                            Level : in Int;
+                            X_Offset : in Int;
+                            Y_Offset : in Int;
+                            Width : in SizeI;
+                            Height : in SizeI;
+                            Format : in Enum;
+                            Pixel_Type : in Enum;
+                            Pixels : in GL.Pointer);
+  
+
 --   procedure Tex_Image (Target          : in Enum;
 --                       Level           : in Int;
 --                       Internal_Format : in Int;
