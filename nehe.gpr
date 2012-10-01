@@ -37,7 +37,7 @@ project Nehe is
          when "Windows_NT" =>
             for Default_Switches ("ada") use ("-lglu32","-lGDI32","-lopengl32");
          when "Linux"|"MacOSX" =>
-            for Default_Switches ("ada") use ("-lGLU");
+            for Default_Switches ("ada") use ("-lGLU","-lGL","-ldl");
       end case;
    end Linker;
 
