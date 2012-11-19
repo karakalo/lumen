@@ -215,19 +215,19 @@ procedure Blending is
 
       -- GL.Color (Float (1.0), 1.0, 1.0);
 
-      GL.Begin_Primitive (GL.GL_POLYGON);
+      GL.Begin_Primitive (GL.GL_TRIANGLE_STRIP);
       begin
-	 GL.Tex_Coord (Float (0.0), 0.0);
-         GL.Vertex (Float (-1.0), -1.0);
-
-	 GL.Tex_Coord (Float (0.0), 1.0);
+      	 GL.Tex_Coord (Float (0.0), 1.0);
+	 GL.Vertex (Float (-1.0), -1.0);
+	 
+      	 GL.Tex_Coord (Float (0.0), 0.0);
          GL.Vertex (Float (-1.0),  1.0);
-
-	 GL.Tex_Coord (Float (1.0), 1.0);
-         GL.Vertex (Float ( 1.0),  1.0);
-
-	 GL.Tex_Coord (Float (1.0), 0.0);
+	 
+      	 GL.Tex_Coord (Float (1.0), 1.0);
          GL.Vertex (Float ( 1.0), -1.0);
+	 
+      	 GL.Tex_Coord (Float (1.0), 0.0);
+         GL.Vertex (Float ( 1.0),  1.0);
       end;
       GL.End_Primitive;
 
@@ -238,19 +238,19 @@ procedure Blending is
 
       -- GL.Color (Float (1.0), 1.0, 1.0);
 
-      GL.Begin_Primitive (GL.GL_POLYGON);
+      GL.Begin_Primitive (GL.GL_TRIANGLE_STRIP);
       begin
-	 GL.Tex_Coord (Float (0.0), 0.0);
-         GL.Vertex (Float (-0.5), -0.5);
-
-	 GL.Tex_Coord (Float (0.0), 1.0);
+      	 GL.Tex_Coord (Float (0.0), 1.0);
+	 GL.Vertex (Float (-0.5), -0.5);
+	 
+      	 GL.Tex_Coord (Float (0.0), 0.0);
          GL.Vertex (Float (-0.5),  1.5);
-
-	 GL.Tex_Coord (Float (1.0), 1.0);
-         GL.Vertex (Float ( 1.5),  1.5);
-
-	 GL.Tex_Coord (Float (1.0), 0.0);
+	 
+      	 GL.Tex_Coord (Float (1.0), 1.0);
          GL.Vertex (Float ( 1.5), -0.5);
+	 
+      	 GL.Tex_Coord (Float (1.0), 0.0);
+         GL.Vertex (Float ( 1.5),  1.5);
       end;
       GL.End_Primitive;
       GL.Flush;
