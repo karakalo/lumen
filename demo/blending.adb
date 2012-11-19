@@ -309,8 +309,16 @@ begin  -- Blending
       raise Program_Error with "Usage: blending <texture 1> <texture 2>";
    end if;
 
-   Ada.Text_IO.Put_Line("Bitmap --> " & Ada.Command_Line.Argument(1));
-   Ada.Text_IO.Put_Line("Bitmap --> " & Ada.Command_Line.Argument(2));
+   Ada.Text_IO.Put_Line ("Bitmap --> " & Ada.Command_Line.Argument(1));
+   Ada.Text_IO.Put_Line ("Bitmap --> " & Ada.Command_Line.Argument(2));
+   
+   Ada.Text_IO.New_Line;
+   
+   Ada.Text_IO.Put_Line ("Keys:");
+   Ada.Text_IO.Put_Line ("Escape --> Exit.");
+   Ada.Text_IO.Put_Line ("S      --> Changes source blend factor.");
+   Ada.Text_IO.Put_Line ("D      --> Changes destination blend factor.");
+   Ada.Text_IO.Put_Line ("E      --> Changes blend equation.");
 
    Bitmap1 := Image.From_File(Ada.Command_Line.Argument(1));
    Bitmap2 := Image.From_File(Ada.Command_Line.Argument(2));
