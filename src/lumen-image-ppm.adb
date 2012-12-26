@@ -101,6 +101,7 @@ package body Lumen.Image.PPM is
       end Read_Num;
 
       ------------------------------------------------------------------------
+      -- Read a PBM ASCII (portable bitmap) file
       procedure Read_APBM is
          Col      : Natural;
          Pix      : Pixel;
@@ -124,7 +125,30 @@ package body Lumen.Image.PPM is
          end loop;
       end Read_APBM;
       ------------------------------------------------------------------------
+      -- Read a PGM ASCII (portable greymap) file
+      procedure Read_APGM is
+         Maxval : Natural;
+         Col    : Natural;
+         Value  : Natural;
+      begin -- Read_APGM
+         -- Read the maxval
+         Maxval := Read_Num (Skip);
+         -- Read the data a row at a time and unpack it into our internal format
+         for Row in Result.Values'Range (1) loop
+            Col := Result.Values'First (2);
+            for Pixel in 1 .. Result.Width loop
+               Next := Skip;
+               Value := Read_Num (Next);
 
+               Result.Values (Row, Col).R := Binary.Byte (Value);
+               Result.Values (Row, Col).G := Binary.Byte (Value);
+               Result.Values (Row, Col).B := Binary.Byte (Value);
+               Result.Values (Row, Col).A := Binary.Byte'Last;  -- PGMs don't have alpha, so use max
+               Col := Col + 1;
+            end loop;
+         end loop;
+      end Read_APGM;
+      ------------------------------------------------------------------------
       -- Read a PBM (portable bitmap) file
       procedure Read_PBM is
 
@@ -465,6 +489,10 @@ package body Lumen.Image.PPM is
       case PPM_Format is
          when '1' =>
             Read_APBM;
+            return Result;
+
+         when '2' =>
+            Read_APGM;
             return Result;
 
          when '4' =>
