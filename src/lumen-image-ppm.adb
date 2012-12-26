@@ -27,7 +27,6 @@ with Ada.Streams.Stream_IO;
 
 with Lumen.Binary.Endian.Shorts;
 
-
 package body Lumen.Image.PPM is
 
    ---------------------------------------------------------------------------
@@ -81,7 +80,8 @@ package body Lumen.Image.PPM is
       ------------------------------------------------------------------------
 
       -- Read a nonnegative decimal integer from the stream, represented as
-      -- Latin_1 digits; used only when reading the header/metadata
+      -- Latin_1 digits; used when reading the header/metadata in all formats
+      -- and the RGB values in the ASCII version of the format.
       function Read_Num (First : in Character) return Natural is
 
          Number : Natural := 0;
@@ -100,6 +100,29 @@ package body Lumen.Image.PPM is
 
       end Read_Num;
 
+      ------------------------------------------------------------------------
+      procedure Read_APBM is
+         Col      : Natural;
+         Pix      : Pixel;
+         Value    : Natural;
+      begin -- Read_APBM
+         -- Read the data a row at a time and unpack it into our internal format
+         for Row in Result.Values'Range (1) loop
+            Col := Result.Values'First (2);
+            for Pixel in 1 .. Result.Width loop
+               Next := Skip;
+               Value := Read_Num (Next);
+
+               if Value = 1 then
+                  Pix := Black_Pixel;
+               else
+                  Pix := White_Pixel;
+               end if;
+               Result.Values (Row, Col) := Pix;
+               Col := Col + 1;
+            end loop;
+         end loop;
+      end Read_APBM;
       ------------------------------------------------------------------------
 
       -- Read a PBM (portable bitmap) file
@@ -440,6 +463,9 @@ package body Lumen.Image.PPM is
 
       -- Based on format, read the rest of the data
       case PPM_Format is
+         when '1' =>
+            Read_APBM;
+            return Result;
 
          when '4' =>
             Read_PBM;

@@ -89,7 +89,8 @@ package body Lumen.Image is
          return Result;
       elsif Sig (Sig'First) = 16#50# and Is_In (Sig (Sig'First + 2), Whitespace) then  -- "P"
          PPM_Sub := Character'Val (Sig (Sig'First + 1));
-         if PPM_Sub in '4' .. '6' then
+         if PPM_Sub = '1'
+           or PPM_Sub in '4' .. '6' then
             Result := PPM.From_File (File, PPM_Sub);
             Binary.IO.Close (File);
             return Result;
