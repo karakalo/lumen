@@ -493,16 +493,16 @@ package GLSC is
    SCHAR_MAX : constant := 127;  -- Maximum value for a signed char
    UCHAR_MAX : constant := 255;  -- Maximum value for an unsigned char
 
-   -----------------------------------------------------------------------------
-   -- GL types - Note: GL types are NOT C types. -------------------------------
-   -----------------------------------------------------------------------------
+   ----------------------------------------------------------------------------
+   -- GL types - Note: GL types are NOT C types. ------------------------------
+   ----------------------------------------------------------------------------
    -- Double-precision floating-point (parameters and data types) are
    -- eliminated completely in the Safety-Critical GL specification.
    -- All integer quantity parameters (widths, heights, array lengths, etc.)
    -- should be typed GLsizei, not GLint or GLuint.  Note that GLsizei
    -- generates an error only for negative values, so all integer quantity
    -- parameters should accept the value zero.
-   -- Representation Clause's specify the minimum bit widths as stated
+   -- Representation attributes specify the minimum bit widths as stated
    -- by the API documentation. The only exception is Boolean, which the
    -- documentation states a MBW of 1-bit, whereas Ada's Boolean bit width
    -- of 8-bits is prefered.
@@ -516,6 +516,9 @@ package GLSC is
    type unsigned_char is mod (UCHAR_MAX + 1);
    for unsigned_char'Size use CHAR_BIT; -- Minimum bit width for unsigned_char
 
+   -- Derived types (incompatible with parent type but inherit primitive
+   -- operations of the parent type, must have a range overlapping the
+   -- parent type)
    type GLenum is new unsigned;         -- Enumerated Binary Integer
    for GLenum'Size use 32;              -- Minimum bit width for GLenum
 
