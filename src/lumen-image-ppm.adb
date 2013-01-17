@@ -27,7 +27,6 @@ with Ada.Streams.Stream_IO;
 
 with Lumen.Binary.Endian.Shorts;
 
-
 package body Lumen.Image.PPM is
 
    ---------------------------------------------------------------------------
@@ -81,7 +80,8 @@ package body Lumen.Image.PPM is
       ------------------------------------------------------------------------
 
       -- Read a nonnegative decimal integer from the stream, represented as
-      -- Latin_1 digits; used only when reading the header/metadata
+      -- Latin_1 digits; used when reading the header/metadata in all formats
+      -- and the RGB values in the ASCII version of the format.
       function Read_Num (First : in Character) return Natural is
 
          Number : Natural := 0;
@@ -101,7 +101,79 @@ package body Lumen.Image.PPM is
       end Read_Num;
 
       ------------------------------------------------------------------------
+      -- Read a PBM ASCII (portable bitmap) file
+      procedure Read_APBM is
+         Col      : Natural;
+         Pix      : Pixel;
+         Value    : Natural;
+      begin -- Read_APBM
+         -- Read the data a row at a time and unpack it into our internal format
+         for Row in Result.Values'Range (1) loop
+            Col := Result.Values'First (2);
+            for Pixel in 1 .. Result.Width loop
+               Next := Skip;
+               Value := Read_Num (Next);
 
+               if Value = 1 then
+                  Pix := Black_Pixel;
+               else
+                  Pix := White_Pixel;
+               end if;
+               Result.Values (Row, Col) := Pix;
+               Col := Col + 1;
+            end loop;
+         end loop;
+      end Read_APBM;
+      ------------------------------------------------------------------------
+      -- Read a PGM ASCII (portable greymap) file
+      procedure Read_APGM is
+         Maxval : Natural;
+         Col    : Natural;
+         Value  : Natural;
+      begin -- Read_APGM
+         -- Read the maxval
+         Maxval := Read_Num (Skip);
+         -- Read the data a row at a time and unpack it into our internal format
+         for Row in Result.Values'Range (1) loop
+            Col := Result.Values'First (2);
+            for Pixel in 1 .. Result.Width loop
+               Next := Skip;
+               Value := Read_Num (Next);
+
+               Result.Values (Row, Col).R := Binary.Byte (Value);
+               Result.Values (Row, Col).G := Binary.Byte (Value);
+               Result.Values (Row, Col).B := Binary.Byte (Value);
+               Result.Values (Row, Col).A := Binary.Byte'Last;  -- PGMs don't have alpha, so use max
+               Col := Col + 1;
+            end loop;
+         end loop;
+      end Read_APGM;
+      ------------------------------------------------------------------------
+      -- Read a PPM ASCII (portable pixmap) file
+      procedure Read_APPM is
+         Maxval : Natural;
+         Col    : Natural;
+         function Read_Color return Binary.Byte
+         is
+         begin
+            return Binary.Byte (Read_Num (Skip));
+         end Read_Color;
+      begin -- Read_APPM
+         -- Read the maxval
+         Maxval := Read_Num (Skip);
+         -- Read the data a row at a time and unpack it into our internal format
+         for Row in Result.Values'Range (1) loop
+            Col := Result.Values'First (2);
+            for Pixel in 1 .. Result.Width loop
+               Result.Values (Row, Col).R := Read_Color;
+               Result.Values (Row, Col).G := Read_Color;
+               Result.Values (Row, Col).B := Read_Color;
+               Result.Values (Row, Col).A := Binary.Byte'Last;  -- PPMs don't have alpha, so use max
+               Col := Col + 1;
+            end loop;
+         end loop;
+      end Read_APPM;
+      ------------------------------------------------------------------------
       -- Read a PBM (portable bitmap) file
       procedure Read_PBM is
 
@@ -440,6 +512,17 @@ package body Lumen.Image.PPM is
 
       -- Based on format, read the rest of the data
       case PPM_Format is
+         when '1' =>
+            Read_APBM;
+            return Result;
+
+         when '2' =>
+            Read_APGM;
+            return Result;
+
+         when '3' =>
+            Read_APPM;
+            return Result;
 
          when '4' =>
             Read_PBM;
