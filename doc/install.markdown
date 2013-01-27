@@ -28,8 +28,8 @@ it with another compiler, though, so it's not a priority.)
 
 ## Fetching
 
-A preliminary form of the Lumen library, and some demos for it, can be fetched
-using this [git][] command:
+A preliminary form of the Lumen library can be fetched using this [git][]
+command:
 
         git clone https://github.com/karakalo/lumen.git
 
@@ -38,8 +38,21 @@ alternative to the above you can use this:
 
         git clone git://ftp.niestu.com/lumen
 
-That will create a subdirectory named `lumen` containing the library,
-its demos, and its docs.
+That will create a subdirectory named `lumen` containing the library and its
+docs.
+
+The demo applications were recently split into their own repository, so to
+fetch the demos, use this command:
+
+        git clone https://github.com/karakalo/lumen-demos.git
+
+or this alternative:
+
+        git clone git://ftp.niestu.com/lumen-demos
+
+That will create a subdirectory named `lumen-demos` containing the sources of
+the demo apps.  Normally you should create this in a location parallel to the
+`lumen` directory, or elsewhere in your filesystem, not under `lumen` itself.
 
 
 ## Building Lumen
@@ -60,44 +73,34 @@ As soon as you have the file in your path, you can move on to the next step.
 You need to tell Lumen which operating system you're on. This is done by
 setting the scenario variable **OS**. It currently supports three values:
 
- * `Linux`: Compiles Lumen for a Linux / X-Server based system
+ * `Linux`: Compiles Lumen for an X11-based system
  * `MacOSX`: Compiles Lumen for MacOSX
  * `Windows`: Compiles Lumen for Windows
 
 Please substitute **$OS** with the value representing your operating system
-in the following commands.
+in the following commands.  The default is Linux, which in this context means
+"X11", so if you're building for X11, you can omit the OS specifier.
 
 For compiling Lumen itself, do:
 
 		cd lumen
-		gnatmake -p -P lumen.gpr -XOS=$OS
+		gprbuild -P lumen.gpr -XOS=$OS
 
 That should create `liblumen.a` and a clutter of `.ali` files in the
 `lib` directory.
-
----
-NOTE: If you're using the
-[MinGW GNAT compiler from GnuAda](http://gnuada.sourceforge.net/pmwiki.php/Install/MinGW),
-you might get an error message
-
-		opengl.gpr:1:01: "project" expected
-
-(Because the gnatmake version is not new enough to support the
-`library project` feature.) In this case, substitute gnatmake with gprbuild,
-which does support it.
-
----
-
-If you want to build the optional joystick support
-as well (note that it is Linux-specific), this command should do it:
-
-        gprbuild -P joy.gpr -XOS=Linux
 
 The `gprbuild` command has some configuration it likes, and if that's not set
 up on your system yet, it may give you some static.  The program `gprconfig`
 lets you set that up, choosing which compilers and languages to use for
 builds.  Pick at least a C compiler and an Ada compiler from its menu, and
 save the config, after which the above command *should* work.
+
+---
+
+If you want to build the optional Linux joystick support as well, this command
+should do it:
+
+        gprbuild -P joy.gpr -XOS=Linux
 
 The command should add `lumen-joystick.ali` and `liblumenjoy.a` to the `lib`
 directory, which will allow you to build the joystick demos.  And if you have
@@ -107,18 +110,18 @@ a joystick or a game pad or something similar, you should be able to actually
 ## Building the Demos
 
 Once you have built the library, you should be able to build
-[the demo programs][demos] with this command:
+[the demo programs][demos] by changing into the `lumen-demos` directory and
+running this command:
 
-        gnatmake -p -P demos.gpr -XOS=$OS
+        gprbuild -P demos.gpr -XOS=$OS
 
-That should create various executables in the `bin` directory, which
-you can run according to the instructions on their respective
-description pages.
+That should create various executables in the `bin` directory, which you can
+run according to the instructions on their respective description pages.
 
 Lumen now also includes the first few lessons from the
 [NeHe OpenGL tutorials][nehe], which can be built thusly:
 
-        gnatmake -P nehe.gpr - XOS=$OS
+        gprbuild -P nehe.gpr XOS=$OS
 
 This should create more executables in the `bin` directory.
 
