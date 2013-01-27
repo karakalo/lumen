@@ -46,7 +46,7 @@ package Lumen.Window is
    -- Rendering context's color depth
    type Color_Depth is (Pseudo_Color, True_Color);
 
-   type Button_Enum is (Button_1, Button_2, Button_3, Button_4, Button_5);
+   type Button_Enum is (Button_1, Button_2, Button_3, Button_4, Button_5, Button_6, Button_7, Button_8, Button_9);
    type Button_Set is array(Button_Enum) of Boolean;
    NoButtons : constant Button_Set:=(others => False);
 
