@@ -935,10 +935,11 @@ package Lumen.GL is
         Size   : SizeI;
         Data   : Pointer;
         Usage  : Enum);
+   pragma Convention(StdCall,glBufferData_Access);
 
-   Bind_Buffer : glBindBuffer_Access := null;
-   Gen_Buffers : glGenBuffers_Access := null;
-   Buffer_Data : glBufferData_Access := null;
+   -- Bind_Buffer : glBindBuffer_Access := null;
+   -- Gen_Buffers : glGenBuffers_Access := null;
+   -- Buffer_Data : glBufferData_Access := null;
 
    -- OpenGL 2.0 functions
    ---------------------------------------------------------------------------
@@ -1580,6 +1581,16 @@ package Lumen.GL is
                                FBO    : in UInt);
 
    -- Vertex buffer stuff:
+   procedure Gen_Buffers (N   : in SizeI;
+                          VBO : in Pointer);
+
+   procedure Bind_Buffer (Target : in Enum;
+                          VBO    : in UInt);
+
+   procedure Buffer_Data (Target : in Enum;
+                          Size   : in SizeI;
+                          Data   : in Pointer;
+                          Usage  : in Enum);
 
    procedure Enable_Client_State (Target : in Enum);
 
@@ -1630,10 +1641,12 @@ private
    pragma Import (StdCall, Active_Texture, "glActiveTexture");
    pragma Import (StdCall, Alpha_Func, "glAlphaFunc");
    pragma Import (StdCall, Begin_Primitive, "glBegin");
+   pragma Import (StdCall, Bind_Buffer, "glBindBuffer");
    pragma Import (StdCall, Bind_Framebuffer, "glBindFramebuffer");
    pragma Import (StdCall, Bind_Texture, "glBindTexture");
    pragma Import (StdCall, Bind_Vertex_Array, "glBindVertexArray");
    pragma Import (StdCall, Blend_Func, "glBlendFunc");
+   pragma Import (StdCall, Buffer_Data, "glBufferData");
    pragma Import (StdCall, Clear, "glClear");
    pragma Import (StdCall, Clear_Accum, "glClearAccum");
    pragma Import (StdCall, Clear_Color, "glClearColor");
@@ -1654,6 +1667,7 @@ private
    pragma Import (StdCall, Flush, "glFlush");
    pragma Import (StdCall, Front_Face, "glFrontFace");
    pragma Import (StdCall, Frustum, "glFrustum");
+   pragma Import (StdCall, Gen_Buffers, "glGenBuffers");
    pragma Import (StdCall, Gen_Framebuffers, "glGenFramebuffers");
    pragma Import (StdCall, Gen_Textures, "glGenTextures");
    pragma Import (StdCall, Gen_Vertex_Arrays, "glGenVertexArrays");

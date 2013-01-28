@@ -1551,18 +1551,18 @@ package body Lumen.GL is
      return Boolean is
    begin
 
-      Bind_Buffer:=Conv(GetProcAddress("glBindBuffer"));
-      if Bind_Buffer=null then
-         return False;
-      end if;
-      Gen_Buffers:=Conv(GetProcAddress("glGenBuffers"));
-      if Gen_Buffers=null then
-         return False;
-      end if;
-      Buffer_Data:=Conv(GetProcAddress("glBufferData"));
-      if Buffer_Data=null then
-         return False;
-      end if;
+      -- Bind_Buffer:=Conv(GetProcAddress("glBindBuffer"));
+      -- if Bind_Buffer=null then
+      --    return False;
+      -- end if;
+      -- Gen_Buffers:=Conv(GetProcAddress("glGenBuffers"));
+      -- if Gen_Buffers=null then
+      --    return False;
+      -- end if;
+      -- Buffer_Data:=Conv(GetProcAddress("glBufferData"));
+      -- if Buffer_Data=null then
+      --    return False;
+      -- end if;
 
       return Load_GL_1_2;
 
