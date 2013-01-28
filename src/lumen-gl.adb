@@ -20,6 +20,7 @@
 -- in connection with the use or performance of this software.
 
 with Ada.Unchecked_Conversion;
+with Interfaces.C.Strings;
 
 with Lumen.GL.GetProc; use Lumen.GL.GetProc;
 
@@ -40,6 +41,23 @@ package body Lumen.GL is
    function Conv is new Ada.Unchecked_Conversion(System.Address,glBindBuffer_Access);
    function Conv is new Ada.Unchecked_Conversion(System.Address,glGenBuffers_Access);
    function Conv is new Ada.Unchecked_Conversion(System.Address,glBufferData_Access);
+   ---------------------------------------------------------------------------
+
+   -- Misc stuff
+   function Get_String (Name : Enum) return String is
+      function glGetString (Name : Enum) return Interfaces.C.Strings.chars_ptr;
+      pragma Import (StdCall, glGetString, "glGetString");
+   begin  -- Get_String
+      return Interfaces.C.Strings.Value (glGetString (Name));
+   end Get_String;
+
+   function Get_String (Name  : Enum;
+                        Index : Int) return String is
+      function glGetStringi (Name : Enum;  Index : Int) return Interfaces.C.Strings.chars_ptr;
+      pragma Import (StdCall, glGetStringi, "glGetStringi");
+   begin  -- Get_String
+      return Interfaces.C.Strings.Value (glGetStringi (Name, Index));
+   end Get_String;
 
    ---------------------------------------------------------------------------
 

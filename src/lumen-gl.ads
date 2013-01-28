@@ -84,6 +84,9 @@ package Lumen.GL is
    type Float_Matrix  is array (1 .. 4, 1 .. 4) of Float;
    type Double_Matrix is array (1 .. 4, 1 .. 4) of Double;
 
+   -- Useful value
+   Null_Pointer : Pointer := System.Null_Address;
+
    -- "Enumeration" constants
    GL_FALSE                                    : constant Bool := 16#0#;
    GL_TRUE                                     : constant Bool := 16#1#;
@@ -546,6 +549,7 @@ package Lumen.GL is
    GL_VENDOR                                   : constant Enum := 16#1F00#;
    GL_RENDERER                                 : constant Enum := 16#1F01#;
    GL_VERSION                                  : constant Enum := 16#1F02#;
+   GL_SHADING_LANGUAGE_VERSION                 : constant Enum := 16#8B8C#;
    GL_EXTENSIONS                               : constant Enum := 16#1F03#;
    GL_NO_ERROR                                 : constant Enum := 16#0#;
    GL_INVALID_ENUM                             : constant Enum := 16#500#;
@@ -1002,6 +1006,10 @@ package Lumen.GL is
 
    procedure Pop_Attrib;
 
+   function Get_String (Name : Enum) return String;
+   function Get_String (Name  : Enum;
+                        Index : Int) return String;
+
    -- Pipeline control
    procedure Finish;
 
@@ -1340,7 +1348,7 @@ package Lumen.GL is
                             Format     : in Enum;
                             Pixel_Type : in Enum;
                             Pixels     : in GL.Pointer);
-  
+
 
 --   procedure Tex_Image (Target          : in Enum;
 --                       Level           : in Int;
@@ -1589,6 +1597,23 @@ package Lumen.GL is
                           First : in Int;
                           Count : in SizeI);
 
+   procedure Enable_Vertex_Attrib_Array (Index : in UInt);
+
+   procedure Disable_Vertex_Attrib_Array (Index : in UInt);
+
+   procedure Vertex_Attrib_Pointer (Index        : in UInt;
+                                    Size         : in Int;
+                                    Attr_Type    : in Enum;
+                                    Normalized   : in Bool;
+                                    Stride       : in SizeI;
+                                    Data_Pointer : in Pointer);
+
+   -- Vertex array objects
+   procedure Gen_Vertex_Arrays (N    : in SizeI;
+                                VAOs : in Pointer);
+
+   procedure Bind_Vertex_Array (VAO : in UInt);
+
    ---------------------------------------------------------------------------
 
    function Load_GL_1_2
@@ -1607,6 +1632,7 @@ private
    pragma Import (StdCall, Begin_Primitive, "glBegin");
    pragma Import (StdCall, Bind_Framebuffer, "glBindFramebuffer");
    pragma Import (StdCall, Bind_Texture, "glBindTexture");
+   pragma Import (StdCall, Bind_Vertex_Array, "glBindVertexArray");
    pragma Import (StdCall, Blend_Func, "glBlendFunc");
    pragma Import (StdCall, Clear, "glClear");
    pragma Import (StdCall, Clear_Accum, "glClearAccum");
@@ -1616,11 +1642,13 @@ private
    pragma Import (StdCall, Cull_Face, "glCullFace");
    pragma Import (StdCall, Depth_Func, "glDepthFunc");
    pragma Import (StdCall, Disable, "glDisable");
+   pragma Import (StdCall, Disable_Vertex_Attrib_Array, "glDisableVertexAttribArray");
    pragma Import (StdCall, Draw_Arrays, "glDrawArrays");
    pragma Import (StdCall, Edge_Flag, "glEdgeFlag");
    pragma Import (StdCall, Edge_Flagv, "glEdgeFlagv");
    pragma Import (StdCall, Enable, "glEnable");
    pragma Import (StdCall, Enable_Client_State, "glEnableClientState");
+   pragma Import (StdCall, Enable_Vertex_Attrib_Array, "glEnableVertexAttribArray");
    pragma Import (StdCall, End_Primitive, "glEnd");
    pragma Import (StdCall, Finish, "glFinish");
    pragma Import (StdCall, Flush, "glFlush");
@@ -1628,6 +1656,7 @@ private
    pragma Import (StdCall, Frustum, "glFrustum");
    pragma Import (StdCall, Gen_Framebuffers, "glGenFramebuffers");
    pragma Import (StdCall, Gen_Textures, "glGenTextures");
+   pragma Import (StdCall, Gen_Vertex_Arrays, "glGenVertexArrays");
    pragma Import (StdCall, Get_Error, "glGetError");
    pragma Import (StdCall, Get_Polygon_Stipple, "glGetPolygonStipple");
    pragma Import (StdCall, Hint, "glHint");
@@ -1649,6 +1678,7 @@ private
    pragma Import (StdCall, Shade_Model, "glShadeModel");
    pragma Import (StdCall, Stencil_Func, "glStencilFunc");
    pragma Import (StdCall, Tex_Env, "glTexEnvi");
+   pragma Import (StdCall, Vertex_Attrib_Pointer, "glVertexAttribPointer");
    pragma Import (StdCall, Viewport, "glViewport");
 
 end Lumen.GL;
