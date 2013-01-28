@@ -897,103 +897,6 @@ package Lumen.GL is
 
    ---------------------------------------------------------------------------
 
-   -- OpenGL 1.2 functions
-   ---------------------------------------------------------------------------
-   type glBlendColor_Access is
-     access procedure
-       (red   : ClampF;
-        green : ClampF;
-        blue  : ClampF;
-        alpha : ClampF);
-   pragma Convention(StdCall,glBlendColor_Access);
-
-   type glBlendEquation_Access is
-     access procedure
-       (mode : Enum);
-   pragma Convention(StdCall,glBlendEquation_Access);
-
-   Blend_Color    : glBlendColor_Access    := null;
-   Blend_Equation : glBlendEquation_Access := null;
-
-   -- OpenGL 1.5 functions
-   ---------------------------------------------------------------------------
-   type glBindBuffer_Access is
-     access procedure
-       (Target : Enum;
-        VBO    : Uint);
-   pragma Convention(StdCall,glBindBuffer_Access);
-
-   type glGenBuffers_Access is
-     access procedure
-       (N   : SizeI;
-        VBO : Pointer);
-   pragma Convention(StdCall,glGenBuffers_Access);
-
-   type glBufferData_Access is
-     access procedure
-       (Target : Enum;
-        Size   : SizeI;
-        Data   : Pointer;
-        Usage  : Enum);
-   pragma Convention(StdCall,glBufferData_Access);
-
-   -- Bind_Buffer : glBindBuffer_Access := null;
-   -- Gen_Buffers : glGenBuffers_Access := null;
-   -- Buffer_Data : glBufferData_Access := null;
-
-   -- OpenGL 2.0 functions
-   ---------------------------------------------------------------------------
-
-   type glCreateShader_Access is
-     access function
-       (Shader_Type : Enum)
-        return UInt;
-   pragma Convention(StdCall,glCreateShader_Access);
-
-   type glShaderSource_Access is
-     access procedure
-       (Shader        : Uint;
-        Count         : Sizei;
-        Source_String : System.Address;
-        Length        : System.Address);
-   pragma Convention(StdCall,glShaderSource_Access);
-
-   type glCompileShader_Access is
-     access procedure
-       (Shader : UInt);
-   pragma Convention(StdCall,glCompileShader_Access);
-
-   type glAttachShader_Access is
-     access procedure
-       (Program : Uint;
-        Shader  : Uint);
-   pragma Convention(StdCall,glAttachShader_Access);
-
-   type glLinkProgram_Access is
-     access procedure
-       (Program : Uint);
-   pragma Convention(StdCall,glLinkProgram_Access);
-
-   type glUseProgram_Access is
-     access procedure
-       (Program : Uint);
-   pragma Convention(StdCall,glUseProgram_Access);
-
-   type glCreateProgram_Access is
-     access function
-     return Uint;
-   pragma Convention(StdCall,glCreateProgram_Access);
-
-   Create_Shader  : glCreateShader_Access  := null;
-   Shader_Source  : glShaderSource_Access  := null;
-   Compile_Shader : glCompileShader_Access := null;
-   Attach_Shader  : glAttachShader_Access  := null;
-   Link_Program   : glLinkProgram_Access   := null;
-   Use_Program    : glUseProgram_Access    := null;
-   Create_Program : glCreateProgram_Access := null;
-
-   ---------------------------------------------------------------------------
-
    -- These two have pride of place in that they don't lose their "gl" prefix.
    -- That's because their "base" names are Ada keywords.
    procedure Begin_Primitive (Mode : in Enum);
@@ -1120,8 +1023,15 @@ package Lumen.GL is
                           Mask : in UInt);
 
    -- Blending
+   procedure Blend_Color (Red   : in ClampF;
+                          Green : in ClampF;
+                          Blue  : in ClampF;
+                          Alpha : in ClampF);
+
+   procedure Blend_Equation (Mode : in Enum);
+
    procedure Blend_Func (S_Factor : in Enum;
-                        D_Factor : in Enum);
+                         D_Factor : in Enum);
 
    -- Drawing parameters
    procedure Point_Size (Size : in Float);
@@ -1625,26 +1535,39 @@ package Lumen.GL is
 
    procedure Bind_Vertex_Array (VAO : in UInt);
 
+   -- Shaders
+   function Create_Shader (Shader_Type : in Enum) return UInt;
+
+   procedure Shader_Source (Shader        : in Uint;
+                            Count         : in Sizei;
+                            Source_String : in Pointer;
+                            Length        : in Pointer);
+
+   procedure Compile_Shader (Shader : in UInt);
+
+   procedure Attach_Shader (Program : in UInt;
+                            Shader  : in UInt);
+
+   procedure Link_Program (Program : in UInt);
+
+   procedure Use_Program (Program : in UInt);
+
+   function Create_Program return UInt;
+
    ---------------------------------------------------------------------------
-
-   function Load_GL_1_2
-     return Boolean;
-
-   function Load_GL_1_5
-     return Boolean;
-
-   function Load_GL_2_0
-     return Boolean;
 
 private
    -- These can be bound directly
    pragma Import (StdCall, Active_Texture, "glActiveTexture");
    pragma Import (StdCall, Alpha_Func, "glAlphaFunc");
+   pragma Import (StdCall, Attach_Shader, "glAttachShader");
    pragma Import (StdCall, Begin_Primitive, "glBegin");
    pragma Import (StdCall, Bind_Buffer, "glBindBuffer");
    pragma Import (StdCall, Bind_Framebuffer, "glBindFramebuffer");
    pragma Import (StdCall, Bind_Texture, "glBindTexture");
    pragma Import (StdCall, Bind_Vertex_Array, "glBindVertexArray");
+   pragma Import (StdCall, Blend_Color, "glBlendColor");
+   pragma Import (StdCall, Blend_Equation, "glBlendEquation");
    pragma Import (StdCall, Blend_Func, "glBlendFunc");
    pragma Import (StdCall, Buffer_Data, "glBufferData");
    pragma Import (StdCall, Clear, "glClear");
@@ -1652,6 +1575,9 @@ private
    pragma Import (StdCall, Clear_Color, "glClearColor");
    pragma Import (StdCall, Clear_Depth, "glClearDepth");
    pragma Import (StdCall, Clear_Index, "glClearIndex");
+   pragma Import (StdCall, Compile_Shader, "glCompileShader");
+   pragma Import (StdCall, Create_Program, "glCreateProgram");
+   pragma Import (StdCall, Create_Shader, "glCreateShader");
    pragma Import (StdCall, Cull_Face, "glCullFace");
    pragma Import (StdCall, Depth_Func, "glDepthFunc");
    pragma Import (StdCall, Disable, "glDisable");
@@ -1677,6 +1603,7 @@ private
    pragma Import (StdCall, Is_Enabled, "glIsEnabled");
    pragma Import (StdCall, Line_Stipple, "glLineStipple");
    pragma Import (StdCall, Line_Width, "glLineWidth");
+   pragma Import (StdCall, Link_Program, "glLinkProgram");
    pragma Import (StdCall, Load_Identity, "glLoadIdentity");
    pragma Import (StdCall, Matrix_Mode, "glMatrixMode");
    pragma Import (StdCall, Ortho, "glOrtho");
@@ -1690,8 +1617,10 @@ private
    pragma Import (StdCall, Push_Matrix, "glPushMatrix");
    pragma Import (StdCall, Scissor, "glScissor");
    pragma Import (StdCall, Shade_Model, "glShadeModel");
+   pragma Import (StdCall, Shader_Source, "glShaderSource");
    pragma Import (StdCall, Stencil_Func, "glStencilFunc");
    pragma Import (StdCall, Tex_Env, "glTexEnvi");
+   pragma Import (StdCall, Use_Program, "glUseProgram");
    pragma Import (StdCall, Vertex_Attrib_Pointer, "glVertexAttribPointer");
    pragma Import (StdCall, Viewport, "glViewport");
 
