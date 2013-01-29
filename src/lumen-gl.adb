@@ -27,18 +27,38 @@ package body Lumen.GL is
 
    -- Misc stuff
    function Get_String (Name : Enum) return String is
+
+      use type Interfaces.C.Strings.chars_ptr;
+
       function glGetString (Name : Enum) return Interfaces.C.Strings.chars_ptr;
       pragma Import (StdCall, glGetString, "glGetString");
+
+      Ptr : Interfaces.C.Strings.chars_ptr := glGetString (Name);
+
    begin  -- Get_String
-      return Interfaces.C.Strings.Value (glGetString (Name));
+      if Ptr = Interfaces.C.Strings.Null_Ptr then
+         return "";
+      else
+         return Interfaces.C.Strings.Value (Ptr);
+      end if;
    end Get_String;
 
    function Get_String (Name  : Enum;
                         Index : Int) return String is
+
+      use type Interfaces.C.Strings.chars_ptr;
+
       function glGetStringi (Name : Enum;  Index : Int) return Interfaces.C.Strings.chars_ptr;
       pragma Import (StdCall, glGetStringi, "glGetStringi");
+
+      Ptr : Interfaces.C.Strings.chars_ptr := glGetStringi (Name, Index);
+
    begin  -- Get_String
-      return Interfaces.C.Strings.Value (glGetStringi (Name, Index));
+      if Ptr = Interfaces.C.Strings.Null_Ptr then
+         return "";
+      else
+         return Interfaces.C.Strings.Value (Ptr);
+      end if;
    end Get_String;
 
    ---------------------------------------------------------------------------
