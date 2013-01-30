@@ -871,6 +871,8 @@ package Lumen.GL is
 
    GL_VERTEX_SHADER                            : constant Enum := 16#8B31#;
    GL_FRAGMENT_SHADER                          : constant Enum := 16#8B30#;
+   GL_COMPILE_STATUS                           : constant Enum := 16#8B81#;
+   GL_INFO_LOG_LENGTH                          : constant Enum := 16#8B84#;
 
    -- Bitfield constants
    GL_CURRENT_BIT                              : constant Bitfield := 16#00001#;
@@ -1538,6 +1540,8 @@ package Lumen.GL is
    -- Shaders
    function Create_Shader (Shader_Type : in Enum) return UInt;
 
+   procedure Delete_Shader (Shader_ID : in UInt);
+
    procedure Shader_Source (Shader        : in Uint;
                             Count         : in Sizei;
                             Source_String : in Pointer;
@@ -1553,6 +1557,15 @@ package Lumen.GL is
    procedure Use_Program (Program : in UInt);
 
    function Create_Program return UInt;
+
+   procedure Get_Shader (Shader : in UInt;
+                         PName  : in Enum;
+                         Params : in Pointer);
+
+   procedure Get_Shader_Info_Log (Shader     : in UInt;
+                                  MaxLength  : in SizeI;
+                                  Length     : in Pointer;
+                                  InfoLog    : in Pointer);
 
    ---------------------------------------------------------------------------
 
@@ -1579,6 +1592,7 @@ private
    pragma Import (StdCall, Create_Program, "glCreateProgram");
    pragma Import (StdCall, Create_Shader, "glCreateShader");
    pragma Import (StdCall, Cull_Face, "glCullFace");
+   pragma Import (StdCall, Delete_Shader, "glDeleteShader");
    pragma Import (StdCall, Depth_Func, "glDepthFunc");
    pragma Import (StdCall, Disable, "glDisable");
    pragma Import (StdCall, Disable_Vertex_Attrib_Array, "glDisableVertexAttribArray");
@@ -1599,6 +1613,8 @@ private
    pragma Import (StdCall, Gen_Vertex_Arrays, "glGenVertexArrays");
    pragma Import (StdCall, Get_Error, "glGetError");
    pragma Import (StdCall, Get_Polygon_Stipple, "glGetPolygonStipple");
+   pragma Import (StdCall, Get_Shader, "glGetShaderiv");
+   pragma Import (StdCall, Get_Shader_Info_Log, "glGetShaderInfoLog");
    pragma Import (StdCall, Hint, "glHint");
    pragma Import (StdCall, Is_Enabled, "glIsEnabled");
    pragma Import (StdCall, Line_Stipple, "glLineStipple");
