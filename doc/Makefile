@@ -7,6 +7,7 @@
 PAGES = \
 	index \
 	demo-manual \
+	getting-started \
 	install \
 	old-intro \
 	old-news \
