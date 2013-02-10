@@ -55,7 +55,7 @@ mdata = mfile.read ()
 mfile.close ()
 
 # Make our converter object, adding useful extensions
-md = markdown.Markdown (extensions=['meta', 'tables', 'headerid(forceid=False)'])
+md = markdown.Markdown (extensions=['toc', 'meta', 'tables', 'headerid(forceid=False)'])
 
 # Convert the input text, which will gather the meta-data; right now that's
 # just the document title
