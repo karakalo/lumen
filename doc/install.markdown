@@ -129,7 +129,7 @@ below.
 
 To build Lumen itself, do:
 
-		cd /path/where/you/installed/lumen
+		cd /path/where/you/put/lumen
 		gprbuild -P lumen
 
 That should create `liblumen.a` and a clutter of `.ali` files in the
@@ -149,7 +149,7 @@ come pre-configured.
 If you want to build the optional Linux joystick support as well, this command
 should do it:
 
-		cd /path/where/you/installed/lumen
+		cd /path/where/you/put/lumen
         gprbuild -P joy
 
 The command should add `lumen-joystick.ali` and `liblumenjoy.a` to the `lib`
@@ -162,7 +162,7 @@ a joystick or a game pad or something similar, you should be able to actually
 
 For compiling Lumen itself, do:
 
-		cd \path\where\you\installed\lumen
+		cd \path\where\you\put\lumen
 		gprbuild -P lumen -XOS=Windows_NT
 
 That should create `liblumen.???` and a clutter of `.ali` files in the `lib`
@@ -182,7 +182,7 @@ directory, you must tell the compiler where to find the Lumen library that you
 built above.  To do this, you must set an environment variable; on most Unix
 systems, you can do it thusly:
 
-        GPR_PROJECT_PATH=/path/where/you/installed/lumen
+        GPR_PROJECT_PATH=/path/where/you/put/lumen
         export GPR_PROJECT_PATH
 
 On MS-Windows, there is a system configuration dialog that lets you set
@@ -195,7 +195,7 @@ Once you have built the library, you should be able to build
 [the demo programs][demos] by changing into the `lumen-demos` directory and
 running this command:
 
-		cd \path\where\you\installed\lumen-demos
+		cd /path/where/you/put/lumen-demos
         gprbuild -P demos -XOS=$OS
 
 That should create various executables in the `bin` directory, which you can
@@ -206,7 +206,7 @@ run according to the instructions on their respective description pages.
 Lumen now also includes the first few lessons from the
 [NeHe OpenGL tutorials][nehe], which can be built thusly:
 
-		cd \path\where\you\installed\lumen-demos
+		cd /path/where/you/put/lumen-demos
         gprbuild -P nehe XOS=$OS
 
 This should create more executables in the `bin` directory.
@@ -216,7 +216,7 @@ This should create more executables in the `bin` directory.
 Lumen now also includes the first few tutorials from the
 [OpenGL Tutorials][tutes] site, which can be built thusly:
 
-		cd \path\where\you\installed\lumen-demos
+		cd /path/where/you/put/lumen-demos
         gprbuild -P ogltut -XOS=$OS
 
 This should create more executables in the `bin` directory.

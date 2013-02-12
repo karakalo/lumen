@@ -6,6 +6,7 @@
 # List of doc files
 PAGES = \
 	index \
+	changelog \
 	demo-manual \
 	getting-started \
 	install \

@@ -12,6 +12,9 @@ Here are the current documents available:
 
 Some informal documents related to the current code:
 
+* A [Getting Started page][start] to provide some suggestions about what to do
+  once you've built the library and its demos.
+
 * An informal narrative description of [the Lumen library][nlumen].
 
 * An informal narrative description of [the demo applications][ndemos].
@@ -37,12 +40,12 @@ though we haven't tested it yet, presumably you can also use
 I'm going to start adding notable events here, so you can check quickly
 whether there's something new since you last visited the site.
 
-* **Wednesday, 23 January 2013**: The long-awaited and much-delayed Lumen
+* **Monday, 11 February 2013**: The long-awaited and much-delayed Lumen
     repository re-organization is now complete!  See [this page][changelog]
     for a summary of the major changes.  Note that some of the more
     experimental code branches have not been integrated with the new
     repositories; until they are, to find that code look for a repository
-    called `lumen-old`.
+    called `old-lumen`.
 
 * **Thursday, 5 April 2012**: Work resumes on Lumen with the addition of a
     couple of [simple old apps][stages] I had lying around, that I recently
@@ -69,3 +72,4 @@ whether there's something new since you last visited the site.
 [ramble]:    widgets-1.html
 [rat]:       rationale.html
 [stages]:    narrative-stages.html
+[start]:     getting-started.html
