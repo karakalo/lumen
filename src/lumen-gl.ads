@@ -867,6 +867,8 @@ package Lumen.GL is
    GL_RENDERBUFFER                             : constant Enum := 16#8D41#;
 
    GL_ARRAY_BUFFER                             : constant Enum := 16#8892#;
+   GL_ELEMENT_ARRAY_BUFFER                     : constant Enum := 16#8893#;
+
    GL_STATIC_DRAW                              : constant Enum := 16#88E4#;
 
    GL_VERTEX_SHADER                            : constant Enum := 16#8B31#;
@@ -1516,9 +1518,14 @@ package Lumen.GL is
                              Stride : in SizeI;
                              Offset : in SizeI);
 
-   procedure Draw_Arrays (Mode : in Enum;
+   procedure Draw_Arrays (Mode  : in Enum;
                           First : in Int;
                           Count : in SizeI);
+
+   procedure Draw_Elements (Mode       : in Enum;
+                            Count      : in SizeI;
+                            Index_Type : in Enum;
+                            Indices    : in Pointer);
 
    procedure Enable_Vertex_Attrib_Array (Index : in UInt);
 
@@ -1567,6 +1574,53 @@ package Lumen.GL is
                                   Length     : in Pointer;
                                   InfoLog    : in Pointer);
 
+   function Get_Uniform_Location (Program : UInt;   Name : String) return Int;
+
+   procedure Uniform (Location : in Int;
+                      V0       : in Float);
+   procedure Uniform (Location : in Int;
+                      V0       : in Float;
+                      V1       : in Float);
+   procedure Uniform (Location : in Int;
+                      V0       : in Float;
+                      V1       : in Float;
+                      V2       : in Float);
+   procedure Uniform (Location : in Int;
+                      V0       : in Float;
+                      V1       : in Float;
+                      V2       : in Float;
+                      V3       : in Float);
+
+   procedure Uniform (Location : in Int;
+                      V0       : in Int);
+   procedure Uniform (Location : in Int;
+                      V0       : in Int;
+                      V1       : in Int);
+   procedure Uniform (Location : in Int;
+                      V0       : in Int;
+                      V1       : in Int;
+                      V2       : in Int);
+   procedure Uniform (Location : in Int;
+                      V0       : in Int;
+                      V1       : in Int;
+                      V2       : in Int;
+                      V3       : in Int);
+
+   procedure Uniform (Location : in Int;
+                      V0       : in UInt);
+   procedure Uniform (Location : in Int;
+                      V0       : in UInt;
+                      V1       : in UInt);
+   procedure Uniform (Location : in Int;
+                      V0       : in UInt;
+                      V1       : in UInt;
+                      V2       : in UInt);
+   procedure Uniform (Location : in Int;
+                      V0       : in UInt;
+                      V1       : in UInt;
+                      V2       : in UInt;
+                      V3       : in UInt);
+
    ---------------------------------------------------------------------------
 
 private
@@ -1597,6 +1651,7 @@ private
    pragma Import (StdCall, Disable, "glDisable");
    pragma Import (StdCall, Disable_Vertex_Attrib_Array, "glDisableVertexAttribArray");
    pragma Import (StdCall, Draw_Arrays, "glDrawArrays");
+   pragma Import (StdCall, Draw_Elements, "glDrawElements");
    pragma Import (StdCall, Edge_Flag, "glEdgeFlag");
    pragma Import (StdCall, Edge_Flagv, "glEdgeFlagv");
    pragma Import (StdCall, Enable, "glEnable");

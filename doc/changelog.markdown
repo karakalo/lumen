@@ -1,5 +1,7 @@
 Title: Major Changes in Lumen, 11 February 2013
 
+First post-reorg changelog, 11 Feb 2013.
+
 * The biggest change is that the demo applications have been moved to a separate
 repository, named `lumen-demos`.  The old Lumen repository is still available
 on github, under the name `old-lumen`.
@@ -25,7 +27,7 @@ on github, under the name `old-lumen`.
 * Several new OpenGL calls have been added to the `Lumen.GL` streamlined
   bindings, relating to blending, shaders, and vertex buffers.
 
-* Added the Lumen.Shaders package, providing convenience procedures to read
+* Added the `Lumen.Shaders` package, providing convenience procedures to read
   shader source from a file or a string and compile it, and fetch the info
   log, which contains error messages if there were errors.
 

@@ -5,7 +5,6 @@ Title: The Lumen User Interface Library
 Lumen is a user interface library for Ada designed to support visually oriented
 applications such as games, simulations, and visualization.
 
-As of the spring of 2010, development on Lumen has started to accelerate.
 Here are the current documents available:
 
 * How to [get and install][install] the current Lumen code.
@@ -61,7 +60,7 @@ whether there's something new since you last visited the site.
 
 * Older news items are now on a [separate page][oldnews].
 
-[changelog]: reorg-changes.html
+[changelog]: changelog.html
 [freenode]:  http://freenode.net/
 [install]:   install.html
 [intro]:     old-intro.html

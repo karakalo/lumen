@@ -1,5 +1,7 @@
 Title: Getting and Installing Lumen
 
+<h1 class="centered">Getting and Installing Lumen and Its Demos</h1>
+
 [TOC]
 
 ## Requirements
