@@ -1621,6 +1621,8 @@ package Lumen.GL is
                       V2       : in UInt;
                       V3       : in UInt);
 
+   function Get_Attribute_Location (Program : UInt;   Name : String) return Int;
+
    ---------------------------------------------------------------------------
 
 private

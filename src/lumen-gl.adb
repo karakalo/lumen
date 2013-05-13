@@ -1687,6 +1687,16 @@ package body Lumen.GL is
       glUniform4ui (Location, V0, V1, V2, V3);
    end Uniform;
 
+   function Get_Attribute_Location (Program : UInt;   Name : String) return Int is
+      C_Name : Interfaces.C.char_array := Interfaces.C.To_C (Name);
+
+      function glGetAttribLocation (Program : UInt;   Name : Pointer) return Int;
+      pragma Import (StdCall, glGetAttribLocation, "glGetAttribLocation");
+
+   begin  -- Get_Attribute_Location
+      return glGetAttribLocation (Program, C_Name'Address);
+   end Get_Attribute_Location;
+
    ---------------------------------------------------------------------------
 
 end Lumen.GL;
