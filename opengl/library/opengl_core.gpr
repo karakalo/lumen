@@ -1,0 +1,28 @@
+with 
+     "../private/gl/library/gl",
+     "../private/gid/gid";
+     
+project Opengl_Core is
+
+   for Source_Dirs use ("../source");
+   for Object_Dir use "build";
+   for Library_Name use "opengl_core";
+
+   package Builder is
+      for Default_Switches ("ada") use ("-j13", "-g", "-k");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnato", "-fstack-check", "-g", "-gnata", "-gnat12");
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-E");
+   end Binder;
+
+   package Linker is
+      for Default_Switches ("ada") use ("-g");
+   end Linker;
+
+end Opengl_Core;
+

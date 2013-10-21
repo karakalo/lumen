@@ -1,12 +1,13 @@
-with "config";
+with "config",
+     "opengl";
 
-library project OpenGL is
+library project Lumen_GL is
 
-   for Library_Name use "AdaOpenGL";
+   for Library_Name use "LumenGL";
    case Config.Os is
-      when "Windows_NT" => for Source_Dirs use ("gl", "gl/wgl");
-      when "Linux" => for Source_Dirs use ("gl");
-      when "MacOSX" => for Source_Dirs use ("gl", "gl/cgl");
+      when "Windows_NT" => for Source_Dirs use ("opengl/private/gl/source/wgl");
+      when "Linux" => for Source_Dirs use ("opengl/private/gl/source/glx");
+      when "MacOSX" => for Source_Dirs use ("opengl/private/gl/source/cgl");
    end case;
 
    for Object_Dir use "obj";
@@ -37,4 +38,4 @@ library project OpenGL is
       end case;
    end Linker;
 
-end OpenGL;
+end Lumen_GL;

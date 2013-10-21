@@ -1,0 +1,101 @@
+with "opengl_core", "../private/freetype/library/freetype", "shared";
+
+project Opengl is
+
+   type Profile is
+      ("safe", "lean", "desk");
+   The_Profile : Profile := external ("opengl_profile", "lean");
+   type Restrictions is
+      ("xgc", "ravenscar");
+   Restrictions : Restrictions := external ("restrictions");
+   type Platform is
+      ("egl", "glx");
+   The_Platform : Platform := external ("opengl_platform", "egl");
+   type Os_Type is
+      ("Windows_NT", "Linux", "MacOSX");
+   Os : Os_Type := external ("OS");
+
+   
+   case The_Platform is 
+      when "egl" =>   for Languages    use ("Ada");
+      when "glx" =>   for Languages    use ("Ada", "C");
+   end case; 
+   
+   
+   case The_Profile is
+      when "safe" =>
+         for Source_Dirs use ("../source/platform/" & external ("opengl_platform", "egl"), "../source/platform/" & external ("opengl_platform", "egl") & "/private", "../source/platform/" & external ("opengl_platform", "egl") & "/private/thin", 
+                              "../source/safe");
+         for Object_Dir   use "build";
+         for Library_Name use "opengl";
+
+      when "lean" =>
+         for Source_Dirs use ("../source/platform/" & external ("opengl_platform", "egl"), "../source/platform/" & external ("opengl_platform", "egl") & "/private", "../source/platform/" & external ("opengl_platform", "egl") & 
+                              "/private/thin", "../source/lean", "../source/lean/buffer", "../source/lean/geometry", "../source/lean/light", "../source/lean/shader", "../source/lean/text", "../source/lean/io", 
+                              "../source/lean/text/private");
+         for Object_Dir   use "build";
+         for Library_Name use "opengl";
+
+
+      when "desk" =>
+         for Source_Dirs  use ("../source/platform/" & external ("opengl_platform", "egl"), "../source/platform/" & external ("opengl_platform", "egl") & "/private", "../source/platform/" & external ("opengl_platform", "egl") & "/private/thin", 
+                               "../source/lean", "../source/lean/buffer", "../source/lean/geometry", "../source/lean/light", "../source/lean/shader", "../source/lean/text", "../source/lean/io", "../source/lean/text/private", "../source/desk");
+         for Object_Dir   use "build";
+         for Library_Name use "opengl";
+   end case;
+
+
+   package Builder is
+
+      case Restrictions is
+
+         when "xgc" =>
+
+            case The_Platform is
+
+               when "egl" =>
+                  for Default_Switches ("ada") use ("-g", "-lpthread", "-j13");
+
+               when "glx" =>
+
+                  case Os is
+
+                     when "Windows_NT" =>
+                        for Default_Switches ("ada") use ("-g", "-lpthread");
+
+                     when "Linux" =>
+
+                        case The_Profile is
+
+                           when "safe" =>
+                              for Default_Switches ("ada") use ("-g", "-lpthread");
+
+                           when "lean" =>
+                              for Default_Switches ("ada") use ("-g", "-lpthread", "-k", "-j13");
+
+                           when "desk" =>
+                              for Default_Switches ("ada") use ("-g", "-lpthread");
+                        end case;
+
+                     when "MacOSX" =>
+                        for Default_Switches ("ada") use ("-g", "-lpthread");
+                  end case;
+            end case;
+
+         when "ravenscar" =>
+            for Default_Switches ("ada") use ("-g", "-lpthread");
+      end case;
+   end Builder;
+
+   package Compiler renames Shared.Compiler;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-E");
+   end Binder;
+
+   package Linker is
+      for Default_Switches ("ada") use ("-lGLU", "-lGLX");
+   end Linker;
+
+end Opengl;
+

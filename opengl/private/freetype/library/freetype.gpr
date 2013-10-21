@@ -1,0 +1,28 @@
+with "freetype_thin";
+
+project Freetype is
+
+   for Source_Dirs use ("../source");
+   for Object_Dir use "build";
+   for Library_Name use "freetype_ada";
+
+   package Builder is
+      for Default_Switches ("ada") use ("-k", "-g");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnato", "-fstack-check", "-g", "-gnata", "-gnat12");
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-E");
+   end Binder;
+   
+   package Linker is
+--      for Linker_Options use ("-L.", "-lfreetype", "-lfreetype_c");
+      for Linker_Options use ("-g", "-L./lib", "-lfreetype");
+   end Linker;
+   
+
+end Freetype;
+

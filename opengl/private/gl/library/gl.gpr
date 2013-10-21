@@ -1,0 +1,21 @@
+
+project Gl is
+
+   for Languages use ("Ada");
+   for Source_Dirs use (".", "../source");
+   for Object_Dir use "build";
+
+   package Builder is
+      for Default_Switches ("ada") use ("-g", "-lpthread");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnato", "-lpthread", "-fstack-check", "-g", "-gnata", "-gnat12");
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-E");
+   end Binder;
+
+end Gl;
+

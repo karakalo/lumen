@@ -1,0 +1,13 @@
+-- This is a GNAT, GCC or GNAT Programming Studio (GPS) project file
+-- for the Generic Image Decoder ( http://sf.net/projects/gen-img-dec/ )
+-- Build me with "gnatmake -P gid.gpr", or open me with GPS
+--
+project GID is
+
+   for Source_Dirs use (".");
+   --   for Exec_Dir use "test";
+   --   for Main use ("tb.ads", "to_bmp.adb", "mini.adb");
+   for Object_Dir use "obj_debug";
+
+end GID;
+

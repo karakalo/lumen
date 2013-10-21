@@ -1,0 +1,29 @@
+with "freetype_c";
+
+project FreeType_thin is
+
+   for Languages use ("Ada");
+   for Source_Dirs use (".", "../source/thin");
+   for Object_Dir use "build";
+   for Library_Name use "freetype_thin_ada";
+   for Library_Dir use "lib";
+   for Library_Ali_Dir use "objects";
+
+   package Builder is
+      for Default_Switches ("ada") use ("-g", "-lpthread");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnato", "-lpthread", "-fstack-check", "-g", "-gnata", "-gnat05");
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-E");
+   end Binder;
+
+   package Linker is
+      for Linker_Options use ("-g", "-L./lib", "-lfreetype_c", "-lfreetype");
+   end Linker;
+
+end FreeType_thin;
+

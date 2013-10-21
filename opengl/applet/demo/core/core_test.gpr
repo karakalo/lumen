@@ -1,0 +1,76 @@
+with "opengl", "lumen";
+
+project Core_Test is
+
+   type Restrictions is
+      ("xgc", "ravenscar");
+   type Platform is
+      ("egl", "glx");
+   type Profile is
+      ("safe", "lean", "desk");
+   for Object_Dir use "build";
+   for Exec_Dir use ".";
+   for Main use ("launch_core_test.adb");
+   type Os_Type is
+      ("Windows_NT", "Linux", "MacOSX");
+   Os : Os_Type := external ("OS");
+   Opengl_Profile : Profile := external ("opengl_profile");
+   Opengl_Platform : Platform := external ("opengl_platform");
+   Restrictions : Restrictions := external ("restrictions");
+
+   package Builder is
+      for Default_Switches ("ada") use ("-k", "-g", "-j13");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnato", "-fstack-check", "-g", "-gnata", "-gnat12");
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-E");
+   end Binder;
+
+   package Linker is
+
+      case Os is
+
+         when "Windows_NT" =>
+            for Default_Switches ("ada") use ("-g");
+
+         when "Linux" =>
+
+            case Opengl_Profile is
+
+               when "safe" =>
+                  for Default_Switches ("ada") use ("-g", "-lX11", "-lGL");
+
+               when "lean" =>
+
+                  case Opengl_Platform is
+
+                     when "egl" =>
+                        for Default_Switches ("ada") use ("-g", "-lX11", "-lGL");
+
+                     when "glx" =>
+
+                        case Restrictions is
+
+                           when "xgc" =>
+                              for Default_Switches ("ada") use ("-g", "-lX11", "-lGL", "-lm");
+
+                           when "ravenscar" =>
+                              for Default_Switches ("ada") use ("-g", "-lX11", "-lGL");
+                        end case;
+                  end case;
+
+               when "desk" =>
+                  for Default_Switches ("ada") use ("-g", "-lX11", "-lGL");
+            end case;
+
+         when "MacOSX" =>
+            for Default_Switches ("ada") use ("-g");
+      end case;
+   end Linker;
+
+end Core_Test;
+
