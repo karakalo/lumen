@@ -4,7 +4,7 @@ with
      freetype.charMap,
      freetype_c,
 --       float_Math,
-     interfaces.C;
+     interfaces.C.Pointers;
 
 limited
 with
@@ -20,6 +20,8 @@ package openGL.FontImpl
 --  Implements an openGL font.
 --
 is
+   use Interfaces;
+
 
    type Item is tagged limited private;
    type View is access all Item'Class;
@@ -41,6 +43,17 @@ is
                           ALIGN_CENTER  => 1,
                           ALIGN_RIGHT   => 2,
                           ALIGN_JUSTIFY => 3);
+
+
+   --  unsigned_char_Pointer
+   --
+   type    unsigned_char_array    is array (C.size_t range <>) of aliased C.unsigned_char;
+   package unsigned_char_Pointers is new C.Pointers (Index              => C.size_t,
+                                                     Element            => C.unsigned_char,
+                                                     Element_Array      => unsigned_char_array,
+                                                     Default_Terminator => 0);
+   subtype unsigned_char_Pointer  is unsigned_char_Pointers.Pointer;
+
 
 
    --  Forge

@@ -32,7 +32,7 @@ is
 
 
 
-   function to_Font_texture (pBufferBytes      : in     swig.Pointers.unsigned_char_Pointer;
+   function to_Font_texture (pBufferBytes      : in     unsigned_char_Pointer;
                              bufferSizeInBytes : in     Natural)
      return Font.texture.item
    is

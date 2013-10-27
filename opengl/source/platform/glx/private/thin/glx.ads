@@ -1,6 +1,6 @@
 with
      Interfaces.C.Strings,
-     Swig;
+     System;
 
 package GLX
 is
@@ -38,25 +38,25 @@ is
 
    -- XVisualInfo
    --
-   subtype XVisualInfo       is Swig.incomplete_class;
+   subtype XVisualInfo       is system.Address;
    type    XVisualInfo_array is array (Interfaces.C.size_t range <>) of aliased GLX.XVisualInfo;
 
 
    -- Pixmap
    --
-   subtype Pixmap       is Swig.incomplete_class;
+   subtype Pixmap       is system.Address;
    type    Pixmap_array is array (Interfaces.C.size_t range <>) of aliased GLX.Pixmap;
 
 
    -- Font
    --
-   subtype Font    is Swig.incomplete_class;
+   subtype Font    is system.Address;
    type Font_array is array (Interfaces.C.size_t range <>) of aliased GLX.Font;
 
 
    -- Window
    --
-   subtype Window    is Swig.incomplete_class;
+   subtype Window    is system.Address;
    type Window_array is array (Interfaces.C.size_t range <>) of aliased GLX.Window;
 
 
@@ -68,13 +68,13 @@ is
 
    -- GLXcontextRec
    --
-   subtype GLXcontextRec       is Swig.opaque_structure;
+   subtype GLXcontextRec       is system.Address;
    type    GLXcontextRec_array is array (Interfaces.C.size_t range <>) of aliased GLX.GLXcontextRec;
 
 
    -- XID
    --
-   subtype XID       is Swig.opaque_structure;
+   subtype XID       is system.Address;
    type    XID_array is array (Interfaces.C.size_t range <>) of aliased GLX.XID;
 
 
@@ -92,7 +92,7 @@ is
 
    -- p_a_GLXFBConfigRec
    --
-   subtype p_a_GLXFBConfigRec       is Swig.opaque_structure;
+   subtype p_a_GLXFBConfigRec       is system.Address;
    type    p_a_GLXFBConfigRec_array is array (Interfaces.C.size_t range <>) of aliased GLX.p_a_GLXFBConfigRec;
 
 

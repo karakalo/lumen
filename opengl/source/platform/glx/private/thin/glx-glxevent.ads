@@ -1,9 +1,11 @@
-with GLX.GLXBufferSwapComplete;
-with GLX.GLXPbufferClobberEvent;
-with Swig;
+with
+     GLX.GLXBufferSwapComplete,
+     GLX.GLXPbufferClobberEvent;
 
 package GLX.GLXEvent
 is
+   type long_Array   is array (C.size_t range <>) of aliased C.Long;
+
 
    type Item_variant is (glxpbufferclobber_variant,
                          glxbufferswapcomplete_variant,
@@ -14,7 +16,7 @@ is
          case union_Variant is
          when glxpbufferclobber_variant     =>   glxpbufferclobber     : aliased GLX.GLXPbufferClobberEvent.Item;
          when glxbufferswapcomplete_variant =>   glxbufferswapcomplete : aliased GLX.GLXBufferSwapComplete.Item;
-         when pad_variant                   =>   pad                   : aliased Swig.long_Array (0 .. 23);
+         when pad_variant                   =>   pad                   : aliased long_Array (0 .. 23);
          end case;
       end record;
    pragma Unchecked_Union (Item);

@@ -4,9 +4,8 @@ with
      openGL.FontImpl,
 
      freetype.Face,
-     freetype_c.FT_GlyphSlot,
+     freetype_c.FT_GlyphSlot;
 
-     Swig.Pointers;
 
 
 package openGL.Font
@@ -18,9 +17,12 @@ package openGL.Font
 --  MakeGlyph function to create glyphs of the appropriate type.
 --
 is
+   use openGL.FontImpl;
+
 
    type Item is abstract tagged limited private;
    type View is access all Item'Class;
+
 
 
    --  Forge
@@ -135,7 +137,7 @@ is
    --  Note: not all font formats implement this function.
 
 
-   function Attach (Self : in Item;   pBufferBytes      : in swig.Pointers.unsigned_char_Pointer;
+   function Attach (Self : in Item;   pBufferBytes      : in unsigned_char_Pointer;
                                       bufferSizeInBytes : in Natural)
                     return Boolean;
    --
@@ -217,7 +219,7 @@ private
    --  Open and read a font file. Sets Error flag.
 
 
-   procedure define (Self : in out Item;   pBufferBytes      : in swig.Pointers.unsigned_char_Pointer;
+   procedure define (Self : in out Item;   pBufferBytes      : in unsigned_char_Pointer;
                                            bufferSizeInBytes : in Natural);
    --
    --  Open and read a font from a buffer in memory. Sets Error flag.

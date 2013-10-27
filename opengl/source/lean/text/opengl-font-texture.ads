@@ -26,7 +26,7 @@ is
    function new_Font_texture (fontFilePath : in     String) return Font.texture.view;
 
 
-   function to_Font_texture  (pBufferBytes      : in     swig.Pointers.unsigned_char_Pointer;
+   function to_Font_texture  (pBufferBytes      : in     unsigned_char_Pointer;
                               bufferSizeInBytes : in     Natural)
                               return Font.texture.item;
    --

@@ -19,7 +19,7 @@ is
 
 
 
-   procedure define (Self : in out Item;   pBufferBytes      : in swig.Pointers.unsigned_char_Pointer;
+   procedure define (Self : in out Item;   pBufferBytes      : in unsigned_char_Pointer;
                                            bufferSizeInBytes : in Natural)
    is
    begin
@@ -175,7 +175,7 @@ is
 
 
 
-   function Attach (Self : in Item;   pBufferBytes      : in swig.Pointers.unsigned_char_Pointer;
+   function Attach (Self : in Item;   pBufferBytes      : in unsigned_char_Pointer;
                                       bufferSizeInBytes : in Natural)
                     return Boolean
    is

@@ -5,8 +5,7 @@ with
 
      freetype_c.FT_GlyphSlot,
 
-     Swig.Pointers,
-     Ada.Containers.Vectors;
+     ada.Containers.Vectors;
 
 private
 with
@@ -17,6 +16,7 @@ package openGL.FontImpl.Texture
 --  Implements a texture font.
 --
 is
+   use openGL.FontImpl;
 
    type Item is new FontImpl.item with private;
    type View is access all Item'Class;
@@ -33,11 +33,11 @@ is
                                   fontFilePath      : in     String)  return access fontImpl.texture.item'Class;
 
    function to_FontImpl_texture  (ftFont            : access openGL.Font.Item'Class;
-                                  pBufferBytes      : in     swig.Pointers.unsigned_char_Pointer;
+                                  pBufferBytes      : in     unsigned_char_Pointer;
                                   bufferSizeInBytes : in     Natural) return fontImpl.texture.item;
 
    function new_FontImpl_texture (ftFont            : access openGL.Font.Item'Class;
-                                  pBufferBytes      : in     swig.Pointers.unsigned_char_Pointer;
+                                  pBufferBytes      : in     unsigned_char_Pointer;
                                   bufferSizeInBytes : in     Natural) return access fontImpl.texture.item'Class;
 
    procedure destruct (Self : in out Item);

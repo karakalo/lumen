@@ -1,10 +1,6 @@
 with
      Interfaces.C;
 
-private
-with
-     swig.Pointers;
-
 
 package opengl.Display
 --
@@ -16,7 +12,7 @@ is
 
 
    function Default                    return Item;
-   function screen_Id (Self : in Item) return interfaces.c.int;
+   function screen_Id (Self : in Item) return interfaces.C.int;
 
 
 
@@ -29,7 +25,7 @@ private
       record
          --           Connection : xcb_connection_t_Pointer;
          --           Xcb        : access Standard.xcb.Display;
-         screen_Id  : swig.Pointers.int_Pointer := new interfaces.c.int;
+         screen_Id  : aliased interfaces.C.int;
          --           eGL           : standard.eGL.EGLDisplay;
 
          --           Version_major,

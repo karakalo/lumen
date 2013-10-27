@@ -47,7 +47,7 @@ is
    function screen_Id (Self : in Item) return interfaces.c.int
    is
    begin
-      return Self.screen_Id.all;
+      return Self.screen_Id;
    end screen_Id;
 
 
