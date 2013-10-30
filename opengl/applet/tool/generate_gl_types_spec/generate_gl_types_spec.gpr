@@ -1,0 +1,24 @@
+project Generate_Gl_Types_Spec is
+
+   for Object_Dir use "build";
+   for Exec_Dir use ".";
+   for Main use ("generate_gl_types_spec.adb");
+
+   package Builder is
+      for Default_Switches ("ada") use ("-g", "-j13");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnato", "-fstack-check", "-g", "-gnata", "-gnat12");
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-E");
+   end Binder;
+
+   package Linker is
+      for Default_Switches ("ada") use ("-g");
+   end Linker;
+
+end Generate_Gl_Types_Spec;
+

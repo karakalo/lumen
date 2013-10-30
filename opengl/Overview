@@ -1,0 +1,32 @@
+~~~~~~~~~~~~~~~~~~~~~~~~
+Lumen 'openGL' Component
+     Overview
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Platforms
+---------
+   - eGL     (preferred)
+   - glX     (til eGL is fully supported (ask nVidia))
+   - Windows (if/when contributed)
+   - Apple   (if/when contributed)
+
+
+Profiles
+--------
+   - Safe (safety critical) 
+   - Lean (embedded)
+   - Desk (desktop)
+
+  
+Source Folders
+--------------
+   - source:      Code common   to all openGL profiles.
+   - source/safe: Code common   to 'Safety Critical' and 'Desktop' openGL profiles.
+   - source/lean: Code common   to 'Embedded'        and 'Desktop' openGL profiles.
+   - source/desk: Code specific to 'Desktop' openGL profile.
+  
+
+Installation
+------------
+   Add the  .../lumen/opengl/library  folder to your GNAT_PROJECT_PATH.
