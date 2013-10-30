@@ -2,6 +2,7 @@ with
      Interfaces.C,
      System;
 
+with GL_Types;
 
 package GL
 --
@@ -17,72 +18,72 @@ is
 
    -- GLvoid
    --
-   subtype GLvoid       is System.Address;
+   subtype GLvoid       is GL_Types.GLvoid;
    type    GLvoid_array is array (Interfaces.C.size_t range <>) of aliased GLvoid;
 
 
    -- GLenum
    --
-   subtype GLenum       is Interfaces.C.unsigned;
+   subtype GLenum       is GL_Types.GLenum;
    type    GLenum_array is array (Interfaces.C.size_t range <>) of aliased GLenum;
 
    -- GLboolean
    --
-   subtype GLboolean       is Interfaces.C.unsigned_char;
+   subtype GLboolean       is GL_Types.GLboolean;
    type    GLboolean_array is array (Interfaces.C.size_t range <>) of aliased GLboolean;
 
    -- GLbitfield
    --
-   subtype GLbitfield       is Interfaces.C.unsigned;
+   subtype GLbitfield       is GL_Types.GLbitfield;
    type    GLbitfield_array is array (Interfaces.C.size_t range <>) of aliased GLbitfield;
 
    -- GLshort
    --
-   subtype GLshort       is Interfaces.C.short;
+   subtype GLshort       is GL_Types.GLshort;
    type    GLshort_array is array (Interfaces.C.size_t range <>) of aliased GLshort;
 
    -- GLint
    --
-   subtype GLint       is Interfaces.C.int;
+   subtype GLint       is GL_Types.GLint;
    type    GLint_array is array (Interfaces.C.size_t range <>) of aliased GLint;
 
    -- GLsizei
    --
-   subtype GLsizei       is Interfaces.C.int;
+   subtype GLsizei       is GL_Types.GLsizei;
    type    GLsizei_array is array (Interfaces.C.size_t range <>) of aliased GLsizei;
 
    -- GLushort
    --
-   subtype GLushort       is Interfaces.C.unsigned_short;
+   subtype GLushort       is GL_Types.GLushort;
    type    GLushort_array is array (Interfaces.C.size_t range <>) of aliased GLushort;
 
    -- GLuint
    --
-   subtype GLuint       is Interfaces.C.unsigned;
+   subtype GLuint       is GL_Types.GLuint;
    type    GLuint_array is array (Interfaces.C.size_t range <>) of aliased GLuint;
 
 
    -- GLbyte
    --
-   subtype GLbyte       is Interfaces.C.signed_char;
+   subtype GLbyte       is GL_Types.GLbyte;
    type    GLbyte_array is array (Interfaces.C.size_t range <>) of aliased GLbyte;
 
 
    -- GLubyte
    --
-   subtype GLubyte       is Interfaces.C.unsigned_char;
+   subtype GLubyte       is GL_Types.GLubyte;
    type    GLubyte_array is array (Interfaces.C.size_t range <>) of aliased GLubyte;
 
 
    -- GLfloat
    --
-   subtype GLfloat       is Interfaces.IEEE_Float_32;
+   subtype GLfloat       is GL_Types.GLfloat;
    type    GLfloat_array is array (Interfaces.C.size_t range <>) of aliased GLfloat;
 
 
    -- GLclampf
    --
-   subtype GLclampf       is Interfaces.IEEE_Float_32;
+   subtype GLclampf       is GL_Types.GLclampf;
    type    GLclampf_array is array (Interfaces.C.size_t range <>) of aliased GLclampf;
 
 

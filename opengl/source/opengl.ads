@@ -19,7 +19,8 @@ is
    type      Index_t is range 0 .. 2**16 - 1;
    type long_Index_t is range 0 .. 2**32 - 1;
 
-   type      Indices is array (long_Index_t range <>) of Index_t;
+   type      Indices is array (long_Index_t range <>) of      Index_t;
+   type long_Indices is array (long_Index_t range <>) of long_Index_t;
 
 
 
@@ -112,8 +113,8 @@ is
    --  Color
    ---------
 
-   subtype  grey_Value is gl.GLuByte;
-   subtype color_Value is gl.GLuByte;
+   subtype  grey_Value is gl.GLubyte;
+   subtype color_Value is gl.GLubyte;
 
    Opaque : constant color_Value;
    Lucid  : constant color_Value;

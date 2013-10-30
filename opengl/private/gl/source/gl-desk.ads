@@ -16,8 +16,8 @@ is
    --  Types
    --
 
-   subtype GLclampd is C.double;
-   subtype GLdouble is C.double;
+   subtype GLclampd is GL_Types.GLclampd;
+   subtype GLdouble is GL_Types.GLdouble;
 
 
    --  GLclampf_Pointer

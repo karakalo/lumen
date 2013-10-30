@@ -11,7 +11,7 @@ with
 package openGL.Font
 --
 --  Specific font classes are derived from this class. It uses the helper
---  classes freetype_c.Face and dreetype_c.FTSize to access the Freetype library.
+--  classes freetype_c.Face and freetype_c.FTSize to access the Freetype library.
 --
 --  This class is abstract and deriving classes must implement the protected
 --  MakeGlyph function to create glyphs of the appropriate type.

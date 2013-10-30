@@ -13,8 +13,8 @@ is
    --  Types
    --
 
-   subtype GLchar     is C.char;
-   subtype GLfixed    is Integer_32;
+   subtype GLchar     is GL_Types.GLchar;
+   subtype GLfixed    is GL_Types.GLfixed;
 
    type    GLintptr   is new Integer;
    type    GLsizeiptr is new Integer;

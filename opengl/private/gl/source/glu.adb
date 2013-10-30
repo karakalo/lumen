@@ -20,7 +20,8 @@ is
        Interfaces;
 
    use type GLint,
-            GLenum;
+            GLenum,
+            GLfloat;
 
 
    --  GLubyte
