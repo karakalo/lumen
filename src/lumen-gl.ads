@@ -1204,6 +1204,9 @@ package Lumen.GL is
    procedure Gen_Textures (N        : in SizeI;
                           Textures : in Pointer);
 
+   procedure Delete_Textures (N     : in SizeI;
+                             Textures : in Pointer);
+
 
    procedure Tex_Env (Coord : in Enum;
                      PName : in Enum;
@@ -1667,6 +1670,7 @@ private
    pragma Import (StdCall, Gen_Buffers, "glGenBuffers");
    pragma Import (StdCall, Gen_Framebuffers, "glGenFramebuffers");
    pragma Import (StdCall, Gen_Textures, "glGenTextures");
+   pragma Import (StdCall, Delete_Textures, "glDeleteTextures");
    pragma Import (StdCall, Gen_Vertex_Arrays, "glGenVertexArrays");
    pragma Import (StdCall, Get_Error, "glGetError");
    pragma Import (StdCall, Get_Polygon_Stipple, "glGetPolygonStipple");
