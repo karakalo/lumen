@@ -1355,6 +1355,13 @@ package Lumen.GL is
    procedure Tex_Coord (V : in Doubles_4);
    pragma Inline (Tex_Coord);
 
+   -- Get texture data
+   procedure Get_Tex_Image (Target  : in Enum;
+                            Level   : in Int;
+                            Format  : in Enum;
+                            Type_Of : in Enum;
+                            Pixels  : in Pointer);
+
    -- Evaluators
    procedure Map (Target : in Enum;
                   U1     : in Float;
@@ -1670,6 +1677,7 @@ private
    pragma Import (StdCall, Gen_Buffers, "glGenBuffers");
    pragma Import (StdCall, Gen_Framebuffers, "glGenFramebuffers");
    pragma Import (StdCall, Gen_Textures, "glGenTextures");
+   Pragma Import (StdCall, Get_Tex_Image, "glGetTexImage");
    pragma Import (StdCall, Delete_Textures, "glDeleteTextures");
    pragma Import (StdCall, Gen_Vertex_Arrays, "glGenVertexArrays");
    pragma Import (StdCall, Get_Error, "glGetError");
