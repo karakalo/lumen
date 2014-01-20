@@ -1649,7 +1649,21 @@ package Lumen.GL is
 
    function Get_Attribute_Location (Program : UInt;   Name : String) return Int;
 
-   procedure Vertex_Attrib (Index: in UInt; X: in Float);
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float);
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float;
+                            Y     : in Float);
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float;
+                            Y     : in Float;
+                            Z     : in Float);
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float;
+                            Y     : in Float;
+                            Z     : in Float;
+                            W     : in Float);
+  Pragma Inline (Vertex_Attrib);
 
    ---------------------------------------------------------------------------
 
@@ -1729,7 +1743,6 @@ private
    Pragma Import (StdCall, Delete_Buffers, "glDeleteBuffers");
    Pragma Import (StdCall, Buffer_Sub_Data, "glBufferSubData");
    Pragma Import (StdCall, Disable_Client_State, "glDisableClientState");
-   Pragma Import (StdCall, Vertex_Attrib, "glVertexAttrib1f");
    Pragma Import (StdCall, Tex_Coord_Pointer, "glTexCoordPointer");
 
 end Lumen.GL;
