@@ -870,6 +870,7 @@ package Lumen.GL is
    GL_ELEMENT_ARRAY_BUFFER                     : constant Enum := 16#8893#;
 
    GL_STATIC_DRAW                              : constant Enum := 16#88E4#;
+   GL_DYNAMIC_DRAW                             : constant Enum := 16#88E8#;
 
    GL_VERTEX_SHADER                            : constant Enum := 16#8B31#;
    GL_FRAGMENT_SHADER                          : constant Enum := 16#8B30#;
@@ -1355,6 +1356,11 @@ package Lumen.GL is
    procedure Tex_Coord (V : in Doubles_4);
    pragma Inline (Tex_Coord);
 
+   procedure Tex_Coord_Pointer (Size    : in SizeI;
+                                Type_Of : in Enum;
+                                Stride  : in SizeI;
+                                Offset  : in SizeI);
+
    -- Get texture data
    procedure Get_Tex_Image (Target  : in Enum;
                             Level   : in Int;
@@ -1508,6 +1514,9 @@ package Lumen.GL is
    procedure Gen_Buffers (N   : in SizeI;
                           VBO : in Pointer);
 
+   procedure Delete_Buffers (N        : in SizeI;
+                             Buffers  : in Pointer);
+
    procedure Bind_Buffer (Target : in Enum;
                           VBO    : in UInt);
 
@@ -1516,7 +1525,14 @@ package Lumen.GL is
                           Data   : in Pointer;
                           Usage  : in Enum);
 
+   procedure Buffer_Sub_Data (Target: in Enum;
+                              Offset: in SizeI;
+                              Size  : in SizeI;
+                              Data  : in Pointer);
+
    procedure Enable_Client_State (Target : in Enum);
+
+   procedure Disable_Client_State (Target : in Enum);
 
    procedure Vertex_Pointer (Size : in SizeI;
                              Element_Type : in Enum;
@@ -1633,6 +1649,8 @@ package Lumen.GL is
 
    function Get_Attribute_Location (Program : UInt;   Name : String) return Int;
 
+   procedure Vertex_Attrib (Index: in UInt; X: in Float);
+
    ---------------------------------------------------------------------------
 
 private
@@ -1708,5 +1726,10 @@ private
    pragma Import (StdCall, Use_Program, "glUseProgram");
    pragma Import (StdCall, Vertex_Attrib_Pointer, "glVertexAttribPointer");
    pragma Import (StdCall, Viewport, "glViewport");
+   Pragma Import (StdCall, Delete_Buffers, "glDeleteBuffers");
+   Pragma Import (StdCall, Buffer_Sub_Data, "glBufferSubData");
+   Pragma Import (StdCall, Disable_Client_State, "glDisableClientState");
+   Pragma Import (StdCall, Vertex_Attrib, "glVertexAttrib1f");
+   Pragma Import (StdCall, Tex_Coord_Pointer, "glTexCoordPointer");
 
 end Lumen.GL;
