@@ -25,8 +25,6 @@ with System;
 
 with Lumen.GL;
 use  Lumen.GL;
-with Lumen.Image;
-
 
 package Lumen.GLU is
 

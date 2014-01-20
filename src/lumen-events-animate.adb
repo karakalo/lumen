@@ -32,7 +32,7 @@ package body Lumen.Events.Animate is
 
       use Ada.Calendar;
 
-      Been : Duration := Clock - Win.Prior_Frame;
+      Been : constant Duration := Clock - Win.Prior_Frame;
 
    begin  -- Wait_Frame
 

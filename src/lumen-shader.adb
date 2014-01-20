@@ -39,7 +39,7 @@ package body Lumen.Shader is
                         Success     : out Boolean) is
 
       Result  : GL.UInt;
-      Size    : Ada.Directories.File_Size := Ada.Directories.Size (Name);
+      Size    : constant Ada.Directories.File_Size := Ada.Directories.Size (Name);
       Status  : GL.Int;
 
    begin  -- From_File

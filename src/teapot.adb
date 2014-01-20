@@ -58,7 +58,7 @@ package body Teapot is
    -- fine.
    type Index_Array is array (Natural range 0 .. 15) of Natural;
    type Patch_Array is array (Natural range <>) of Index_Array;
-   Patch_Data : Patch_Array :=
+   Patch_Data : constant Patch_Array :=
       (
        ( 102, 103, 104, 105,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,  15 ), -- rim
        (  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27 ), -- body
@@ -77,7 +77,7 @@ package body Teapot is
    -- The vertices of the control points defining the patches.
    type Point is array (Natural range 0 .. 2) of GL.Double;
    type Control_Point_Array is array (Natural range <>) of Point;
-   CP_Data : Control_Point_Array :=
+   CP_Data : constant Control_Point_Array :=
       (
        (0.2, 0.0, 2.7), (0.2, -0.112, 2.7), (0.112, -0.2, 2.7),
        (0.0, -0.2, 2.7), (1.3375, 0.0, 2.53125), (1.3375, -0.749, 2.53125),

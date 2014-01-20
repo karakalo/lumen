@@ -158,8 +158,8 @@ package body Lumen.Image.BMP is
          Colors : Palette (0..1);
          Components : Natural := 4;
 
-         Row_Size : Natural := Natural(Result.Width) / Binary.Byte_Bits + 1; -- Row size in Bytes
-         Padding  : Natural := (-Row_Size) mod 4; -- padding
+         Row_Size : constant Natural := Result.Width / Binary.Byte_Bits + 1; -- Row size in Bytes
+         Padding  : constant Natural := (-Row_Size) mod 4; -- padding
          Row_Buf  : Binary.Byte_String (1 .. Row_Size + Padding);
          Last     : Natural;
          Row,The_Row,The_Col : Natural;
@@ -235,8 +235,8 @@ package body Lumen.Image.BMP is
 
          if Compression = BI_RGB then
             declare
-               Row_Size : Natural := Natural(Result.Width) / 2 + 1; -- Row size in Bytes
-               Padding  : Natural := (-Row_Size) mod 4; -- padding
+               Row_Size : constant Natural := Result.Width / 2 + 1; -- Row size in Bytes
+               Padding  : constant Natural := (-Row_Size) mod 4; -- padding
                Row_Buf  : Binary.Byte_String (1 .. Row_Size + Padding);
                Last     : Natural;
                Row,The_Row,The_Col : Natural;
@@ -292,8 +292,8 @@ package body Lumen.Image.BMP is
                   if Read_Buf(1) = 0 then
                      if Read_Buf(2) >= 3 then -- Absolute Mode
                         declare
-                           Bytes  : Natural := Natural(Read_Buf(2)) / 2;
-                           Padding : Natural := (-Bytes) mod 2;
+                           Bytes   : constant Natural := Natural(Read_Buf(2)) / 2;
+                           Padding : constant Natural := (-Bytes) mod 2;
                            Values  : Binary.Byte_String(1 .. Bytes + Padding);
                         begin
                            Binary.IO.Read (File, Values, Last);
@@ -329,7 +329,7 @@ package body Lumen.Image.BMP is
                      end if;
                   else -- Encoded Mode
                      declare
-                        Times : Natural := Natural (Read_Buf (1));
+                        Times : constant Natural := Natural (Read_Buf (1));
                      begin
                         Current_Byte := Read_Buf (2);
                         for Time in 1 .. Times loop
@@ -365,8 +365,8 @@ package body Lumen.Image.BMP is
 
          if Compression = BI_RGB then
             declare
-               Row_Size : Natural := Natural(Result.Width); -- Row size in Bytes
-               Padding  : Natural := (-Row_Size) mod 4; -- padding
+               Row_Size : constant Natural := Result.Width; -- Row size in Bytes
+               Padding  : constant Natural := (-Row_Size) mod 4; -- padding
                Row_Buf  : Binary.Byte_String (1 .. Row_Size + Padding);
                Last     : Natural;
                Row,The_Row : Natural;
@@ -415,8 +415,8 @@ package body Lumen.Image.BMP is
                   if Read_Buf(1) = 0 then
                      if Read_Buf(2) >= 3 then -- Absolute Mode
                         declare
-                           Bytes  : Natural := Natural(Read_Buf(2));
-                           Padding : Natural := (-Bytes) mod 2;
+                           Bytes   : constant Natural := Natural (Read_Buf (2));
+                           Padding : constant Natural := (-Bytes) mod 2;
                            Values  : Binary.Byte_String(1 .. Bytes + Padding);
                         begin
                            Binary.IO.Read (File, Values, Last);
@@ -449,8 +449,8 @@ package body Lumen.Image.BMP is
                      end if;
                   else -- Encoded Mode
                      declare
-                        Times : Natural := Natural (Read_Buf (1));
-                        Value : Natural := Natural (Read_Buf (2));
+                        Times : constant Natural := Natural (Read_Buf (1));
+                        Value : constant Natural := Natural (Read_Buf (2));
                      begin
                         for I in 1 .. Times loop
                            Result.Values (The_Row, Col).B := Colors(Value)(1);
@@ -468,8 +468,8 @@ package body Lumen.Image.BMP is
       end Read_Eight_Bit_Format;
 
       procedure Read_RGB_Format is
-         Row_Size : Natural := Natural(Result.Width) * 3; -- 3 Bytes for color information
-         Padding  : Natural := (-Row_Size) mod 4; -- padding
+         Row_Size : constant Natural := Result.Width * 3; -- 3 Bytes for color information
+         Padding  : constant Natural := (-Row_Size) mod 4; -- padding
          Row_Buf  : Binary.Byte_String (1 .. Row_Size + Padding);
          Last     : Natural;
          Row,The_Row : Natural;
@@ -497,8 +497,8 @@ package body Lumen.Image.BMP is
       end Read_RGB_Format;
 
       procedure Read_Sixteen_Bit_Format is
-         Row_Size : Natural := Natural(Result.Width); -- Size (in Shorts)
-         Padding  : Natural := (-Row_Size) mod (4 / Binary.Short_Bytes); -- padding
+         Row_Size : constant Natural := Result.Width; -- Size (in Shorts)
+         Padding  : constant Natural := (-Row_Size) mod (4 / Binary.Short_Bytes); -- padding
          Row_Buf  : Binary.Short_String (1 .. Row_Size + Padding);
          Last     : Natural;
          Row,The_Row : Natural;
@@ -549,7 +549,7 @@ package body Lumen.Image.BMP is
       end Read_Sixteen_Bit_Format;
 
       procedure Read_Thirtytwo_Bit_Format is
-         Row_Size : Natural := Natural(Result.Width); -- Size in Words
+         Row_Size : constant Natural := Result.Width; -- Size in Words
          Row_Buf  : Binary.Word_String (1 .. Row_Size);
          Last     : Natural;
          Row,The_Row : Natural;
@@ -707,7 +707,7 @@ package body Lumen.Image.BMP is
       end if;
 
       -- Are the lines of the image in reversed order?
-      if Result.Height < 0 then
+      if not Result.Height'Valid then
          Reversed := True;
          Result.Height := -Result.Height;
       end if;

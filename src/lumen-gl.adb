@@ -33,7 +33,7 @@ package body Lumen.GL is
       function glGetString (Name : Enum) return Interfaces.C.Strings.chars_ptr;
       pragma Import (StdCall, glGetString, "glGetString");
 
-      Ptr : Interfaces.C.Strings.chars_ptr := glGetString (Name);
+      Ptr : constant Interfaces.C.Strings.chars_ptr := glGetString (Name);
 
    begin  -- Get_String
       if Ptr = Interfaces.C.Strings.Null_Ptr then
@@ -51,7 +51,7 @@ package body Lumen.GL is
       function glGetStringi (Name : Enum;  Index : Int) return Interfaces.C.Strings.chars_ptr;
       pragma Import (StdCall, glGetStringi, "glGetStringi");
 
-      Ptr : Interfaces.C.Strings.chars_ptr := glGetStringi (Name, Index);
+      Ptr : constant Interfaces.C.Strings.chars_ptr := glGetStringi (Name, Index);
 
    begin  -- Get_String
       if Ptr = Interfaces.C.Strings.Null_Ptr then
