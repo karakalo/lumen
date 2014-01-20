@@ -32,7 +32,7 @@ project Lumen is
 
    package Compiler is
       for Default_Switches ("ada") use
-        ( "-gnat05", "-gnatn", "-fstack-check", "-fPIC" );
+        ( "-gnat05", "-gnatn", "-fstack-check", "-fPIC", "-Wall" );
    end Compiler;
 
 end Lumen;
