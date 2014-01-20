@@ -1204,6 +1204,9 @@ package Lumen.GL is
    procedure Gen_Textures (N        : in SizeI;
                           Textures : in Pointer);
 
+   procedure Delete_Textures (N     : in SizeI;
+                             Textures : in Pointer);
+
 
    procedure Tex_Env (Coord : in Enum;
                      PName : in Enum;
@@ -1621,6 +1624,8 @@ package Lumen.GL is
                       V2       : in UInt;
                       V3       : in UInt);
 
+   function Get_Attribute_Location (Program : UInt;   Name : String) return Int;
+
    ---------------------------------------------------------------------------
 
 private
@@ -1665,6 +1670,7 @@ private
    pragma Import (StdCall, Gen_Buffers, "glGenBuffers");
    pragma Import (StdCall, Gen_Framebuffers, "glGenFramebuffers");
    pragma Import (StdCall, Gen_Textures, "glGenTextures");
+   pragma Import (StdCall, Delete_Textures, "glDeleteTextures");
    pragma Import (StdCall, Gen_Vertex_Arrays, "glGenVertexArrays");
    pragma Import (StdCall, Get_Error, "glGetError");
    pragma Import (StdCall, Get_Polygon_Stipple, "glGetPolygonStipple");
