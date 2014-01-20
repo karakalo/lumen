@@ -21,7 +21,6 @@
 -- in connection with the use or performance of this software.
 
 with Lumen.Events; use Lumen.Events;
-with Lumen.Events.Key_Translate; use Lumen.Events.Key_Translate;
 with Ada.Calendar;
 
 package Lumen.Window is
