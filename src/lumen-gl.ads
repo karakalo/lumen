@@ -1,4 +1,3 @@
-
 -- Lumen.GL -- Lumen's own thin OpenGL bindings
 --
 -- Chip Richards, NiEstu, Phoenix AZ, Summer 2010
@@ -1621,6 +1620,21 @@ package Lumen.GL is
                       V2       : in UInt;
                       V3       : in UInt);
 
+
+   procedure Get_Double (pname  : in Enum;
+      						 params : out Double_Matrix);
+
+   procedure Read_Pixels (  X      : in int;
+                            Y      : in int;
+                            Width  : in int; 
+                            Height : in int;
+                            Format : in enum;
+                            C_Type : in enum;
+                            Pixels : in System.Address );
+
+
+
+
    ---------------------------------------------------------------------------
 
 private
@@ -1694,5 +1708,9 @@ private
    pragma Import (StdCall, Use_Program, "glUseProgram");
    pragma Import (StdCall, Vertex_Attrib_Pointer, "glVertexAttribPointer");
    pragma Import (StdCall, Viewport, "glViewport");
+
+   pragma Import (StdCall, Get_Double, "glGetDoublev");
+   pragma Import (StdCall, Read_Pixels, "glReadPixels");
+
 
 end Lumen.GL;
