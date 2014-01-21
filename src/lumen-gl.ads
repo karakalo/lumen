@@ -874,7 +874,10 @@ package Lumen.GL is
 
    GL_VERTEX_SHADER                            : constant Enum := 16#8B31#;
    GL_FRAGMENT_SHADER                          : constant Enum := 16#8B30#;
+   GL_DELETE_STATUS                            : constant Enum := 16#8B80#;
    GL_COMPILE_STATUS                           : constant Enum := 16#8B81#;
+   GL_LINK_STATUS                              : constant Enum := 16#8B82#;
+   GL_VALIDATE_STATUS                          : constant Enum := 16#8B83#;
    GL_INFO_LOG_LENGTH                          : constant Enum := 16#8B84#;
 
    -- Bitfield constants
