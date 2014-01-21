@@ -33,7 +33,7 @@ package body Lumen.GL is
       function glGetString (Name : Enum) return Interfaces.C.Strings.chars_ptr;
       pragma Import (StdCall, glGetString, "glGetString");
 
-      Ptr : Interfaces.C.Strings.chars_ptr := glGetString (Name);
+      Ptr : constant Interfaces.C.Strings.chars_ptr := glGetString (Name);
 
    begin  -- Get_String
       if Ptr = Interfaces.C.Strings.Null_Ptr then
@@ -51,7 +51,7 @@ package body Lumen.GL is
       function glGetStringi (Name : Enum;  Index : Int) return Interfaces.C.Strings.chars_ptr;
       pragma Import (StdCall, glGetStringi, "glGetStringi");
 
-      Ptr : Interfaces.C.Strings.chars_ptr := glGetStringi (Name, Index);
+      Ptr : constant Interfaces.C.Strings.chars_ptr := glGetStringi (Name, Index);
 
    begin  -- Get_String
       if Ptr = Interfaces.C.Strings.Null_Ptr then
@@ -522,76 +522,76 @@ package body Lumen.GL is
    ---------------------------------------------------------------------------
 
    -- Lighting
-   procedure Light (Light : in Enum; P_Name : in Enum; Param : in Float) is
+   procedure Light (Light : in Enum; PName : in Enum; Param : in Float) is
       procedure glLightf (Light : in Enum;
-                          P_Name : in Enum;
-                          Param  : in Float);
+                          PName : in Enum;
+                          Param : in Float);
       pragma Import (StdCall, glLightf, "glLightf");
    begin  -- Light
-      glLightf (Light, P_Name, Param);
+      glLightf (Light, PName, Param);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_1) is
-      procedure glLightfv (Light : in Enum;
-                          P_Name : in Enum;
-                          Params : in Floats_1);
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Floats_1) is
+      procedure glLightfv (Light  : in Enum;
+                           PName  : in Enum;
+                           Params : in Floats_1);
       pragma Import (StdCall, glLightfv, "glLightfv");
    begin  -- Light
-      glLightfv (Light, P_Name, Params);
+      glLightfv (Light, PName, Params);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_3) is
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Floats_3) is
       procedure glLightfv (Light : in Enum;
-                          P_Name : in Enum;
-                          Params : in Floats_3);
+                           PName : in Enum;
+                           Params : in Floats_3);
       pragma Import (StdCall, glLightfv, "glLightfv");
    begin  -- Light
-      glLightfv (Light, P_Name, Params);
+      glLightfv (Light, PName, Params);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_4) is
-      procedure glLightfv (Light : in Enum;
-                          P_Name : in Enum;
-                          Params : in Floats_4);
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Floats_4) is
+      procedure glLightfv (Light  : in Enum;
+                           PName  : in Enum;
+                           Params : in Floats_4);
       pragma Import (StdCall, glLightfv, "glLightfv");
    begin  -- Light
-      glLightfv (Light, P_Name, Params);
+      glLightfv (Light, PName, Params);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Param : Int) is
+   procedure Light (Light : in Enum; PName : in Enum; Param : in Int) is
       procedure glLighti (Light : in Enum;
-                          P_Name : in Enum;
-                          Param  : in Int);
+                          PName : in Enum;
+                          Param : in Int);
       pragma Import (StdCall, glLighti, "glLighti");
    begin  -- Light
-      glLighti (Light, P_Name, Param);
+      glLighti (Light, PName, Param);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_1) is
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Ints_1) is
       procedure glLightiv (Light  : in Enum;
-                           P_Name : in Enum;
+                           PName  : in Enum;
                            Params : in Ints_1);
       pragma Import (StdCall, glLightiv, "glLightiv");
    begin  -- Light
-      glLightiv (Light, P_Name, Params);
+      glLightiv (Light, PName, Params);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_3) is
-      procedure glLightiv (Light : in Enum;
-                          P_Name : in Enum;
-                          Params : in Ints_3);
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Ints_3) is
+      procedure glLightiv (Light  : in Enum;
+                           PName  : in Enum;
+                           Params : in Ints_3);
       pragma Import (StdCall, glLightiv, "glLightiv");
    begin  -- Light
-      glLightiv (Light, P_Name, Params);
+      glLightiv (Light, PName, Params);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_4) is
-      procedure glLightiv (Light : in Enum;
-                          P_Name : in Enum;
-                          Params : in Ints_4);
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Ints_4) is
+      procedure glLightiv (Light  : in Enum;
+                           PName  : in Enum;
+                           Params : in Ints_4);
       pragma Import (StdCall, glLightiv, "glLightiv");
    begin  -- Light
-      glLightiv (Light, P_Name, Params);
+      glLightiv (Light, PName, Params);
    end Light;
 
    -- Normal Vector
@@ -1686,6 +1686,87 @@ package body Lumen.GL is
    begin  -- Uniform
       glUniform4ui (Location, V0, V1, V2, V3);
    end Uniform;
+
+   procedure Uniform (Location  : in Int;
+                      Count     : in SizeI;
+                      Transpose : in Bool;
+                      Value     : in Float_Matrix) is
+      procedure glUniformMatrix4fv (Location  : in Int;
+                                    Count     : in SizeI;
+                                    Transpose : in Bool;
+                                    Value     : in Pointer);
+      Pragma Import (StdCall, glUniformMatrix4fv, "glUniformMatrix4fv");
+   begin
+      glUniformMatrix4fv (Location, Count, Transpose, Value'Address);
+   end Uniform;
+
+   function Get_Attribute_Location (Program : UInt;   Name : String) return Int is
+      C_Name : Interfaces.C.char_array := Interfaces.C.To_C (Name);
+
+      function glGetAttribLocation (Program : UInt;   Name : Pointer) return Int;
+      pragma Import (StdCall, glGetAttribLocation, "glGetAttribLocation");
+
+   begin  -- Get_Attribute_Location
+      return glGetAttribLocation (Program, C_Name'Address);
+   end Get_Attribute_Location;
+
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float) is
+      procedure glVertexAttrib1f (Index : in UInt;
+                                  X     : in Float);
+      Pragma Import (StdCall, glVertexAttrib1f, "glVertexAttrib1f");
+   begin
+      glVertexAttrib1f (Index, X);
+   end Vertex_Attrib;
+
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float;
+                            Y     : in Float) is
+      procedure glVertexAttrib2f (Index : in UInt;
+                                  X     : in Float;
+                                  Y     : in Float);
+      Pragma Import (StdCall, glVertexAttrib2f, "glVertexAttrib2f");
+   begin
+      glVertexAttrib2f (Index, X, Y);
+   end Vertex_Attrib;
+
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float;
+                            Y     : in Float;
+                            Z     : in Float) is
+      procedure glVertexAttrib3f (Index : in UInt;
+                                  X     : in Float;
+                                  Y     : in Float;
+                                  Z     : in Float);
+      Pragma Import (StdCall, glVertexAttrib3f, "glVertexAttrib3f");
+   begin
+      glVertexAttrib3f (Index, X, Y, Z);
+   end Vertex_Attrib;
+
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float;
+                            Y     : in Float;
+                            Z     : in Float;
+                            W     : in Float) is
+      procedure glVertexAttrib4f (Index : in UInt;
+                                  X     : in Float;
+                                  Y     : in Float;
+                                  Z     : in Float;
+                                  W     : in Float);
+      Pragma Import (StdCall, glVertexAttrib4f, "glVertexAttrib4f");
+   begin
+      glVertexAttrib4f (Index, X, Y, Z, W);
+   end  Vertex_Attrib;
+
+   procedure Get_Double (Pname  : in Enum;
+                         Params : out Double_Matrix)
+   is
+      procedure glGetDoublev (Pname  : in Enum;
+                              Params : in Pointer);
+      Pragma Import (StdCall, glGetDoublev, "glGetDoublev");
+   begin
+      glGetDoublev (Pname, Params'Address);
+   end Get_Double;
 
    ---------------------------------------------------------------------------
 

@@ -21,8 +21,6 @@
 
 -- Environment
 with System;
-with Ada.Calendar;
-
 
 package Lumen.Internal is
 

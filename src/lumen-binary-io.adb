@@ -22,9 +22,7 @@
 
 
 -- Environment
-with Ada.Streams.Stream_IO;
 with System.Address_To_Access_Conversions;
-
 
 package body Lumen.Binary.IO is
 
@@ -102,7 +100,7 @@ package body Lumen.Binary.IO is
       package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
 
       Into : Byte_String (1 .. Length);
-      Item : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Into'Address);
+      Item : constant SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Into'Address);
       Got  : Stream_Element_Offset;
 
    begin  -- Read
@@ -128,7 +126,7 @@ package body Lumen.Binary.IO is
       subtype SEA is Stream_Element_Array (Stream_Element_Offset (Item'First) .. Stream_Element_Offset (Item'Last));
       package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
 
-      Into : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);
+      Into : constant SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);
       Got  : Stream_Element_Offset;
 
    begin  -- Read
@@ -155,7 +153,7 @@ package body Lumen.Binary.IO is
       package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
 
       Into : Short_String (1 .. Length);
-      Item : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Into'Address);
+      Item : constant SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Into'Address);
       Got  : Stream_Element_Offset;
 
    begin  -- Read
@@ -181,7 +179,7 @@ package body Lumen.Binary.IO is
       subtype SEA is Stream_Element_Array (1 .. Stream_Element_Offset (Item'Length * Bytes_Per_Short));
       package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
 
-      Into : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);
+      Into : constant SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);
       Got  : Stream_Element_Offset;
 
    begin  -- Read
@@ -208,7 +206,7 @@ package body Lumen.Binary.IO is
       package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
 
       Into : Word_String (1 .. Length);
-      Item : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Into'Address);
+      Item : constant SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Into'Address);
       Got  : Stream_Element_Offset;
 
    begin  -- Read
@@ -234,7 +232,7 @@ package body Lumen.Binary.IO is
       subtype SEA is Stream_Element_Array (1 .. Stream_Element_Offset (Item'Length * Bytes_Per_Word));
       package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
 
-      Into : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);
+      Into : constant SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);
       Got  : Stream_Element_Offset;
 
    begin  -- Read
@@ -259,7 +257,7 @@ package body Lumen.Binary.IO is
       subtype SEA is Stream_Element_Array (Stream_Element_Offset (Item'First) .. Stream_Element_Offset (Item'Last));
       package SEA_Addr is new System.Address_To_Access_Conversions (SEA);
 
-      From : SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);
+      From : constant SEA_Addr.Object_Pointer := SEA_Addr.To_Pointer (Item'Address);
 
    begin  -- Write
 

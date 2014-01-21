@@ -1,4 +1,3 @@
-
 -- Lumen.GL -- Lumen's own thin OpenGL bindings
 --
 -- Chip Richards, NiEstu, Phoenix AZ, Summer 2010
@@ -870,10 +869,14 @@ package Lumen.GL is
    GL_ELEMENT_ARRAY_BUFFER                     : constant Enum := 16#8893#;
 
    GL_STATIC_DRAW                              : constant Enum := 16#88E4#;
+   GL_DYNAMIC_DRAW                             : constant Enum := 16#88E8#;
 
    GL_VERTEX_SHADER                            : constant Enum := 16#8B31#;
    GL_FRAGMENT_SHADER                          : constant Enum := 16#8B30#;
+   GL_DELETE_STATUS                            : constant Enum := 16#8B80#;
    GL_COMPILE_STATUS                           : constant Enum := 16#8B81#;
+   GL_LINK_STATUS                              : constant Enum := 16#8B82#;
+   GL_VALIDATE_STATUS                          : constant Enum := 16#8B83#;
    GL_INFO_LOG_LENGTH                          : constant Enum := 16#8B84#;
 
    -- Bitfield constants
@@ -1182,6 +1185,33 @@ package Lumen.GL is
    procedure Shade_Model (Mode : in Enum);
    pragma Inline (Light, Material);
 
+   -- Lighting
+   procedure Light (Light : in Enum;
+                    PName : in Enum;
+                    Param : in Float);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Floats_1);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Floats_3);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Floats_4);
+   procedure Light (Light : in Enum;
+                    PName : in Enum;
+                    Param : in Int);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Ints_1);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Ints_3);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Ints_4);
+   Pragma Inline (Light);
+
    -- Normal Vector
    procedure Normal (X, Y, Z : Byte);
    procedure Normal (X, Y, Z : Double);
@@ -1203,6 +1233,9 @@ package Lumen.GL is
 
    procedure Gen_Textures (N        : in SizeI;
                           Textures : in Pointer);
+
+   procedure Delete_Textures (N     : in SizeI;
+                             Textures : in Pointer);
 
 
    procedure Tex_Env (Coord : in Enum;
@@ -1352,6 +1385,18 @@ package Lumen.GL is
    procedure Tex_Coord (V : in Doubles_4);
    pragma Inline (Tex_Coord);
 
+   procedure Tex_Coord_Pointer (Size    : in SizeI;
+                                Type_Of : in Enum;
+                                Stride  : in SizeI;
+                                Offset  : in SizeI);
+
+   -- Get texture data
+   procedure Get_Tex_Image (Target  : in Enum;
+                            Level   : in Int;
+                            Format  : in Enum;
+                            Type_Of : in Enum;
+                            Pixels  : in Pointer);
+
    -- Evaluators
    procedure Map (Target : in Enum;
                   U1     : in Float;
@@ -1498,6 +1543,9 @@ package Lumen.GL is
    procedure Gen_Buffers (N   : in SizeI;
                           VBO : in Pointer);
 
+   procedure Delete_Buffers (N        : in SizeI;
+                             Buffers  : in Pointer);
+
    procedure Bind_Buffer (Target : in Enum;
                           VBO    : in UInt);
 
@@ -1506,7 +1554,14 @@ package Lumen.GL is
                           Data   : in Pointer;
                           Usage  : in Enum);
 
+   procedure Buffer_Sub_Data (Target: in Enum;
+                              Offset: in SizeI;
+                              Size  : in SizeI;
+                              Data  : in Pointer);
+
    procedure Enable_Client_State (Target : in Enum);
+
+   procedure Disable_Client_State (Target : in Enum);
 
    procedure Vertex_Pointer (Size : in SizeI;
                              Element_Type : in Enum;
@@ -1574,7 +1629,19 @@ package Lumen.GL is
                                   Length     : in Pointer;
                                   InfoLog    : in Pointer);
 
-   function Get_Uniform_Location (Program : UInt;   Name : String) return Int;
+   procedure Get_Program (Program : in UInt;
+                          PName   : in Enum;
+                          Params  : in Pointer);
+
+   procedure Get_Program_Info_Log (Progarm   : in UInt;
+                                   MaxLength : in SizeI;
+                                   Length    : in Pointer;
+                                   InfoLog   : in Pointer);
+
+   procedure Validate_Program (Program : in GL.UInt);
+
+   function Get_Uniform_Location (Program : in UInt;
+                                  Name    : in String) return Int;
 
    procedure Uniform (Location : in Int;
                       V0       : in Float);
@@ -1621,6 +1688,42 @@ package Lumen.GL is
                       V2       : in UInt;
                       V3       : in UInt);
 
+   procedure Uniform (Location  : in Int;
+                      Count     : in SizeI;
+                      Transpose : in Bool;
+                      Value     : in Float_Matrix);
+
+   function Get_Attribute_Location (Program : in UInt;
+                                    Name    : in String) return Int;
+
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float);
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float;
+                            Y     : in Float);
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float;
+                            Y     : in Float;
+                            Z     : in Float);
+   procedure Vertex_Attrib (Index : in UInt;
+                            X     : in Float;
+                            Y     : in Float;
+                            Z     : in Float;
+                            W     : in Float);
+   Pragma Inline (Vertex_Attrib);
+
+   procedure Get_Double (Pname  : in Enum;
+                         Params : out Double_Matrix);
+   Pragma Inline (Get_Double);
+
+   procedure Read_Pixels (X      : in Int;
+                          Y      : in Int;
+                          Width  : in SizeI;
+                          Height : in SizeI;
+                          Format : in Enum;
+                          C_Type : in Enum;
+                          Pixels : in Pointer);
+
    ---------------------------------------------------------------------------
 
 private
@@ -1665,6 +1768,8 @@ private
    pragma Import (StdCall, Gen_Buffers, "glGenBuffers");
    pragma Import (StdCall, Gen_Framebuffers, "glGenFramebuffers");
    pragma Import (StdCall, Gen_Textures, "glGenTextures");
+   Pragma Import (StdCall, Get_Tex_Image, "glGetTexImage");
+   pragma Import (StdCall, Delete_Textures, "glDeleteTextures");
    pragma Import (StdCall, Gen_Vertex_Arrays, "glGenVertexArrays");
    pragma Import (StdCall, Get_Error, "glGetError");
    pragma Import (StdCall, Get_Polygon_Stipple, "glGetPolygonStipple");
@@ -1694,5 +1799,13 @@ private
    pragma Import (StdCall, Use_Program, "glUseProgram");
    pragma Import (StdCall, Vertex_Attrib_Pointer, "glVertexAttribPointer");
    pragma Import (StdCall, Viewport, "glViewport");
+   Pragma Import (StdCall, Delete_Buffers, "glDeleteBuffers");
+   Pragma Import (StdCall, Buffer_Sub_Data, "glBufferSubData");
+   Pragma Import (StdCall, Disable_Client_State, "glDisableClientState");
+   Pragma Import (StdCall, Tex_Coord_Pointer, "glTexCoordPointer");
+   Pragma Import (StdCall, Get_Program, "glGetProgramiv");
+   Pragma Import (StdCall, Get_Program_Info_Log, "glGetProgramInfoLog");
+   Pragma Import (StdCall, Validate_Program, "glValidateProgram");
+   pragma Import (StdCall, Read_Pixels, "glReadPixels");
 
 end Lumen.GL;

@@ -21,7 +21,6 @@
 
 
 -- Environment
-with Ada.Streams;
 with Ada.Unchecked_Deallocation;
 with System.Address_To_Access_Conversions;
 
@@ -29,7 +28,6 @@ with Lumen.Binary.IO;
 with Lumen.Binary.Endian.Shorts;
 with Lumen.Binary.Endian.Words;
 with Lumen.GLU;
-
 
 package body Lumen.Font.Txf is
 
@@ -76,12 +74,12 @@ package body Lumen.Font.Txf is
 
       use Lumen.Binary;
 
-      Buffer_Len : Natural := Item'Size / Byte_Bits;
+      Buffer_Len : constant Natural := Item'Size / Byte_Bits;
 
       subtype Buffer_Type is Byte_String (1 .. Buffer_Len);
       package Address_Convert is new System.Address_To_Access_Conversions (Buffer_Type);
 
-      Buffer : Address_Convert.Object_Pointer := Address_Convert.To_Pointer (Item'Address);
+      Buffer : constant Address_Convert.Object_Pointer := Address_Convert.To_Pointer (Item'Address);
 
    begin  -- Read
       Buffer.all := IO.Read (File, Buffer_Len);
@@ -133,10 +131,9 @@ package body Lumen.Font.Txf is
 
       -- Traditional txf file header
       subtype Txf_Signature is String (1 .. 4);
-      Txf_Signature_Mark : Txf_Signature := Character'Val (16#FF#) & "txf";
-      Txf_Endian_Mark    : Word := 16#12345678#;
-      Txf_Byte_Format    : Word := 0;  -- should be an enum, just way easier like this
-      Txf_Bitmap_Format  : Word := 1;
+      Txf_Signature_Mark : constant Txf_Signature := Character'Val (16#FF#) & "txf";
+      Txf_Endian_Mark    : constant Word := 16#12345678#;
+      Txf_Byte_Format    : constant Word := 0;  -- should be an enum, just way easier like this
 
       type Txf_Header is record
          Signature  : Txf_Signature;
@@ -239,10 +236,10 @@ package body Lumen.Font.Txf is
          Info     : Txf_Info_Table;
          Lo_Glyph : Natural;
          Hi_Glyph : Natural;
-         W        : Float := Float (Header.Width);
-         H        : Float := Float (Header.Height);
-         X_Step   : Float := 0.5 / W;
-         Y_Step   : Float := 0.5 / H;
+         W        : constant Float := Float (Header.Width);
+         H        : constant Float := Float (Header.Height);
+         X_Step   : constant Float := 0.5 / W;
+         Y_Step   : constant Float := 0.5 / H;
          T        : Txf_Glyph_Info;
          Verts    : Txf_Vertex_Info;
       begin
@@ -418,7 +415,7 @@ package body Lumen.Font.Txf is
    procedure Render (Font : in Handle;
                      Char : in Character) is
 
-      V : Txf_Vertex_Info := Get_Vertex_Info (Font, Character'Pos (Char));
+      V : constant Txf_Vertex_Info := Get_Vertex_Info (Font, Character'Pos (Char));
 
    begin  -- Render
       GL.Begin_Primitive (GL.GL_QUADS);

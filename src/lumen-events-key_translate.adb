@@ -49,7 +49,7 @@ package body Lumen.Events.Key_Translate is
       Cat : Key_Category;
    end record;
    type Special_1_Translation is array (Lo_Spec_1 .. Hi_Spec_1) of Translation_Target;
-   Specials_1 : Special_1_Translation :=
+   Specials_1 : constant Special_1_Translation :=
       (
        16#FF08#    => (Key_Symbol (Character'Pos (Ada.Characters.Latin_1.BS)),  Key_Control),
        16#FF09#    => (Key_Symbol (Character'Pos (Ada.Characters.Latin_1.HT)),  Key_Control),
@@ -66,7 +66,7 @@ package body Lumen.Events.Key_Translate is
    -- Translation array for specials that turn into themselves; needed because
    -- the ranges are discontinuous and have holes
    type Special_2_Translation is array (Lo_Spec_2 .. Hi_Spec_2) of Key_Symbol;
-   Specials_2 : Special_2_Translation :=
+   Specials_2 : constant Special_2_Translation :=
       (
        Home         => Self_Symbol,
        Left         => Self_Symbol,

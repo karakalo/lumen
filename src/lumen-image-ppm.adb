@@ -35,10 +35,6 @@ package body Lumen.Image.PPM is
 
       ------------------------------------------------------------------------
 
-      subtype Bytes_Per_Pixel_Range is Integer range 1 .. 6;  -- actually 1/8th .. 6
-
-      ------------------------------------------------------------------------
-
       Next   : Character;
       Result : Descriptor;
 
@@ -48,7 +44,7 @@ package body Lumen.Image.PPM is
       -- reading the header/metadata
       function Next_Char return Character is
 
-         BS : Binary.Byte_String := Binary.IO.Read (File, 1);
+         BS : constant Binary.Byte_String := Binary.IO.Read (File, 1);
 
       begin  -- Next_Char
          return Character'Val (BS (1));
@@ -127,12 +123,9 @@ package body Lumen.Image.PPM is
       ------------------------------------------------------------------------
       -- Read a PGM ASCII (portable greymap) file
       procedure Read_APGM is
-         Maxval : Natural;
          Col    : Natural;
          Value  : Natural;
       begin -- Read_APGM
-         -- Read the maxval
-         Maxval := Read_Num (Skip);
          -- Read the data a row at a time and unpack it into our internal format
          for Row in Result.Values'Range (1) loop
             Col := Result.Values'First (2);
@@ -151,7 +144,6 @@ package body Lumen.Image.PPM is
       ------------------------------------------------------------------------
       -- Read a PPM ASCII (portable pixmap) file
       procedure Read_APPM is
-         Maxval : Natural;
          Col    : Natural;
          function Read_Color return Binary.Byte
          is
@@ -159,8 +151,6 @@ package body Lumen.Image.PPM is
             return Binary.Byte (Read_Num (Skip));
          end Read_Color;
       begin -- Read_APPM
-         -- Read the maxval
-         Maxval := Read_Num (Skip);
          -- Read the data a row at a time and unpack it into our internal format
          for Row in Result.Values'Range (1) loop
             Col := Result.Values'First (2);
@@ -179,7 +169,7 @@ package body Lumen.Image.PPM is
 
          use Binary;
 
-         Row_Size : Natural := (Result.Width + Byte_LB) / Byte_Bits;
+         Row_Size : constant Natural := (Result.Width + Byte_LB) / Byte_Bits;
          Row_Buf  : Byte_String (0 .. Row_Size - 1);
          Last     : Natural;
          Col      : Natural;
@@ -396,7 +386,7 @@ package body Lumen.Image.PPM is
                Mult : constant Short := Short'Last / Short (Maxval);  -- multiplier to maximize pixel value retention
                Div  : constant := Short (Byte'Last) + 1;              -- divisor to convert shorts to bytes
 
-               Row_Size : Natural := Result.Width * 3;  -- 3 color values per pixel
+               Row_Size : constant Natural := Result.Width * 3;  -- 3 color values per pixel
                Row_Buf  : Short_String (0 .. Row_Size - 1);
                Last     : Natural;
 
@@ -448,7 +438,7 @@ package body Lumen.Image.PPM is
 
                use type Binary.Byte;
 
-               Row_Size : Natural := Result.Width * 3;  -- 3 color values per pixel
+               Row_Size : constant Natural := Result.Width * 3;  -- 3 color values per pixel
                Row_Buf  : Binary.Byte_String (0 .. Row_Size - 1);
                Last     : Natural;
 

@@ -29,7 +29,6 @@
 
 
 -- Environment
-with Ada.Calendar;
 with Ada.Command_Line;
 with Ada.Directories;
 with Ada.Environment_Variables;
@@ -38,11 +37,11 @@ with System;
 
 with GNAT.Case_Util;
 
-with Lumen.Binary;
-
 -- This is really "part of" this package, just packaged separately so it can
 -- be used in Events
 with X11; use X11;
+
+with Lumen.Events.Key_Translate; use Lumen.Events.Key_Translate;
 
 package body Lumen.Window is
 
@@ -349,7 +348,7 @@ package body Lumen.Window is
    -- Destroy a native window, including its current rendering context.
    procedure Destroy (Win : in out Window_Handle) is
 
-      XWin : X11Window_Handle:=X11Window_Handle(Win);
+      XWin : constant X11Window_Handle := X11Window_Handle (Win);
 
       procedure X_Destroy_Window (Display : in Display_Pointer;   Window : in Window_ID);
       pragma Import (C, X_Destroy_Window, "XDestroyWindow");
@@ -371,7 +370,7 @@ package body Lumen.Window is
                         Icon_Name     : in String           := "";
                         Class_Name    : in String           := "";
                         Instance_Name : in String           := "") is
-      XWin : X11Window_Handle:=X11Window_Handle(Win);
+      XWin : constant X11Window_Handle := X11Window_Handle (Win);
 
       Name_Property : X_Text_Property;
 
@@ -406,7 +405,7 @@ package body Lumen.Window is
 
    -- Select a window to use for subsequent OpenGL calls
    procedure Make_Current (Win : in Window_Handle) is
-      XWin : X11Window_Handle:=X11Window_Handle(Win);
+      XWin : constant X11Window_Handle := X11Window_Handle (Win);
    begin  -- Make_Current
       if GLX_Make_Current (XWin.Display, XWin.Window, XWin.Context) /= GL_TRUE then
          raise Context_Failed with "Cannot make given OpenGL context current";
@@ -419,7 +418,7 @@ package body Lumen.Window is
    -- buffered, meaning Animated was true when the window was created.  Useful
    -- for smooth animation.
    procedure Swap (Win : in Window_Handle) is
-      XWin : X11Window_Handle:=X11Window_Handle(Win);
+      XWin : constant X11Window_Handle := X11Window_Handle (Win);
 
       procedure GLX_Swap_Buffers (Display : in Display_Pointer;   Window : in Window_ID);
       pragma Import (C, GLX_Swap_Buffers, "glXSwapBuffers");
@@ -469,7 +468,7 @@ package body Lumen.Window is
    -- Useful for more complex event loops.
    function Pending (Win : Window_Handle) return Natural is
 
-      XWin : X11Window_Handle:=X11Window_Handle(Win);
+      XWin : constant X11Window_Handle := X11Window_Handle (Win);
 
    begin  -- Pending
       return X_Pending (XWin.Display);
@@ -482,7 +481,7 @@ package body Lumen.Window is
                         Translate : in Boolean := True)
                         return Boolean is
 
-      XWin : X11Window_Handle:=X11Window_Handle(Win);
+      XWin : constant X11Window_Handle := X11Window_Handle (Win);
 
       ------------------------------------------------------------------------
 
@@ -663,8 +662,6 @@ package body Lumen.Window is
          end if;
 
       when X_Client_Message =>
-         declare
-            use type Atom;
          begin
             if X_Event.Msg_Value = Delete_Window_Atom then
                return False;

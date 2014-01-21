@@ -10,9 +10,15 @@ project Lumen is
         for Source_Dirs use ("src","src/x11");
    end case;
 
+   Name := "lumen";
+
    for Object_Dir use "obj";
-   for Library_Name use "lumen";
+   for Library_Name use Name;
    for Library_Dir use "lib";
+
+   Version := "0.1";
+   for Library_Kind use "dynamic";
+   for Library_Version use "lib" & Name & ".so." & Version;
 
    for Languages use ("Ada");
 
@@ -25,7 +31,8 @@ project Lumen is
    end Builder;
 
    package Compiler is
-      for Default_Switches ("ada") use ("-gnat05", "-gnatn", "-fstack-check");
+      for Default_Switches ("ada") use
+        ( "-gnat05", "-gnatn", "-fstack-check", "-fPIC", "-Wall" );
    end Compiler;
 
 end Lumen;
