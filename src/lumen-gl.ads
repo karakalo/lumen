@@ -1609,6 +1609,8 @@ package Lumen.GL is
                                    Length    : in Pointer;
                                    InfoLog   : in Pointer);
 
+   procedure Validate_Program (Program : in GL.UInt);
+
    function Get_Uniform_Location (Program : in UInt;
                                   Name    : in String) return Int;
 
@@ -1756,5 +1758,6 @@ private
    Pragma Import (StdCall, Tex_Coord_Pointer, "glTexCoordPointer");
    Pragma Import (StdCall, Get_Program, "glGetProgramiv");
    Pragma Import (StdCall, Get_Program_Info_Log, "glGetProgramInfoLog");
+   Pragma Import (StdCall, Validate_Program, "glValidateProgram");
 
 end Lumen.GL;
