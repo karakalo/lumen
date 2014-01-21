@@ -1,4 +1,3 @@
-
 -- Lumen.GL -- Lumen's own thin OpenGL bindings
 --
 -- Chip Richards, NiEstu, Phoenix AZ, Summer 2010
@@ -1667,7 +1666,8 @@ package Lumen.GL is
                       Transpose : in Bool;
                       Value     : in Float_Matrix);
 
-   function Get_Attribute_Location (Program : UInt;   Name : String) return Int;
+   function Get_Attribute_Location (Program : in UInt;
+                                    Name    : in String) return Int;
 
    procedure Vertex_Attrib (Index : in UInt;
                             X     : in Float);
@@ -1683,7 +1683,18 @@ package Lumen.GL is
                             Y     : in Float;
                             Z     : in Float;
                             W     : in Float);
-  Pragma Inline (Vertex_Attrib);
+   Pragma Inline (Vertex_Attrib);
+
+   procedure Get_Double (Pname  : in Enum;
+                         Params : out Double_Matrix);
+
+   procedure Read_Pixels ( X      : in int;
+                           Y      : in int;
+                           Width  : in int; 
+                           Height : in int;
+                           Format : in enum;
+                           C_Type : in enum;
+                           Pixels : in System.Address );
 
    ---------------------------------------------------------------------------
 
@@ -1767,5 +1778,7 @@ private
    Pragma Import (StdCall, Get_Program, "glGetProgramiv");
    Pragma Import (StdCall, Get_Program_Info_Log, "glGetProgramInfoLog");
    Pragma Import (StdCall, Validate_Program, "glValidateProgram");
+   pragma Import (StdCall, Get_Double, "glGetDoublev");
+   pragma Import (StdCall, Read_Pixels, "glReadPixels");
 
 end Lumen.GL;
