@@ -1758,6 +1758,16 @@ package body Lumen.GL is
       glVertexAttrib4f (Index, X, Y, Z, W);
    end  Vertex_Attrib;
 
+   procedure Get_Double (Pname  : in Enum;
+                         Params : out Double_Matrix)
+   is
+      procedure glGetDoublev (Pname  : in Enum;
+                              Params : in Pointer);
+      Pragma Import (StdCall, glGetDoublev, "glGetDoublev");
+   begin
+      glGetDoublev (Pname, Params'Address);
+   end Get_Double;
+
    ---------------------------------------------------------------------------
 
 end Lumen.GL;

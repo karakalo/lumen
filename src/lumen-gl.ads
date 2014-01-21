@@ -1687,14 +1687,15 @@ package Lumen.GL is
 
    procedure Get_Double (Pname  : in Enum;
                          Params : out Double_Matrix);
+   Pragma Inline (Get_Double);
 
-   procedure Read_Pixels ( X      : in int;
-                           Y      : in int;
-                           Width  : in int; 
-                           Height : in int;
-                           Format : in enum;
-                           C_Type : in enum;
-                           Pixels : in System.Address );
+   procedure Read_Pixels (X      : in Int;
+                          Y      : in Int;
+                          Width  : in SizeI;
+                          Height : in SizeI;
+                          Format : in Enum;
+                          C_Type : in Enum;
+                          Pixels : in Pointer);
 
    ---------------------------------------------------------------------------
 
@@ -1778,7 +1779,6 @@ private
    Pragma Import (StdCall, Get_Program, "glGetProgramiv");
    Pragma Import (StdCall, Get_Program_Info_Log, "glGetProgramInfoLog");
    Pragma Import (StdCall, Validate_Program, "glValidateProgram");
-   pragma Import (StdCall, Get_Double, "glGetDoublev");
    pragma Import (StdCall, Read_Pixels, "glReadPixels");
 
 end Lumen.GL;
