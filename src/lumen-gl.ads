@@ -1185,6 +1185,33 @@ package Lumen.GL is
    procedure Shade_Model (Mode : in Enum);
    pragma Inline (Light, Material);
 
+   -- Lighting
+   procedure Light (Light : in Enum;
+                    PName : in Enum;
+                    Param : in Float);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Floats_1);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Floats_3);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Floats_4);
+   procedure Light (Light : in Enum;
+                    PName : in Enum;
+                    Param : in Int);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Ints_1);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Ints_3);
+   procedure Light (Light  : in Enum;
+                    PName  : in Enum;
+                    Params : in Ints_4);
+   Pragma Inline (Light);
+
    -- Normal Vector
    procedure Normal (X, Y, Z : Byte);
    procedure Normal (X, Y, Z : Double);

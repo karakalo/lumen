@@ -522,76 +522,76 @@ package body Lumen.GL is
    ---------------------------------------------------------------------------
 
    -- Lighting
-   procedure Light (Light : in Enum; P_Name : in Enum; Param : in Float) is
+   procedure Light (Light : in Enum; PName : in Enum; Param : in Float) is
       procedure glLightf (Light : in Enum;
-                          P_Name : in Enum;
-                          Param  : in Float);
+                          PName : in Enum;
+                          Param : in Float);
       pragma Import (StdCall, glLightf, "glLightf");
    begin  -- Light
-      glLightf (Light, P_Name, Param);
+      glLightf (Light, PName, Param);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_1) is
-      procedure glLightfv (Light : in Enum;
-                          P_Name : in Enum;
-                          Params : in Floats_1);
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Floats_1) is
+      procedure glLightfv (Light  : in Enum;
+                           PName  : in Enum;
+                           Params : in Floats_1);
       pragma Import (StdCall, glLightfv, "glLightfv");
    begin  -- Light
-      glLightfv (Light, P_Name, Params);
+      glLightfv (Light, PName, Params);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_3) is
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Floats_3) is
       procedure glLightfv (Light : in Enum;
-                          P_Name : in Enum;
-                          Params : in Floats_3);
+                           PName : in Enum;
+                           Params : in Floats_3);
       pragma Import (StdCall, glLightfv, "glLightfv");
    begin  -- Light
-      glLightfv (Light, P_Name, Params);
+      glLightfv (Light, PName, Params);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Floats_4) is
-      procedure glLightfv (Light : in Enum;
-                          P_Name : in Enum;
-                          Params : in Floats_4);
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Floats_4) is
+      procedure glLightfv (Light  : in Enum;
+                           PName  : in Enum;
+                           Params : in Floats_4);
       pragma Import (StdCall, glLightfv, "glLightfv");
    begin  -- Light
-      glLightfv (Light, P_Name, Params);
+      glLightfv (Light, PName, Params);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Param : Int) is
+   procedure Light (Light : in Enum; PName : in Enum; Param : in Int) is
       procedure glLighti (Light : in Enum;
-                          P_Name : in Enum;
-                          Param  : in Int);
+                          PName : in Enum;
+                          Param : in Int);
       pragma Import (StdCall, glLighti, "glLighti");
    begin  -- Light
-      glLighti (Light, P_Name, Param);
+      glLighti (Light, PName, Param);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_1) is
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Ints_1) is
       procedure glLightiv (Light  : in Enum;
-                           P_Name : in Enum;
+                           PName  : in Enum;
                            Params : in Ints_1);
       pragma Import (StdCall, glLightiv, "glLightiv");
    begin  -- Light
-      glLightiv (Light, P_Name, Params);
+      glLightiv (Light, PName, Params);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_3) is
-      procedure glLightiv (Light : in Enum;
-                          P_Name : in Enum;
-                          Params : in Ints_3);
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Ints_3) is
+      procedure glLightiv (Light  : in Enum;
+                           PName  : in Enum;
+                           Params : in Ints_3);
       pragma Import (StdCall, glLightiv, "glLightiv");
    begin  -- Light
-      glLightiv (Light, P_Name, Params);
+      glLightiv (Light, PName, Params);
    end Light;
 
-   procedure Light (Light : Enum; P_Name : Enum; Params : Ints_4) is
-      procedure glLightiv (Light : in Enum;
-                          P_Name : in Enum;
-                          Params : in Ints_4);
+   procedure Light (Light : in Enum; PName : in Enum; Params : in Ints_4) is
+      procedure glLightiv (Light  : in Enum;
+                           PName  : in Enum;
+                           Params : in Ints_4);
       pragma Import (StdCall, glLightiv, "glLightiv");
    begin  -- Light
-      glLightiv (Light, P_Name, Params);
+      glLightiv (Light, PName, Params);
    end Light;
 
    -- Normal Vector
