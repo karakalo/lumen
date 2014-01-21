@@ -1600,6 +1600,10 @@ package Lumen.GL is
                                   Length     : in Pointer;
                                   InfoLog    : in Pointer);
 
+   procedure Get_Program (Program : in UInt;
+                          PName   : in Enum;
+                          Params  : in Pointer);
+
    function Get_Uniform_Location (Program : UInt;   Name : String) return Int;
 
    procedure Uniform (Location : in Int;
@@ -1744,5 +1748,6 @@ private
    Pragma Import (StdCall, Buffer_Sub_Data, "glBufferSubData");
    Pragma Import (StdCall, Disable_Client_State, "glDisableClientState");
    Pragma Import (StdCall, Tex_Coord_Pointer, "glTexCoordPointer");
+   Pragma Import (StdCall, Get_Program, "glGetProgramiv");
 
 end Lumen.GL;
