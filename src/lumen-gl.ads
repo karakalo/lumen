@@ -1662,6 +1662,11 @@ package Lumen.GL is
                       V2       : in UInt;
                       V3       : in UInt);
 
+   procedure Uniform (Location  : in Int;
+                      Count     : in SizeI;
+                      Transpose : in Bool;
+                      Value     : in Float_Matrix);
+
    function Get_Attribute_Location (Program : UInt;   Name : String) return Int;
 
    procedure Vertex_Attrib (Index : in UInt;
